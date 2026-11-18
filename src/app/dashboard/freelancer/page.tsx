@@ -27,10 +27,12 @@ import {
   Send,
   Eye,
   Sliders,
-  FolderGit2
+  FolderGit2,
+  Home
 } from 'lucide-react';
 import { FreelancerProfile, ProjectApplication, Contract, PortfolioItem, Transaction, WithdrawalRequest } from '@/types';
 import { formatDate } from '@/lib/utils';
+import EarningsLedgerView from '@/components/dashboard/EarningsLedgerView';
 
 export default function FreelancerDashboard() {
   const router = useRouter();
@@ -216,7 +218,7 @@ export default function FreelancerDashboard() {
 
   if (authLoading || loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-20 text-center text-gray-400">
+      <div className="max-w-7xl mx-auto px-4 pt-32 pb-20 text-center text-gray-400">
         <div className="inline-block w-8 h-8 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
         <p className="mt-3 text-sm">Synchronizing talent workspace...</p>
       </div>
@@ -226,7 +228,7 @@ export default function FreelancerDashboard() {
   const availableEarnings = profile?.totalEarnings || 0;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16">
       
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
@@ -247,13 +249,22 @@ export default function FreelancerDashboard() {
           </div>
 
           <nav className="space-y-1 text-xs">
+            {/* Direct Home Navigation Link */}
+            <Link
+              href="/"
+              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-gray-300 hover:text-[#73D8C4] hover:bg-[#73D8C4]/10 border border-white/[0.04] transition-colors mb-2 group"
+            >
+              <Home className="w-4 h-4 text-[#73D8C4] group-hover:scale-110 transition-transform" />
+              <span className="font-semibold tracking-wide">Home</span>
+            </Link>
+
             {[
               { id: 'overview', label: 'Overview & Metrics', icon: LayoutDashboard },
               { id: 'profile', label: 'My Profile Editor', icon: User },
               { id: 'portfolio', label: `Portfolio Samples (${profile?.portfolio?.length || 0})`, icon: FolderGit2 },
               { id: 'applications', label: 'My Applications', icon: FileText },
               { id: 'projects', label: 'Active Contracts', icon: Briefcase },
-              { id: 'earnings', label: 'Earnings & Withdrawals', icon: DollarSign }
+              { id: 'earnings', label: 'Earnings & Ledger', icon: DollarSign }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -565,102 +576,9 @@ export default function FreelancerDashboard() {
             </div>
           )}
 
-          {/* SECTION: EARNINGS & WITHDRAWALS */}
+          {/* SECTION: EARNINGS & LEDGER */}
           {activeSection === 'earnings' && (
-            <div className="space-y-8">
-              <div>
-                <h2 className="text-xl font-bold text-white">Financial Dashboard & Settlements</h2>
-                <p className="text-xs text-gray-400 mt-0.5">Track released balances, escrow milestones, and request payouts.</p>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="p-5 rounded-2xl bg-[#0B0B0F] border border-emerald-500/30 shadow-sm">
-                  <span className="text-[10px] text-gray-400 uppercase tracking-wider block">Available Balance</span>
-                  <p className="text-3xl font-black text-emerald-400 mt-1">${availableEarnings.toLocaleString()}</p>
-                  <span className="text-[10px] text-emerald-300 block mt-1">Ready for withdrawal</span>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-[#0B0B0F] border border-white/[0.08]">
-                  <span className="text-[10px] text-gray-400 uppercase tracking-wider block">Pending In Escrow</span>
-                  <p className="text-3xl font-black text-violet-400 mt-1">$3,800</p>
-                  <span className="text-[10px] text-gray-500 block mt-1">Locked until milestone review</span>
-                </div>
-
-                <div className="p-5 rounded-2xl bg-[#0B0B0F] border border-white/[0.08]">
-                  <span className="text-[10px] text-gray-400 uppercase tracking-wider block">Total Lifetime Earnings</span>
-                  <p className="text-3xl font-black text-white mt-1">${(availableEarnings + 3800).toLocaleString()}</p>
-                  <span className="text-[10px] text-gray-500 block mt-1">Across all contracts</span>
-                </div>
-              </div>
-
-              {/* Withdrawal Request Form */}
-              <div className="p-6 rounded-3xl bg-[#0B0B0F] border border-white/[0.08] space-y-4">
-                <h3 className="text-sm font-bold text-white uppercase tracking-wider">Request Payout</h3>
-
-                {withdrawMsg && (
-                  <div className="p-3 rounded-xl bg-violet-500/10 border border-violet-500/30 text-xs text-violet-300">
-                    {withdrawMsg}
-                  </div>
-                )}
-
-                <form onSubmit={handleWithdraw} className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
-                        Withdrawal Amount ($)
-                      </label>
-                      <input
-                        type="number"
-                        min={50}
-                        max={availableEarnings || 5000}
-                        value={withdrawAmount}
-                        onChange={(e) => setWithdrawAmount(Number(e.target.value))}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#121218] border border-white/[0.08] text-sm text-white focus:outline-none focus:border-violet-500"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
-                        Payout Method
-                      </label>
-                      <select
-                        value={withdrawMethod}
-                        onChange={(e) => setWithdrawMethod(e.target.value as any)}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-[#121218] border border-white/[0.08] text-sm text-white focus:outline-none focus:border-violet-500"
-                      >
-                        <option value="crypto">Crypto (USDC / USDT / SOL)</option>
-                        <option value="bank_transfer">Direct Bank Wire / SWIFT</option>
-                        <option value="stripe">Stripe Connect</option>
-                        <option value="paypal">PayPal</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-1.5">
-                      Account / Wallet Address Details
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={withdrawDetails}
-                      onChange={(e) => setWithdrawDetails(e.target.value)}
-                      placeholder="e.g. 0x71C... or IBAN / Email address"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#121218] border border-white/[0.08] text-xs text-white placeholder-gray-500 focus:outline-none focus:border-violet-500"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={withdrawSubmitting || availableEarnings <= 0}
-                    className="px-6 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold shadow-neon-violet disabled:opacity-50"
-                  >
-                    {withdrawSubmitting ? 'Processing...' : 'Submit Payout Request'}
-                  </button>
-                </form>
-              </div>
-
-            </div>
+            <EarningsLedgerView />
           )}
 
         </div>

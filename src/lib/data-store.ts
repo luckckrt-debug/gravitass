@@ -15,7 +15,14 @@ import {
   Transaction,
   WithdrawalRequest,
   Dispute,
-  PortfolioItem
+  PortfolioItem,
+  LedgerTransaction,
+  LedgerStatus,
+  WithdrawalStatus,
+  PayoutMethod,
+  PayoutDetails,
+  PlatformSettings,
+  FreelancerEarningsSummary
 } from '@/types';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
@@ -36,6 +43,8 @@ export interface DatabaseState {
   transactions: Transaction[];
   withdrawals: WithdrawalRequest[];
   disputes: Dispute[];
+  ledgerTransactions: LedgerTransaction[];
+  platformSettings: PlatformSettings;
 }
 
 export const INITIAL_CATEGORIES: Category[] = [
@@ -693,6 +702,102 @@ export const INITIAL_TRANSACTIONS: Transaction[] = [
 ];
 
 // Persistent state class
+export const DEFAULT_PLATFORM_SETTINGS: PlatformSettings = {
+  commissionPercentage: 10,
+  minWithdrawalAmount: 20,
+  withdrawalFeePercentage: 0,
+  fixedWithdrawalFee: 0,
+  payoutGatewayMode: 'simulated_live',
+  updatedAt: new Date().toISOString()
+};
+
+export const INITIAL_LEDGER_TRANSACTIONS: LedgerTransaction[] = [
+  {
+    id: 'LED-DEMO-001',
+    freelancerId: 'user-freelancer-1',
+    freelancerName: 'Elena Vance',
+    projectId: 'proj-1',
+    projectTitle: 'Autonomous Multi-Model LLM Orchestration Platform',
+    clientId: 'user-client-1',
+    clientName: 'Aetheria Labs',
+    contractId: 'contract-demo-1',
+    milestoneId: 'ms-demo-1',
+    milestoneTitle: 'Architecture Specification & Vector Pipeline',
+    grossAmount: 2000,
+    commissionPercentage: 10,
+    platformFee: 200,
+    netAmount: 1800,
+    status: 'available',
+    transactionReference: 'REF-GRAV-LLM941',
+    createdAt: '2026-02-14T12:00:00.000Z',
+    updatedAt: '2026-02-14T12:00:00.000Z'
+  },
+  {
+    id: 'LED-DEMO-002',
+    freelancerId: 'user-freelancer-1',
+    freelancerName: 'Elena Vance',
+    projectId: 'proj-2',
+    projectTitle: 'Real-time Streaming Vector Ingestion Engine',
+    clientId: 'user-client-1',
+    clientName: 'Aetheria Labs',
+    contractId: 'contract-demo-1',
+    milestoneId: 'ms-demo-2',
+    milestoneTitle: 'Cluster Ingestion Benchmarks & SDK Release',
+    grossAmount: 3500,
+    commissionPercentage: 10,
+    platformFee: 350,
+    netAmount: 3150,
+    status: 'available',
+    transactionReference: 'REF-GRAV-VEC882',
+    createdAt: '2026-02-15T16:00:00.000Z',
+    updatedAt: '2026-02-15T16:00:00.000Z'
+  },
+  {
+    id: 'LED-DEMO-003',
+    freelancerId: 'user-freelancer-1',
+    freelancerName: 'Elena Vance',
+    projectId: 'proj-1',
+    projectTitle: 'Autonomous Multi-Model LLM Orchestration Platform',
+    clientId: 'user-client-1',
+    clientName: 'Aetheria Labs',
+    contractId: 'contract-demo-1',
+    milestoneId: 'ms-demo-3',
+    milestoneTitle: 'Production Deployment & Load Testing',
+    grossAmount: 2500,
+    commissionPercentage: 10,
+    platformFee: 250,
+    netAmount: 2250,
+    status: 'pending_approval',
+    transactionReference: 'REF-GRAV-DEP319',
+    createdAt: '2026-02-17T09:30:00.000Z',
+    updatedAt: '2026-02-17T09:30:00.000Z'
+  }
+];
+
+export const INITIAL_WITHDRAWALS: WithdrawalRequest[] = [
+  {
+    id: 'WTH-DEMO-001',
+    freelancerId: 'user-freelancer-1',
+    freelancerName: 'Elena Vance',
+    amount: 1500,
+    fee: 0,
+    finalAmount: 1500,
+    method: 'bank_transfer',
+    payoutDetails: {
+      accountHolderName: 'Elena Vance',
+      bankName: 'HDFC Bank',
+      ifsc: 'HDFC0001234',
+      maskedAccount: '•••• •••• 8912',
+      isVerified: true
+    },
+    status: 'paid',
+    estimatedProcessingTime: '24–48 Business Hours',
+    paymentReference: 'UTR-HDFC-9948210381',
+    createdAt: '2026-02-16T10:00:00.000Z',
+    processedAt: '2026-02-16T14:30:00.000Z'
+  }
+];
+
 class DataStore {
   private state: DatabaseState;
 
@@ -708,7 +813,17 @@ class DataStore {
           const parsed = JSON.parse(raw);
           return {
             ...this.getDefaultState(),
-            ...parsed
+            ...parsed,
+            ledgerTransactions: parsed.ledgerTransactions && parsed.ledgerTransactions.length > 0 
+              ? parsed.ledgerTransactions 
+              : INITIAL_LEDGER_TRANSACTIONS,
+            withdrawals: parsed.withdrawals && parsed.withdrawals.length > 0
+              ? parsed.withdrawals
+              : INITIAL_WITHDRAWALS,
+            platformSettings: {
+              ...DEFAULT_PLATFORM_SETTINGS,
+              ...(parsed.platformSettings || {})
+            }
           };
         }
       }
@@ -732,8 +847,10 @@ class DataStore {
       messages: INITIAL_MESSAGES,
       notifications: INITIAL_NOTIFICATIONS,
       transactions: INITIAL_TRANSACTIONS,
-      withdrawals: [],
-      disputes: []
+      withdrawals: INITIAL_WITHDRAWALS,
+      disputes: [],
+      ledgerTransactions: INITIAL_LEDGER_TRANSACTIONS,
+      platformSettings: DEFAULT_PLATFORM_SETTINGS
     };
   }
 
@@ -1063,6 +1180,437 @@ class DataStore {
     w.status = status;
     this.saveState();
     return w;
+  }
+
+  // --- PLATFORM SETTINGS (CONFIGURABLE COMMISSION & LIMITS) ---
+  public getPlatformSettings(): PlatformSettings {
+    if (!this.state.platformSettings) {
+      this.state.platformSettings = { ...DEFAULT_PLATFORM_SETTINGS };
+      this.saveState();
+    }
+    return this.state.platformSettings;
+  }
+
+  public updatePlatformSettings(settings: Partial<PlatformSettings>): PlatformSettings {
+    this.state.platformSettings = {
+      ...this.getPlatformSettings(),
+      ...settings,
+      updatedAt: new Date().toISOString()
+    };
+    this.saveState();
+    return this.state.platformSettings;
+  }
+
+  // --- EARNINGS LEDGER TRANSACTIONS ---
+  public getLedgerTransactions(): LedgerTransaction[] {
+    return this.state.ledgerTransactions || [];
+  }
+
+  public getLedgerForFreelancer(
+    freelancerId: string, 
+    filters?: { status?: string; search?: string; startDate?: string; endDate?: string }
+  ): LedgerTransaction[] {
+    let list = (this.state.ledgerTransactions || []).filter(l => l.freelancerId === freelancerId);
+
+    if (filters?.status && filters.status !== 'all') {
+      list = list.filter(l => l.status === filters.status);
+    }
+
+    if (filters?.search) {
+      const q = filters.search.toLowerCase();
+      list = list.filter(l => 
+        l.projectTitle.toLowerCase().includes(q) ||
+        l.clientName.toLowerCase().includes(q) ||
+        l.id.toLowerCase().includes(q) ||
+        l.transactionReference.toLowerCase().includes(q)
+      );
+    }
+
+    if (filters?.startDate) {
+      list = list.filter(l => new Date(l.createdAt) >= new Date(filters.startDate!));
+    }
+
+    if (filters?.endDate) {
+      list = list.filter(l => new Date(l.createdAt) <= new Date(filters.endDate!));
+    }
+
+    return list;
+  }
+
+  // --- DYNAMIC BALANCE & SUMMARY DERIVATION ---
+  public getFreelancerEarningsSummary(freelancerId: string): FreelancerEarningsSummary {
+    const ledger = (this.state.ledgerTransactions || []).filter(l => l.freelancerId === freelancerId);
+    const withdrawals = (this.state.withdrawals || []).filter(w => w.freelancerId === freelancerId);
+
+    // 1. Lifetime Earnings: Sum of net earnings from all eligible projects (positive ledger amounts)
+    const lifetimeEarnings = ledger
+      .filter(l => (l.status === 'available' || l.status === 'withdrawal_processing' || l.status === 'paid') && l.netAmount > 0)
+      .reduce((sum, l) => sum + l.netAmount, 0);
+
+    // 2. Pending Approval: In review / pending client sign-off
+    const pendingApprovalEarnings = ledger
+      .filter(l => (l.status === 'pending_approval' || l.status === 'pending_payment') && l.netAmount > 0)
+      .reduce((sum, l) => sum + l.netAmount, 0);
+
+    // 3. Processing Withdrawals: Amount reserved in requested/under_review/processing/approved state
+    const processingWithdrawals = withdrawals
+      .filter(w => w.status === 'requested' || w.status === 'under_review' || w.status === 'approved' || w.status === 'processing')
+      .reduce((sum, w) => sum + w.amount, 0);
+
+    // 4. Total Withdrawn: Successfully paid out
+    const totalWithdrawn = withdrawals
+      .filter(w => w.status === 'paid')
+      .reduce((sum, w) => sum + w.amount, 0);
+
+    // 5. Failed / Rejected Payments
+    const failedPayments = withdrawals
+      .filter(w => w.status === 'failed' || w.status === 'rejected')
+      .reduce((sum, w) => sum + w.amount, 0);
+
+    // 6. Available Balance = Lifetime Net - Total Withdrawn - Processing Withdrawals
+    const availableBalance = Math.max(0, Number((lifetimeEarnings - totalWithdrawn - processingWithdrawals).toFixed(2)));
+
+    return {
+      lifetimeEarnings: Number(lifetimeEarnings.toFixed(2)),
+      availableBalance,
+      pendingApprovalEarnings: Number(pendingApprovalEarnings.toFixed(2)),
+      processingWithdrawals: Number(processingWithdrawals.toFixed(2)),
+      totalWithdrawn: Number(totalWithdrawn.toFixed(2)),
+      failedPayments: Number(failedPayments.toFixed(2)),
+      currency: 'USD'
+    };
+  }
+
+  // --- AUTOMATIC PROJECT EARNING CREDIT ---
+  public creditProjectEarning(params: {
+    contractId: string;
+    milestoneId?: string;
+    approverUserId: string;
+  }): { success: boolean; ledger?: LedgerTransaction; error?: string } {
+    const contract = this.getContractById(params.contractId);
+    if (!contract) return { success: false, error: 'Contract not found' };
+
+    // Prevent unauthorized credit modifications
+    if (contract.clientId !== params.approverUserId && params.approverUserId !== 'user-admin') {
+      return { success: false, error: 'Unauthorized approver' };
+    }
+
+    const ms = params.milestoneId 
+      ? contract.milestones.find(m => m.id === params.milestoneId) 
+      : undefined;
+
+    const grossAmount = ms ? ms.amount : (contract.totalAmount - (contract.paidAmount || 0));
+    if (grossAmount <= 0) {
+      return { success: false, error: 'No payable amount on this milestone' };
+    }
+
+    // Idempotency: Prevent duplicate credits for the same milestone/contract
+    const existing = (this.state.ledgerTransactions || []).find(l => 
+      l.contractId === contract.id && 
+      (ms ? l.milestoneId === ms.id : true) &&
+      l.status !== 'failed' && l.status !== 'refunded'
+    );
+    if (existing) {
+      return { success: false, error: 'Project milestone earning has already been credited to ledger', ledger: existing };
+    }
+
+    // Dynamic Platform Commission from Settings
+    const settings = this.getPlatformSettings();
+    const commissionPercentage = settings.commissionPercentage || 10;
+    const platformFee = Number(((grossAmount * commissionPercentage) / 100).toFixed(2));
+    const netAmount = Number((grossAmount - platformFee).toFixed(2));
+
+    const ledgerEntry: LedgerTransaction = {
+      id: `LED-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`,
+      freelancerId: contract.freelancerId,
+      freelancerName: contract.freelancerName,
+      projectId: contract.projectId,
+      projectTitle: contract.projectTitle,
+      clientId: contract.clientId,
+      clientName: contract.clientName,
+      contractId: contract.id,
+      milestoneId: ms?.id,
+      milestoneTitle: ms?.title || 'Contract Deliverable',
+      grossAmount,
+      commissionPercentage,
+      platformFee,
+      netAmount,
+      status: 'available',
+      transactionReference: `REF-GRAV-${Date.now().toString(36).toUpperCase()}`,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    if (!this.state.ledgerTransactions) this.state.ledgerTransactions = [];
+    this.state.ledgerTransactions.unshift(ledgerEntry);
+
+    // Update milestone status if applicable
+    if (ms) {
+      ms.status = 'approved';
+    }
+    contract.paidAmount = (contract.paidAmount || 0) + grossAmount;
+    this.updateContract(contract.id, contract);
+
+    // Update profile total earnings
+    const freelancer = this.getFreelancerById(contract.freelancerId);
+    if (freelancer) {
+      freelancer.totalEarnings = (freelancer.totalEarnings || 0) + netAmount;
+      this.saveFreelancerProfile(freelancer);
+    }
+
+    // Record audit trail transaction
+    this.addTransaction({
+      id: `tx-${Date.now()}`,
+      userId: contract.freelancerId,
+      type: 'payment_release',
+      amount: netAmount,
+      status: 'completed',
+      description: `Project Earning: "${contract.projectTitle}" (Gross $${grossAmount} - ${commissionPercentage}% Fee $${platformFee})`,
+      referenceId: ledgerEntry.id,
+      createdAt: new Date().toISOString()
+    });
+
+    // Notify freelancer
+    this.addNotification({
+      id: `notif-${Date.now()}`,
+      userId: contract.freelancerId,
+      title: 'Project Earnings Credited!',
+      message: `$${netAmount.toLocaleString()} has been credited to your available balance for "${contract.projectTitle}". (Gross: $${grossAmount}, Platform Fee: $${platformFee}).`,
+      type: 'payment',
+      link: `/dashboard/freelancer`,
+      isRead: false,
+      createdAt: new Date().toISOString()
+    });
+
+    this.saveState();
+    return { success: true, ledger: ledgerEntry };
+  }
+
+  // --- WITHDRAWAL WORKFLOW (ATOMIC & IDEMPOTENT) ---
+  public getWithdrawalsForFreelancer(freelancerId: string): WithdrawalRequest[] {
+    return (this.state.withdrawals || []).filter(w => w.freelancerId === freelancerId);
+  }
+
+  public requestWithdrawal(params: {
+    freelancerId: string;
+    amount: number;
+    method: PayoutMethod;
+    payoutDetails: PayoutDetails;
+    idempotencyKey?: string;
+  }): { success: boolean; withdrawal?: WithdrawalRequest; error?: string } {
+    const summary = this.getFreelancerEarningsSummary(params.freelancerId);
+    const settings = this.getPlatformSettings();
+
+    if (params.amount <= 0) {
+      return { success: false, error: 'Withdrawal amount must be greater than zero.' };
+    }
+
+    if (params.amount < settings.minWithdrawalAmount) {
+      return { success: false, error: `Minimum withdrawal amount is $${settings.minWithdrawalAmount}.` };
+    }
+
+    if (params.amount > summary.availableBalance) {
+      return { 
+        success: false, 
+        error: `Insufficient available balance. You requested $${params.amount}, but your verified available balance is $${summary.availableBalance}.` 
+      };
+    }
+
+    // Idempotency: Prevent simultaneous duplicate withdrawal requests
+    if (params.idempotencyKey) {
+      const existing = (this.state.withdrawals || []).find(w => w.idempotencyKey === params.idempotencyKey);
+      if (existing) {
+        return { success: true, withdrawal: existing };
+      }
+    }
+
+    // Validate payout destination format
+    if (params.method === 'bank_transfer') {
+      if (!params.payoutDetails.accountNumber || !params.payoutDetails.ifsc) {
+        return { success: false, error: 'Bank account number and IFSC code are required for bank payout.' };
+      }
+      const ifscRegex = /^[A-Z]{4}0[A-Z0-9]{6}$/i;
+      if (!ifscRegex.test(params.payoutDetails.ifsc.trim())) {
+        return { success: false, error: 'Invalid Indian Financial System Code (IFSC). Format: 4 letters, 0, 6 characters (e.g. HDFC0001234).' };
+      }
+    } else if (params.method === 'upi') {
+      if (!params.payoutDetails.upiId || !/^[\w.-]+@[\w.-]+$/.test(params.payoutDetails.upiId.trim())) {
+        return { success: false, error: 'Invalid Virtual Payment Address (UPI ID). Example: freelancer@okhdfcbank or name@upi.' };
+      }
+    }
+
+    const feePercent = settings.withdrawalFeePercentage || 0;
+    const fixedFee = settings.fixedWithdrawalFee || 0;
+    const fee = Number(((params.amount * feePercent) / 100 + fixedFee).toFixed(2));
+    const finalAmount = Number((params.amount - fee).toFixed(2));
+
+    // Mask destination for secure audit
+    const maskedDetails: PayoutDetails = {
+      ...params.payoutDetails,
+      maskedAccount: params.payoutDetails.accountNumber 
+        ? `•••• •••• ${params.payoutDetails.accountNumber.slice(-4)}` 
+        : undefined,
+      maskedUpi: params.payoutDetails.upiId 
+        ? `${params.payoutDetails.upiId.slice(0, 3)}***@${params.payoutDetails.upiId.split('@')[1] || 'upi'}` 
+        : undefined,
+      isVerified: true
+    };
+
+    const freelancer = this.getFreelancerById(params.freelancerId);
+    const withdrawal: WithdrawalRequest = {
+      id: `WTH-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`,
+      freelancerId: params.freelancerId,
+      freelancerName: freelancer?.fullName || 'Freelancer',
+      amount: params.amount,
+      fee,
+      finalAmount,
+      method: params.method,
+      payoutDetails: maskedDetails,
+      status: 'requested',
+      estimatedProcessingTime: params.method === 'upi' ? 'Instant–15 Minutes' : '24–48 Business Hours',
+      idempotencyKey: params.idempotencyKey || `idem-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    if (!this.state.withdrawals) this.state.withdrawals = [];
+    this.state.withdrawals.unshift(withdrawal);
+
+    // Atomically reserve amount from available balance via negative ledger entry
+    const ledgerReserve: LedgerTransaction = {
+      id: `LED-${Date.now()}-WTH`,
+      freelancerId: params.freelancerId,
+      freelancerName: freelancer?.fullName || 'Freelancer',
+      projectId: 'PAYOUT',
+      projectTitle: `Withdrawal via ${params.method === 'upi' ? 'UPI' : 'Bank Transfer'} (${maskedDetails.maskedAccount || maskedDetails.maskedUpi})`,
+      clientId: 'GRAVITASS-TREASURY',
+      clientName: 'GRAVITASS Escrow & Payout',
+      contractId: withdrawal.id,
+      grossAmount: -params.amount,
+      commissionPercentage: 0,
+      platformFee: fee,
+      netAmount: -params.amount,
+      status: 'withdrawal_processing',
+      transactionReference: `WTH-REF-${Date.now().toString(36).toUpperCase()}`,
+      withdrawalId: withdrawal.id,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    this.state.ledgerTransactions.unshift(ledgerReserve);
+
+    // Add transaction audit trail
+    this.addTransaction({
+      id: `tx-w-${Date.now()}`,
+      userId: params.freelancerId,
+      type: 'withdrawal',
+      amount: -params.amount,
+      status: 'pending',
+      description: `Withdrawal request of $${params.amount} to ${maskedDetails.maskedAccount || maskedDetails.maskedUpi}`,
+      referenceId: withdrawal.id,
+      createdAt: new Date().toISOString()
+    });
+
+    // Notify freelancer
+    this.addNotification({
+      id: `notif-${Date.now()}`,
+      userId: params.freelancerId,
+      title: 'Withdrawal Request Submitted',
+      message: `Your withdrawal of $${params.amount.toLocaleString()} has been queued for review and payout. Estimated time: ${withdrawal.estimatedProcessingTime}.`,
+      type: 'payment',
+      link: `/dashboard/freelancer`,
+      isRead: false,
+      createdAt: new Date().toISOString()
+    });
+
+    this.saveState();
+    return { success: true, withdrawal };
+  }
+
+  // --- WITHDRAWAL LIFECYCLE MANAGEMENT (ADMIN & GATEWAY) ---
+  public processWithdrawalStatus(params: {
+    withdrawalId: string;
+    status: WithdrawalStatus;
+    paymentReference?: string;
+    failureReason?: string;
+  }): { success: boolean; withdrawal?: WithdrawalRequest; error?: string } {
+    const withdrawal = (this.state.withdrawals || []).find(w => w.id === params.withdrawalId);
+    if (!withdrawal) return { success: false, error: 'Withdrawal request not found' };
+
+    const prevStatus = withdrawal.status;
+    if (prevStatus === 'paid') {
+      return { success: false, error: 'Withdrawal is already marked as paid and completed' };
+    }
+
+    withdrawal.status = params.status;
+    withdrawal.updatedAt = new Date().toISOString();
+
+    if (params.paymentReference) {
+      withdrawal.paymentReference = params.paymentReference;
+    }
+    if (params.failureReason) {
+      withdrawal.failureReason = params.failureReason;
+    }
+
+    const ledgerEntry = (this.state.ledgerTransactions || []).find(l => l.withdrawalId === withdrawal.id);
+
+    if (params.status === 'paid') {
+      withdrawal.processedAt = new Date().toISOString();
+      if (ledgerEntry) {
+        ledgerEntry.status = 'paid';
+        ledgerEntry.paidAt = new Date().toISOString();
+        ledgerEntry.updatedAt = new Date().toISOString();
+      }
+      const tx = (this.state.transactions || []).find(t => t.referenceId === withdrawal.id);
+      if (tx) tx.status = 'completed';
+
+      this.addNotification({
+        id: `notif-${Date.now()}`,
+        userId: withdrawal.freelancerId,
+        title: 'Withdrawal Paid Successfully!',
+        message: `Your payout of $${withdrawal.finalAmount.toLocaleString()} has been transferred. Reference/UTR: ${withdrawal.paymentReference || 'UTR-BANK-SETTLED'}.`,
+        type: 'payment',
+        link: `/dashboard/freelancer`,
+        isRead: false,
+        createdAt: new Date().toISOString()
+      });
+
+    } else if (params.status === 'rejected' || params.status === 'failed' || params.status === 'reversed') {
+      // RESTORE RESERVED BALANCE EXACTLY ONCE
+      if (ledgerEntry) {
+        ledgerEntry.status = 'failed';
+        ledgerEntry.notes = params.failureReason || `Payout ${params.status}: funds restored to available balance.`;
+        ledgerEntry.updatedAt = new Date().toISOString();
+      }
+      const tx = (this.state.transactions || []).find(t => t.referenceId === withdrawal.id);
+      if (tx) tx.status = 'failed';
+
+      // Record refund transaction
+      this.addTransaction({
+        id: `tx-rst-${Date.now()}`,
+        userId: withdrawal.freelancerId,
+        type: 'refund',
+        amount: withdrawal.amount,
+        status: 'completed',
+        description: `Balance restored ($${withdrawal.amount}) due to payout ${params.status}: ${params.failureReason || 'Verification rejection'}`,
+        referenceId: withdrawal.id,
+        createdAt: new Date().toISOString()
+      });
+
+      this.addNotification({
+        id: `notif-${Date.now()}`,
+        userId: withdrawal.freelancerId,
+        title: `Withdrawal ${params.status === 'rejected' ? 'Rejected' : 'Failed'} — Balance Restored`,
+        message: `Your withdrawal of $${withdrawal.amount.toLocaleString()} was ${params.status}. Reason: ${params.failureReason || 'Account mismatch'}. Funds have been restored to your available balance.`,
+        type: 'payment',
+        link: `/dashboard/freelancer`,
+        isRead: false,
+        createdAt: new Date().toISOString()
+      });
+    }
+
+    this.saveState();
+    return { success: true, withdrawal };
   }
 
   // --- DISPUTES ---

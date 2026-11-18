@@ -233,7 +233,7 @@ export default function WorkspacePage({ params }: { params: { contractId: string
 
   if (authLoading || loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-20 text-center text-gray-400">
+      <div className="max-w-7xl mx-auto px-4 pt-32 pb-20 text-center text-gray-400">
         <div className="inline-block w-8 h-8 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
         <p className="mt-3 text-sm">Launching encrypted workspace...</p>
       </div>
@@ -242,7 +242,7 @@ export default function WorkspacePage({ params }: { params: { contractId: string
 
   if (!contract) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+      <div className="max-w-7xl mx-auto px-4 pt-32 pb-20 text-center">
         <h2 className="text-xl font-bold text-white">Workspace Not Found</h2>
         <Link href="/" className="mt-4 inline-block px-4 py-2 bg-violet-600 rounded-xl text-white text-xs">
           Return Home
@@ -255,7 +255,7 @@ export default function WorkspacePage({ params }: { params: { contractId: string
   const isFreelancer = user?.id === contract.freelancerId;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16">
       
       {/* Top Workspace Header */}
       <div className="p-8 rounded-3xl bg-[#0B0B0F] border border-violet-500/30 shadow-neon-violet relative overflow-hidden mb-8">

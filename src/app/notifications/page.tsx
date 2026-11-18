@@ -43,14 +43,14 @@ export default function NotificationsPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-20 text-center text-gray-400">
+      <div className="max-w-4xl mx-auto px-4 pt-32 pb-20 text-center text-gray-400">
         <div className="inline-block w-8 h-8 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white">Notifications Center</h1>

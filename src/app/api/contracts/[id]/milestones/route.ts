@@ -42,54 +42,23 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         return NextResponse.json({ error: 'Milestone not found' }, { status: 404 });
       }
 
-      ms.status = 'approved';
-      contract.paidAmount = (contract.paidAmount || 0) + ms.amount;
-      db.updateContract(contract.id, contract);
-
-      // Add transaction for freelancer
-      db.addTransaction({
-        id: `tx-${Date.now()}`,
-        userId: contract.freelancerId,
-        type: 'payment_release',
-        amount: ms.amount,
-        status: 'completed',
-        description: `Milestone Approved: "${ms.title}" on ${contract.projectTitle}`,
-        referenceId: contract.id,
-        createdAt: new Date().toISOString()
+      // Execute atomic project earning credit with configurable platform commission
+      const creditRes = db.creditProjectEarning({
+        contractId: contract.id,
+        milestoneId: ms.id,
+        approverUserId: user.id
       });
 
-      // Update freelancer total earnings
-      const freelancerProfile = db.getFreelancerById(contract.freelancerId);
-      if (freelancerProfile) {
-        freelancerProfile.totalEarnings = (freelancerProfile.totalEarnings || 0) + ms.amount;
-        db.saveFreelancerProfile(freelancerProfile);
+      if (!creditRes.success) {
+        return NextResponse.json({ error: creditRes.error }, { status: 400 });
       }
 
-      // Add transaction for client
-      db.addTransaction({
-        id: `tx-c-${Date.now()}`,
-        userId: contract.clientId,
-        type: 'milestone_escrow',
-        amount: -ms.amount,
-        status: 'completed',
-        description: `Released Milestone Payment: "${ms.title}"`,
-        referenceId: contract.id,
-        createdAt: new Date().toISOString()
+      const updatedContract = db.getContractById(contract.id);
+      return NextResponse.json({ 
+        contract: updatedContract, 
+        ledger: creditRes.ledger,
+        message: 'Milestone approved and earnings automatically credited to freelancer ledger!' 
       });
-
-      // Notify freelancer
-      db.addNotification({
-        id: `notif-${Date.now()}`,
-        userId: contract.freelancerId,
-        title: 'Milestone Funds Released!',
-        message: `${user.name} approved "${ms.title}". $${ms.amount.toLocaleString()} has been released to your balance.`,
-        type: 'payment',
-        link: `/workspace/${contract.id}`,
-        isRead: false,
-        createdAt: new Date().toISOString()
-      });
-
-      return NextResponse.json({ contract, message: 'Milestone approved and funds released!' });
     }
 
     if (action === 'submit_work') {

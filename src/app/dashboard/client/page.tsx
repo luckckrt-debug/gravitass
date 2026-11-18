@@ -20,7 +20,8 @@ import {
   TrendingUp,
   LayoutDashboard,
   Search,
-  ExternalLink
+  ExternalLink,
+  Home
 } from 'lucide-react';
 import { Project, ProjectApplication, Contract, Category } from '@/types';
 import { formatDate } from '@/lib/utils';
@@ -122,7 +123,7 @@ export default function ClientDashboard() {
 
   if (authLoading || loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-20 text-center text-gray-400">
+      <div className="max-w-7xl mx-auto px-4 pt-32 pb-20 text-center text-gray-400">
         <div className="inline-block w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
         <p className="mt-3 text-sm">Loading enterprise command center...</p>
       </div>
@@ -135,7 +136,7 @@ export default function ClientDashboard() {
   const totalBidsCount = userProjects.reduce((acc, p) => acc + (p.proposalsCount || 0), 0);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16">
       
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
@@ -153,6 +154,15 @@ export default function ClientDashboard() {
           </div>
 
           <nav className="space-y-1 text-xs">
+            {/* Direct Home Navigation Link */}
+            <Link
+              href="/"
+              className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl font-medium text-gray-300 hover:text-[#73D8C4] hover:bg-[#73D8C4]/10 border border-white/[0.04] transition-colors mb-2 group"
+            >
+              <Home className="w-4 h-4 text-[#73D8C4] group-hover:scale-110 transition-transform" />
+              <span className="font-semibold tracking-wide">Home</span>
+            </Link>
+
             {[
               { id: 'overview', label: 'Hirer Overview', icon: LayoutDashboard },
               { id: 'post', label: 'Post a New Project', icon: PlusCircle },

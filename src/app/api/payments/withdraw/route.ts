@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/data-store';
 import { getCurrentUser } from '@/lib/auth';
-import { WithdrawalRequest } from '@/types';
+import { PayoutMethod, PayoutDetails } from '@/types';
 
 export async function POST(req: Request) {
   try {
@@ -10,40 +10,38 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { amount, method, accountDetails } = await req.json();
+    const { amount, method, payoutDetails, idempotencyKey } = await req.json();
 
-    if (!amount || amount <= 0 || !method || !accountDetails) {
-      return NextResponse.json({ error: 'Valid amount, payout method, and account details are required' }, { status: 400 });
+    if (!amount || Number(amount) <= 0) {
+      return NextResponse.json({ error: 'Please enter a valid withdrawal amount greater than zero' }, { status: 400 });
     }
 
-    const freelancer = db.getFreelancerById(user.id);
-    if (!freelancer) {
-      return NextResponse.json({ error: 'Freelancer profile not found' }, { status: 404 });
+    const validMethods: PayoutMethod[] = ['bank_transfer', 'upi', 'stripe', 'paypal'];
+    if (!method || !validMethods.includes(method)) {
+      return NextResponse.json({ error: 'Supported payout methods: Indian Bank Account (IMPS/NEFT) or UPI' }, { status: 400 });
     }
 
-    const withdrawal: WithdrawalRequest = {
-      id: `wth-${Date.now()}`,
+    if (!payoutDetails) {
+      return NextResponse.json({ error: 'Verified payout destination details are required' }, { status: 400 });
+    }
+
+    // Execute atomic server-side withdrawal request with strict balance reservation
+    const result = db.requestWithdrawal({
       freelancerId: user.id,
       amount: Number(amount),
       method,
-      accountDetails,
-      status: 'pending',
-      createdAt: new Date().toISOString()
-    };
-
-    db.addWithdrawal(withdrawal);
-
-    db.addTransaction({
-      id: `tx-w-${Date.now()}`,
-      userId: user.id,
-      type: 'withdrawal',
-      amount: -Number(amount),
-      status: 'pending',
-      description: `Withdrawal via ${method} (${accountDetails})`,
-      createdAt: new Date().toISOString()
+      payoutDetails: payoutDetails as PayoutDetails,
+      idempotencyKey
     });
 
-    return NextResponse.json({ withdrawal, message: 'Withdrawal request queued successfully' });
+    if (!result.success) {
+      return NextResponse.json({ error: result.error }, { status: 400 });
+    }
+
+    return NextResponse.json({
+      withdrawal: result.withdrawal,
+      message: 'Withdrawal request registered and amount reserved successfully from available balance.'
+    });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

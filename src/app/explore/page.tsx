@@ -62,7 +62,7 @@ function ExploreTalentContent() {
   }, [search, selectedCategory, selectedBadge, minScore, maxRate, sortBy]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16 relative">
       {/* Header */}
       <div className="mb-8">
         <span className="text-xs font-bold text-violet-400 uppercase tracking-widest flex items-center gap-1.5 mb-2">

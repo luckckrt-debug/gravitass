@@ -96,6 +96,8 @@ export interface FreelancerProfile {
   reviewCount: number;
   completedProjectsCount: number;
   totalEarnings: number;
+  availableBalance?: number;
+  payoutDetails?: PayoutDetails;
   performanceScore: PerformanceBreakdown;
   profileCompletionPercentage: number;
   createdAt: string;
@@ -300,14 +302,99 @@ export interface Transaction {
   createdAt: string;
 }
 
-export interface WithdrawalRequest {
-  id: string;
+export type LedgerStatus = 
+  | 'pending_approval' 
+  | 'pending_payment' 
+  | 'available' 
+  | 'withdrawal_processing' 
+  | 'paid' 
+  | 'failed' 
+  | 'refunded' 
+  | 'disputed';
+
+export type WithdrawalStatus = 
+  | 'requested' 
+  | 'under_review' 
+  | 'approved' 
+  | 'processing' 
+  | 'paid' 
+  | 'rejected' 
+  | 'failed' 
+  | 'reversed';
+
+export type PayoutMethod = 'bank_transfer' | 'upi' | 'stripe' | 'paypal';
+
+export interface PayoutDetails {
+  accountHolderName?: string;
+  accountNumber?: string;
+  maskedAccount?: string;
+  ifsc?: string;
+  bankName?: string;
+  upiId?: string;
+  maskedUpi?: string;
+  isVerified?: boolean;
+}
+
+export interface LedgerTransaction {
+  id: string; // e.g. LED-1708291200000
   freelancerId: string;
-  amount: number;
-  method: 'bank_transfer' | 'crypto' | 'paypal' | 'stripe';
-  accountDetails: string;
-  status: 'pending' | 'processed' | 'rejected';
+  freelancerName: string;
+  projectId: string;
+  projectTitle: string;
+  clientId: string;
+  clientName: string;
+  contractId: string;
+  milestoneId?: string;
+  milestoneTitle?: string;
+  grossAmount: number;
+  commissionPercentage: number;
+  platformFee: number;
+  netAmount: number;
+  status: LedgerStatus;
+  transactionReference: string;
   createdAt: string;
+  updatedAt: string;
+  paidAt?: string;
+  notes?: string;
+  withdrawalId?: string;
+}
+
+export interface WithdrawalRequest {
+  id: string; // e.g. WTH-1708291200000
+  freelancerId: string;
+  freelancerName: string;
+  amount: number;
+  fee: number;
+  finalAmount: number;
+  method: PayoutMethod;
+  payoutDetails: PayoutDetails;
+  status: WithdrawalStatus;
+  estimatedProcessingTime: string;
+  paymentReference?: string;
+  failureReason?: string;
+  idempotencyKey?: string;
+  createdAt: string;
+  updatedAt?: string;
+  processedAt?: string;
+}
+
+export interface PlatformSettings {
+  commissionPercentage: number;
+  minWithdrawalAmount: number;
+  withdrawalFeePercentage: number;
+  fixedWithdrawalFee: number;
+  payoutGatewayMode: 'simulated_live' | 'razorpayx' | 'cashfree';
+  updatedAt?: string;
+}
+
+export interface FreelancerEarningsSummary {
+  lifetimeEarnings: number;
+  availableBalance: number;
+  pendingApprovalEarnings: number;
+  processingWithdrawals: number;
+  totalWithdrawn: number;
+  failedPayments: number;
+  currency: string;
 }
 
 export interface Dispute {

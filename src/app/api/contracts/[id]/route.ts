@@ -56,6 +56,17 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
     // If completed:
     if (updates.status === 'completed') {
+      // Automatically credit any remaining active/unapproved milestones to ledger
+      contract.milestones.forEach((m) => {
+        if (m.status !== 'approved') {
+          db.creditProjectEarning({
+            contractId: contract.id,
+            milestoneId: m.id,
+            approverUserId: user.id
+          });
+        }
+      });
+
       db.addNotification({
         id: `notif-${Date.now()}`,
         userId: contract.freelancerId,

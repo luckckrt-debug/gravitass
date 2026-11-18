@@ -46,7 +46,7 @@ export default function Footer() {
             <ul className="space-y-2 text-xs">
               <li><Link href="/auth/signup" className="hover:text-[#73D8C4] transition-colors">Become a Freelancer</Link></li>
               <li><Link href="/dashboard/client" className="hover:text-[#73D8C4] transition-colors">Hire Talent</Link></li>
-              <li><Link href="/explore" className="hover:text-[#73D8C4] transition-colors">About Gravitass</Link></li>
+              <li><Link href="/about" className="hover:text-[#73D8C4] transition-colors">About Gravitass</Link></li>
               <li><Link href="/messages" className="hover:text-[#73D8C4] transition-colors">Contact</Link></li>
             </ul>
           </div>

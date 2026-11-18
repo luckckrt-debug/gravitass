@@ -151,7 +151,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-20 text-center text-gray-400">
+      <div className="max-w-7xl mx-auto px-4 pt-32 pb-20 text-center text-gray-400">
         <div className="inline-block w-8 h-8 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
         <p className="mt-3 text-sm">Loading project specification...</p>
       </div>
@@ -160,7 +160,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
 
   if (!project) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+      <div className="max-w-7xl mx-auto px-4 pt-32 pb-20 text-center">
         <h2 className="text-2xl font-bold text-white">Project Not Found</h2>
         <Link href="/projects" className="mt-4 inline-block px-4 py-2 bg-violet-600 rounded-xl text-white text-xs font-semibold">
           Browse Projects
@@ -173,7 +173,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
   const userHasApplied = applications.some(a => a.freelancerId === user?.id);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16">
       
       {/* Top Banner */}
       <div className="p-8 rounded-3xl bg-[#0B0B0F] border border-white/[0.08] shadow-2xl relative overflow-hidden mb-8">

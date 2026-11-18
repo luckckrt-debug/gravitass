@@ -1,46 +1,124 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { 
-  ArrowRight, 
-  ArrowUpRight, 
-  Search, 
-  Sparkles, 
-  ShieldCheck, 
-  Compass, 
-  Star,
-  Users,
-  Layers,
-  ChevronDown
-} from 'lucide-react';
-import { FreelancerProfile, Project } from '@/types';
-import CelestialSphereCanvas from '@/components/cinematic/CelestialSphereCanvas';
+import { ArrowRight, Search, ChevronDown } from 'lucide-react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { FreelancerProfile } from '@/types';
+import FixedIntroSphereCanvas from '@/components/cinematic/FixedIntroSphereCanvas';
 import EcosystemNetworkCanvas from '@/components/cinematic/EcosystemNetworkCanvas';
 import InteractiveCategoryUniverse from '@/components/cinematic/InteractiveCategoryUniverse';
 import CinematicTalentShowcase from '@/components/cinematic/CinematicTalentShowcase';
 import PerformanceTrustVisualization from '@/components/cinematic/PerformanceTrustVisualization';
 import DualPathwaysExperience from '@/components/cinematic/DualPathwaysExperience';
 
+// Register GSAP ScrollTrigger plugin on client
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
 export default function CinematicHomePage() {
   const router = useRouter();
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [freelancers, setFreelancers] = useState<FreelancerProfile[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Track window scroll progress for 3D sphere transformation
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = docHeight > 0 ? scrollY / docHeight : 0;
-      setScrollProgress(progress);
-    };
+  // Intro Pinned Timeline Refs
+  const introWrapperRef = useRef<HTMLDivElement>(null);
+  const introPinRef = useRef<HTMLDivElement>(null);
+  const introProgressRef = useRef<number>(0);
+  const scrollPromptRef = useRef<HTMLDivElement>(null);
+  const contentOverlayRef = useRef<HTMLDivElement>(null);
+  const brandTagRef = useRef<HTMLDivElement>(null);
+  const brandNameRef = useRef<HTMLDivElement>(null);
+  const mainHeadlineRef = useRef<HTMLDivElement>(null);
+  const subHeadlineRef = useRef<HTMLDivElement>(null);
+  const ctaButtonsRef = useRef<HTMLDivElement>(null);
+  const bottomMetricsRef = useRef<HTMLDivElement>(null);
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+  // Single Fixed Full-Screen GSAP ScrollTrigger Pinning & Orchestration
+  useEffect(() => {
+    if (!introPinRef.current || !introWrapperRef.current) return;
+
+    const ctx = gsap.context(() => {
+      // Coordinated master timeline scrubbed across pinned distance
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: introPinRef.current,
+          start: 'top top',
+          end: '+=2200',
+          pin: true,
+          pinSpacing: true,
+          scrub: 0.6,
+          onUpdate: (self) => {
+            introProgressRef.current = self.progress;
+          }
+        }
+      });
+
+      // 1. Initial State: "SCROLL TO EXPLORE" indicator fades out immediately on first scroll
+      tl.to(scrollPromptRef.current, {
+        opacity: 0,
+        y: 10,
+        duration: 0.10,
+        ease: 'power1.out'
+      }, 0);
+
+      // 2. Protocol Badge (fades in as sphere begins opening, ~0.42 to 0.56)
+      tl.fromTo(brandTagRef.current,
+        { opacity: 0, y: 15 },
+        { opacity: 1, y: 0, duration: 0.14, ease: 'power2.out' },
+        0.42
+      );
+
+      // 3. GRAVITASS Brand Label (fades in as cluster forms, ~0.50 to 0.65)
+      tl.fromTo(brandNameRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.15, ease: 'power2.out' },
+        0.50
+      );
+
+      // 4. Main Headline: "Where talent meets opportunity." (~0.58 to 0.74)
+      tl.fromTo(mainHeadlineRef.current,
+        { opacity: 0, y: 28 },
+        { opacity: 1, y: 0, duration: 0.16, ease: 'power2.out' },
+        0.58
+      );
+
+      // 5. Supporting Text: "Discover exceptional freelancers. Build something extraordinary." (~0.70 to 0.84)
+      tl.fromTo(subHeadlineRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.14, ease: 'power2.out' },
+        0.70
+      );
+
+      // 6. Action Buttons & Search (~0.78 to 0.90)
+      tl.fromTo(ctaButtonsRef.current,
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.12, ease: 'power2.out' },
+        0.78
+      );
+
+      // 7. Bottom Verified Metrics (~0.82 to 0.92)
+      tl.fromTo(bottomMetricsRef.current,
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.10, ease: 'power2.out' },
+        0.82
+      );
+
+      // 8. Intro Completion Hand-off (~0.94 to 1.00)
+      // Content gently dissolves as the pin releases smoothly into Scene 2
+      tl.to(contentOverlayRef.current, {
+        opacity: 0,
+        duration: 0.06,
+        ease: 'power1.in'
+      }, 0.94);
+
+    }, introWrapperRef);
+
+    return () => ctx.revert();
   }, []);
 
   // Fetch real talent from database
@@ -67,88 +145,141 @@ export default function CinematicHomePage() {
     <div className="w-full bg-[#071011] text-[#F4F5F3] relative overflow-hidden selection:bg-[#73D8C4] selection:text-[#020303]">
       
       {/* =========================================================================
-          SCENE 1: CINEMATIC INTRODUCTION
-          Full-screen hero with 3D organic sphere, mouse parallax, and asymmetric text
+          STEP 1 TO 6: SINGLE FIXED FULL-SCREEN PINNED INTRO EXPERIENCE
+          - Viewport remains completely locked & pinned to this screen.
+          - Closed sphere centered on initial load with "SCROLL TO EXPLORE".
+          - Scrolling scrub-progresses the opening sequence, glass cluster formation,
+            and GRAVITASS headline reveal inside this fixed viewport.
+          - Only upon completion (100% progress) does scrolling unlock to the next section.
       ========================================================================= */}
-      <section className="relative min-h-screen flex flex-col justify-between pt-28 pb-16 px-6 sm:px-8 max-w-7xl mx-auto z-10">
-        
-        {/* 3D Celestial Sphere Canvas in background */}
-        <CelestialSphereCanvas scrollProgress={scrollProgress} />
+      <div ref={introWrapperRef} className="relative w-full">
+        <div 
+          ref={introPinRef} 
+          className="relative w-full h-screen overflow-hidden bg-[#071011] flex flex-col justify-between"
+        >
+          {/* Hardware-Accelerated 3D WebGL Canvas */}
+          <FixedIntroSphereCanvas progressRef={introProgressRef} />
 
-        {/* Hero Top: Label */}
-        <div className="relative z-10 pt-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/[0.08] bg-[#0B1719]/60 backdrop-blur-md">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#73D8C4] shadow-[0_0_8px_#73D8C4]" />
-            <span className="text-[10px] tracking-[0.25em] text-[#A5E8DE] uppercase font-light">
-              THE FUTURE OF INDEPENDENT WORK
+          {/* STEP 1: INITIAL STATE PROMPT (Fades out immediately on first scroll) */}
+          <div 
+            ref={scrollPromptRef}
+            className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2.5 pointer-events-none transition-transform duration-200"
+          >
+            <span className="text-[10px] tracking-[0.35em] uppercase text-[#91A09E]/90 font-light">
+              SCROLL TO EXPLORE
             </span>
-          </div>
-        </div>
-
-        {/* Hero Middle: Asymmetric Editorial Composition */}
-        <div className="relative z-10 py-12 max-w-3xl">
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif text-[#F4F5F3] tracking-tight leading-[1.08]">
-            We are the <span className="italic text-[#73D8C4] font-normal">gravity</span> <br />
-            that connects talent <br />
-            with <span className="text-[#A5E8DE]">opportunity.</span>
-          </h1>
-
-          <p className="text-sm sm:text-base text-[#91A09E] mt-8 max-w-xl leading-relaxed font-light">
-            A sanctuary for autonomous engineers, designers, researchers, and creators. Connect through mathematical proof of merit, cryptographic escrow, and uncompromised craftsmanship.
-          </p>
-
-          {/* Minimal Search & Filter Bar */}
-          <form onSubmit={handleSearchSubmit} className="mt-8 max-w-md">
-            <div className="relative flex items-center p-1 rounded-full bg-[#0B1719]/80 border border-white/[0.1] focus-within:border-[#73D8C4]/60 backdrop-blur-xl transition-all shadow-2xl">
-              <Search className="w-4 h-4 text-[#91A09E] ml-4 flex-shrink-0" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search discipline, skill, or specialist..."
-                className="w-full bg-transparent px-3 py-2 text-xs text-[#F4F5F3] placeholder-[#91A09E]/60 focus:outline-none"
-              />
-              <button
-                type="submit"
-                className="px-5 py-2.5 rounded-full bg-[#73D8C4] hover:bg-[#87E5D3] text-[#020303] text-xs tracking-wider uppercase font-semibold flex items-center gap-1.5 transition-all shadow-[0_0_15px_rgba(115,216,196,0.3)] flex-shrink-0"
-              >
-                <span>Explore</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </form>
-        </div>
-
-        {/* Hero Bottom: Floating Metrics & Subtle Scroll Prompt */}
-        <div className="relative z-10 pt-8 border-t border-white/[0.06] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 text-xs text-[#91A09E]">
-          <div className="flex items-center gap-8 font-light">
-            <div>
-              <span className="text-[10px] tracking-widest uppercase text-[#91A09E]/60 block">ESCROW VOLUME</span>
-              <span className="text-sm font-semibold text-[#F4F5F3] font-mono">$14.8M+</span>
-            </div>
-            <div>
-              <span className="text-[10px] tracking-widest uppercase text-[#91A09E]/60 block">VERIFIED COMPLETION</span>
-              <span className="text-sm font-semibold text-[#73D8C4] font-mono">99.4%</span>
-            </div>
-            <div>
-              <span className="text-[10px] tracking-widest uppercase text-[#91A09E]/60 block">GLOBAL MERIT</span>
-              <span className="text-sm font-semibold text-[#A5E8DE] font-mono">0–100 PROOF</span>
-            </div>
+            <div className="w-[1px] h-8 bg-gradient-to-b from-[#73D8C4] via-[#73D8C4]/60 to-transparent animate-pulse" />
           </div>
 
-          <div className="flex items-center gap-2 text-[10px] tracking-widest uppercase text-[#91A09E]/70 animate-pulse">
-            <span>Scroll to Enter Orbit</span>
-            <ChevronDown className="w-3.5 h-3.5" />
+          {/* PINNED CONTENT OVERLAY (Anchored inside the fixed viewport) */}
+          <div 
+            ref={contentOverlayRef}
+            className="relative z-10 w-full h-full max-w-7xl mx-auto px-6 sm:px-10 flex flex-col justify-between pt-24 pb-10 pointer-events-none"
+          >
+            {/* Top Protocol Tag */}
+            <div ref={brandTagRef} className="opacity-0 pt-2 pointer-events-auto">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-white/[0.08] bg-[#0B1719]/70 backdrop-blur-md">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#73D8C4] shadow-[0_0_8px_#73D8C4]" />
+                <span className="text-[10px] tracking-[0.25em] text-[#A5E8DE] uppercase font-light">
+                  THE FUTURE OF INDEPENDENT WORK
+                </span>
+              </div>
+            </div>
+
+            {/* Center Editorial Headlines (Revealed when glass cluster forms) */}
+            <div className="my-auto max-w-3xl space-y-5">
+              
+              {/* Brand Label */}
+              <div ref={brandNameRef} className="opacity-0">
+                <span className="text-xs sm:text-sm tracking-[0.35em] uppercase text-[#73D8C4] font-medium block">
+                  GRAVITASS
+                </span>
+              </div>
+
+              {/* Main Headline */}
+              <div ref={mainHeadlineRef} className="opacity-0">
+                <h1 className="text-4xl sm:text-6xl lg:text-7xl font-serif text-[#F4F5F3] tracking-tight leading-[1.06]">
+                  Where talent <br />
+                  <span className="italic text-[#73D8C4] font-normal">meets opportunity.</span>
+                </h1>
+              </div>
+
+              {/* Supporting Text */}
+              <div ref={subHeadlineRef} className="opacity-0">
+                <p className="text-lg sm:text-2xl text-[#F4F5F3] font-light leading-snug">
+                  Discover exceptional freelancers. <br />
+                  <span className="text-[#A5E8DE]">Build something extraordinary.</span>
+                </p>
+              </div>
+
+              {/* Action Buttons & Minimal Search */}
+              <div ref={ctaButtonsRef} className="opacity-0 pt-3 space-y-5 pointer-events-auto">
+                <div className="flex flex-wrap items-center gap-4">
+                  <Link
+                    href="/explore"
+                    className="px-8 py-3.5 rounded-full bg-[#73D8C4] hover:bg-[#87E5D3] text-[#020303] text-xs tracking-[0.2em] uppercase font-semibold flex items-center gap-2.5 transition-all shadow-[0_0_24px_rgba(115,216,196,0.4)] group"
+                  >
+                    <span>EXPLORE TALENT</span>
+                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+
+                  <Link
+                    href="/auth/signup"
+                    className="px-8 py-3.5 rounded-full border border-white/[0.18] bg-[#0B1719]/80 hover:bg-[#0B1719] hover:border-[#73D8C4]/60 text-[#F4F5F3] hover:text-[#73D8C4] text-xs tracking-[0.2em] uppercase font-medium transition-all backdrop-blur-md"
+                  >
+                    <span>START YOUR JOURNEY</span>
+                  </Link>
+                </div>
+
+                <form onSubmit={handleSearchSubmit} className="max-w-md">
+                  <div className="relative flex items-center p-1 rounded-full bg-[#0B1719]/85 border border-white/[0.12] focus-within:border-[#73D8C4]/70 backdrop-blur-xl transition-all shadow-2xl">
+                    <Search className="w-4 h-4 text-[#91A09E] ml-4 flex-shrink-0" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search discipline, skill, or specialist..."
+                      className="w-full bg-transparent px-3 py-2 text-xs text-[#F4F5F3] placeholder-[#91A09E]/60 focus:outline-none"
+                    />
+                    <button
+                      type="submit"
+                      className="px-4 py-2 rounded-full bg-[#73D8C4]/20 hover:bg-[#73D8C4] text-[#73D8C4] hover:text-[#020303] text-[11px] tracking-wider uppercase font-semibold transition-all flex-shrink-0"
+                    >
+                      Search
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+            </div>
+
+            {/* Bottom Row: Verified Platform Metrics */}
+            <div 
+              ref={bottomMetricsRef} 
+              className="opacity-0 border-t border-white/[0.06] pt-4 flex flex-wrap items-center gap-8 text-xs text-[#91A09E] pointer-events-auto"
+            >
+              <div>
+                <span className="text-[10px] tracking-widest uppercase text-[#91A09E]/60 block">ESCROW VOLUME</span>
+                <span className="text-sm font-semibold text-[#F4F5F3] font-mono">$14.8M+</span>
+              </div>
+              <div>
+                <span className="text-[10px] tracking-widest uppercase text-[#91A09E]/60 block">VERIFIED COMPLETION</span>
+                <span className="text-sm font-semibold text-[#73D8C4] font-mono">99.4%</span>
+              </div>
+              <div>
+                <span className="text-[10px] tracking-widest uppercase text-[#91A09E]/60 block">GLOBAL MERIT</span>
+                <span className="text-sm font-semibold text-[#A5E8DE] font-mono">0–100 PROOF</span>
+              </div>
+            </div>
+
           </div>
         </div>
-
-      </section>
+      </div>
 
 
       {/* =========================================================================
-          SCENE 2: THE TRANSFORMATION
-          The central sphere transforms into floating translucent fragments representing
-          People, Talent, Creativity, Ideas, Skills, Opportunities.
+          SCENE 2: THE TRANSFORMATION (Revealed ONLY after Intro completes)
+          When scrolling unlocks, the page moves naturally into the rest of the website.
       ========================================================================= */}
       <section className="relative py-32 px-6 sm:px-8 max-w-7xl mx-auto z-10 border-t border-white/[0.05]">
         
@@ -186,7 +317,7 @@ export default function CinematicHomePage() {
                 { label: 'IDEAS', color: 'border-white/[0.15] text-[#91A09E]' },
                 { label: 'SKILLS', color: 'border-[#73D8C4]/40 text-[#73D8C4]' },
                 { label: 'OPPORTUNITIES', color: 'border-white/[0.15] text-[#F4F5F3]' },
-              ].map((sym, i) => (
+              ].map((sym) => (
                 <div
                   key={sym.label}
                   className={`p-3 rounded-2xl bg-[#0B1719]/80 border ${sym.color} text-center backdrop-blur-md transition-transform duration-300 hover:scale-105`}

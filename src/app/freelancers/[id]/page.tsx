@@ -89,7 +89,7 @@ export default function FreelancerProfilePage({ params }: { params: { id: string
 
   if (!profile) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-20 text-center">
+      <div className="max-w-7xl mx-auto px-4 pt-32 pb-20 text-center">
         <h2 className="text-2xl font-bold text-white">Freelancer Not Found</h2>
         <p className="text-sm text-gray-400 mt-2">The requested talent profile does not exist or has been removed.</p>
         <Link href="/explore" className="mt-4 inline-block px-4 py-2 bg-violet-600 rounded-xl text-white text-xs font-semibold">
@@ -100,7 +100,7 @@ export default function FreelancerProfilePage({ params }: { params: { id: string
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16">
       
       {/* Top Profile Hero Card */}
       <div className="p-8 rounded-3xl bg-[#0B0B0F] border border-white/[0.08] shadow-2xl relative overflow-hidden mb-8">
