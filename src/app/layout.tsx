@@ -5,8 +5,8 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
-  title: 'GRAVITASS — The Future of Freelance Work',
-  description: 'Discover elite talent. Build extraordinary things. Futuristic freelance marketplace connecting premier engineers, AI builders, and designers.',
+  title: 'GRAVITASS — Independent Work Protocol',
+  description: 'We are the gravity that connects talent with opportunity. An immersive talent network connecting elite engineers, designers, researchers, and creators.',
 };
 
 export default function RootLayout({
@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className="bg-[#050505] text-white min-h-screen flex flex-col selection:bg-violet-600 selection:text-white">
+      <body className="bg-[#071011] text-[#F4F5F3] min-h-screen flex flex-col selection:bg-[#73D8C4] selection:text-[#020303] antialiased">
         <AuthProvider>
           <Navbar />
           <main className="flex-1 w-full">
