@@ -339,6 +339,29 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Dismiss dropdowns on route changes
+  useEffect(() => {
+    setActiveCategory(null);
+    setIsSearchFocused(false);
+    setMobileMenuOpen(false);
+    setProfileDropdownOpen(false);
+    setNotifDropdownOpen(false);
+  }, [pathname]);
+
+  // Dismiss on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setActiveCategory(null);
+        setIsSearchFocused(false);
+        setProfileDropdownOpen(false);
+        setNotifDropdownOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   // Fetch search suggestions with debouncing
   useEffect(() => {
     if (!isSearchFocused && !searchQuery) {
@@ -404,7 +427,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-[#071011]/90 backdrop-blur-xl border-b border-white/[0.06] transition-all duration-300">
+    <header className="fixed top-0 left-0 w-full z-50 bg-[#071011] border-b border-white/[0.08] transition-all duration-300">
       
       {/* ========================================================
           TIER 1: LOGO, SEARCH BAR & USER/AUTH ACTIONS (H-16)
@@ -788,7 +811,7 @@ export default function Navbar() {
       {/* ========================================================
           TIER 2: HORIZONTALLY SCROLLABLE SERVICE CATEGORIES (H-11)
           ======================================================== */}
-      <div className="border-t border-white/[0.04] bg-[#071011]/95 relative">
+      <div className="border-t border-white/[0.06] bg-[#071011] relative">
         <div className="max-w-7xl mx-auto px-2 sm:px-4 flex items-center justify-between relative">
           
           {/* Scroll Left Button */}
@@ -819,9 +842,10 @@ export default function Navbar() {
                 >
                   <Link
                     href={`/freelancers/${cat.slug}`}
+                    onClick={() => setActiveCategory(null)}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs whitespace-nowrap transition-all duration-150 relative ${
                       isCurrent || isHovered
-                        ? 'text-[#73D8C4] font-medium bg-white/[0.04]'
+                        ? 'text-[#73D8C4] font-medium bg-white/[0.06]'
                         : 'text-[#91A09E] hover:text-[#F4F5F3] hover:bg-white/[0.02]'
                     }`}
                   >
@@ -852,43 +876,75 @@ export default function Navbar() {
 
         </div>
 
+        {/* Mega Menu Backdrop Scrim - Dims out background page to eliminate visual collision */}
+        {activeCategory && (
+          <div
+            onClick={() => setActiveCategory(null)}
+            className="fixed inset-0 top-[108px] bg-black/80 backdrop-blur-sm z-30 transition-opacity duration-200"
+            aria-hidden="true"
+          />
+        )}
+
         {/* ========================================================
-            INTERACTIVE MEGA MENU DROPDOWN (ON CATEGORY HOVER)
+            INTERACTIVE MEGA MENU DROPDOWN (100% OPAQUE SOLID BG)
             ======================================================== */}
         {activeCategory && (
           <div
             ref={megaMenuRef}
             onMouseEnter={handleMegaMenuMouseEnter}
             onMouseLeave={handleMegaMenuMouseLeave}
-            className="absolute top-full left-0 right-0 bg-[#071011]/98 border-t border-b border-white/[0.08] shadow-[0_30px_60px_rgba(0,0,0,0.95)] backdrop-blur-3xl animate-in fade-in slide-in-from-top-1 duration-150 z-40"
+            style={{ backgroundColor: '#071011' }}
+            className="absolute top-full left-0 right-0 bg-[#071011] border-t border-b border-white/[0.12] shadow-[0_30px_70px_rgba(0,0,0,0.98)] z-40 transition-all duration-150"
           >
             <div className="max-w-7xl mx-auto px-6 py-6">
               
               {/* Category Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-white/[0.06] gap-2">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-[#F4F5F3]">{activeCategory.name}</span>
-                    {activeCategory.isTrending && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#73D8C4]/15 border border-[#73D8C4]/40 text-[#73D8C4] font-semibold">
-                        High Demand Category
-                      </span>
-                    )}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-5 border-b border-white/[0.08] gap-3">
+                <div className="flex items-start gap-3.5">
+                  {(() => {
+                    const CatIcon = ICON_MAP[activeCategory.icon] || Sparkles;
+                    return (
+                      <div className="w-10 h-10 rounded-xl bg-[#73D8C4]/10 border border-[#73D8C4]/30 flex items-center justify-center flex-shrink-0 text-[#73D8C4] shadow-[0_0_15px_rgba(115,216,196,0.15)]">
+                        <CatIcon className="w-5 h-5" />
+                      </div>
+                    );
+                  })()}
+                  <div>
+                    <div className="flex items-center gap-2.5">
+                      <h3 className="text-base sm:text-lg font-bold text-[#F4F5F3] tracking-wide">{activeCategory.name}</h3>
+                      {activeCategory.isTrending && (
+                        <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#73D8C4]/15 border border-[#73D8C4]/40 text-[#73D8C4] font-semibold">
+                          HOT CATEGORY
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-[#91A09E] mt-0.5 max-w-2xl leading-relaxed">{activeCategory.description}</p>
                   </div>
-                  <p className="text-xs text-[#91A09E] mt-0.5 max-w-2xl">{activeCategory.description}</p>
                 </div>
-                <Link
-                  href={`/freelancers/${activeCategory.slug}`}
-                  onClick={() => setActiveCategory(null)}
-                  className="inline-flex items-center gap-1.5 text-xs text-[#73D8C4] hover:text-white font-semibold hover:underline"
-                >
-                  <span>Explore all {activeCategory.name} services</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
+
+                <div className="flex items-center gap-3">
+                  <Link
+                    href={`/freelancers/${activeCategory.slug}`}
+                    onClick={() => setActiveCategory(null)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#73D8C4]/10 hover:bg-[#73D8C4]/20 border border-[#73D8C4]/30 hover:border-[#73D8C4] text-xs text-[#73D8C4] hover:text-white font-medium transition-all"
+                  >
+                    <span>Explore All {activeCategory.name}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+
+                  <button
+                    onClick={() => setActiveCategory(null)}
+                    className="p-1.5 rounded-lg text-[#91A09E] hover:text-white hover:bg-white/[0.06] transition-colors"
+                    title="Close menu"
+                    aria-label="Close category menu"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
-              {/* Subcategories Multi-Column Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-6 gap-y-2">
+              {/* Subcategories Multi-Column Grid of High-Contrast Interactive Cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
                 {(activeCategory.subcategories || []).map((sub, idx) => {
                   const subSlug = slugify(sub);
                   return (
@@ -896,15 +952,39 @@ export default function Navbar() {
                       key={idx}
                       href={`/freelancers/${activeCategory.slug}/${subSlug}`}
                       onClick={() => setActiveCategory(null)}
-                      className="group flex items-center justify-between py-1.5 px-2 rounded-md hover:bg-white/[0.03] transition-colors"
+                      className="group flex items-center justify-between p-2.5 rounded-xl bg-[#0B1719] hover:bg-[#0E1F22] border border-white/[0.06] hover:border-[#73D8C4]/40 transition-all duration-150 shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
                     >
-                      <span className="text-xs text-[#91A09E] group-hover:text-[#73D8C4] font-medium transition-colors">
-                        {sub}
-                      </span>
-                      <ChevronRight className="w-3 h-3 text-[#91A09E] group-hover:text-[#73D8C4] group-hover:translate-x-0.5 transition-all opacity-0 group-hover:opacity-100" />
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#73D8C4]/40 group-hover:bg-[#73D8C4] group-hover:scale-125 transition-all flex-shrink-0" />
+                        <span className="text-xs text-[#C5CECB] group-hover:text-white font-medium truncate transition-colors">
+                          {sub}
+                        </span>
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 text-[#91A09E] group-hover:text-[#73D8C4] group-hover:translate-x-0.5 transition-all opacity-0 group-hover:opacity-100 flex-shrink-0" />
                     </Link>
                   );
                 })}
+              </div>
+
+              {/* Trust Badge Footer */}
+              <div className="mt-5 pt-3.5 border-t border-white/[0.06] flex items-center justify-between text-[11px] text-[#91A09E]">
+                <div className="flex items-center gap-4">
+                  <span className="flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#73D8C4]" />
+                    Verified Freelancers
+                  </span>
+                  <span className="hidden sm:inline text-white/[0.1]">•</span>
+                  <span className="hidden sm:inline">Escrow Payment Protection</span>
+                  <span className="hidden sm:inline text-white/[0.1]">•</span>
+                  <span className="hidden sm:inline">Direct Chat & Milestone Delivery</span>
+                </div>
+                <Link
+                  href="/freelancers"
+                  onClick={() => setActiveCategory(null)}
+                  className="text-[#73D8C4] hover:underline font-medium"
+                >
+                  View All Categories &rarr;
+                </Link>
               </div>
 
             </div>

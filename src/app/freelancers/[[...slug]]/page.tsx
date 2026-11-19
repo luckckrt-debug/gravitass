@@ -138,7 +138,7 @@ function FreelancerDiscoveryView({ slug }: { slug: string[] }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#071011] pt-32 pb-20">
+    <div className="min-h-screen bg-[#071011] pt-36 sm:pt-40 pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Breadcrumbs */}
