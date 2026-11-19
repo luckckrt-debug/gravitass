@@ -9,7 +9,6 @@ import {
   PlusCircle, 
   Users, 
   DollarSign, 
-  FileText, 
   CheckCircle2, 
   Clock, 
   Trash2, 
@@ -21,19 +20,33 @@ import {
   LayoutDashboard,
   Search,
   ExternalLink,
-  Home
+  Home,
+  ShieldCheck,
+  Lock,
+  FileText,
+  AlertTriangle
 } from 'lucide-react';
-import { Project, ProjectApplication, Contract, Category } from '@/types';
+import { Project, ProjectApplication, Contract, Category, EscrowAccount, InvoiceRecord, DisputeRecord } from '@/types';
 import { formatDate } from '@/lib/utils';
 
 export default function ClientDashboard() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'post' | 'projects' | 'applicants' | 'contracts'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'post' | 'projects' | 'applicants' | 'contracts' | 'finance'>('overview');
   const [projects, setProjects] = useState<Project[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [escrows, setEscrows] = useState<EscrowAccount[]>([]);
+  const [invoices, setInvoices] = useState<InvoiceRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [escrowFeedback, setEscrowFeedback] = useState('');
+
+  // Dispute Modal
+  const [disputeModalOpen, setDisputeModalOpen] = useState(false);
+  const [disputeContractId, setDisputeContractId] = useState('');
+  const [disputeReason, setDisputeReason] = useState('Deliverable does not meet specification');
+  const [disputeDesc, setDisputeDesc] = useState('');
+  const [submittingDispute, setSubmittingDispute] = useState(false);
 
   // Post Project Form State
   const [title, setTitle] = useState('');
@@ -50,19 +63,105 @@ export default function ClientDashboard() {
 
   const loadClientData = async () => {
     try {
-      const [projRes, catRes] = await Promise.all([
+      const [projRes, catRes, escRes, invRes] = await Promise.all([
         fetch('/api/projects?status=all'),
-        fetch('/api/categories')
+        fetch('/api/categories'),
+        fetch('/api/finance/escrow'),
+        fetch('/api/finance/invoices')
       ]);
       const projData = await projRes.json();
       const catData = await catRes.json();
+      const escData = await escRes.json();
+      const invData = await invRes.json();
 
       if (projData.projects) setProjects(projData.projects);
       if (catData.categories) setCategories(catData.categories);
+      if (escData.escrows) setEscrows(escData.escrows);
+      if (invData.invoices) setInvoices(invData.invoices);
     } catch (e) {
       console.error(e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleFundEscrow = async (contractId: string, amount: number) => {
+    try {
+      setEscrowFeedback('Securing funds in escrow vault...');
+      const res = await fetch('/api/finance/escrow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'fund',
+          contractId,
+          amount,
+          paymentReference: `ESC-DEP-${Date.now().toString(36).toUpperCase()}`
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setEscrowFeedback(`Escrow successfully funded! Invoice issued: ${data.invoice?.invoiceNumber}`);
+        loadClientData();
+      } else {
+        setEscrowFeedback(`Error funding escrow: ${data.error}`);
+      }
+    } catch (err: any) {
+      setEscrowFeedback(err.message || 'Network error');
+    }
+  };
+
+  const handleReleaseMilestone = async (contractId: string, milestoneId: string) => {
+    if (!confirm('Are you sure you want to approve this milestone and release escrow funds to the freelancer?')) return;
+    try {
+      setEscrowFeedback('Releasing milestone funds...');
+      const res = await fetch('/api/finance/escrow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'release',
+          contractId,
+          milestoneId
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setEscrowFeedback('Milestone approved! Escrow payment released to specialist.');
+        loadClientData();
+      } else {
+        setEscrowFeedback(`Release error: ${data.error}`);
+      }
+    } catch (err: any) {
+      setEscrowFeedback(err.message || 'Network error');
+    }
+  };
+
+  const handleSubmitDispute = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!disputeContractId || !disputeDesc.trim()) return;
+    setSubmittingDispute(true);
+    try {
+      const res = await fetch('/api/finance/disputes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contractId: disputeContractId,
+          reason: disputeReason,
+          description: disputeDesc
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setEscrowFeedback('Formal dispute registered. Unreleased escrow funds are locked.');
+        setDisputeModalOpen(false);
+        setDisputeDesc('');
+        loadClientData();
+      } else {
+        setEscrowFeedback(`Dispute filing failed: ${data.error}`);
+      }
+    } catch (err: any) {
+      setEscrowFeedback(err.message || 'Network error');
+    } finally {
+      setSubmittingDispute(false);
     }
   };
 
@@ -167,7 +266,8 @@ export default function ClientDashboard() {
               { id: 'overview', label: 'Hirer Overview', icon: LayoutDashboard },
               { id: 'post', label: 'Post a New Project', icon: PlusCircle },
               { id: 'projects', label: `My Projects (${userProjects.length})`, icon: Briefcase },
-              { id: 'contracts', label: 'Hired Talent & Escrow', icon: Users }
+              { id: 'contracts', label: 'Hired Talent & Escrow', icon: Users },
+              { id: 'finance', label: 'Finance & Escrow Vaults', icon: DollarSign }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -501,10 +601,241 @@ export default function ClientDashboard() {
             </div>
           )}
 
+          {/* TAB: FINANCE & ESCROW VAULTS */}
+          {activeTab === 'finance' && (
+            <div className="space-y-6 animate-fadeIn">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl bg-[#0B0B0F] border border-white/[0.08]">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-[10px] font-mono text-cyan-400 uppercase">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>Cryptographic Milestone Escrow Protection</span>
+                  </div>
+                  <h2 className="text-xl font-bold text-white mt-1">Project Funding & Escrow Vaults</h2>
+                  <p className="text-xs text-gray-400">
+                    Funds are secured in segregated trustee vaults. Release milestones upon verification or raise formal arbitration.
+                  </p>
+                </div>
+              </div>
+
+              {escrowFeedback && (
+                <div className="p-4 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-xs font-mono text-cyan-300">
+                  {escrowFeedback}
+                </div>
+              )}
+
+              {/* Escrow Summary Cards */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {[
+                  { label: 'Total Escrow Funded', value: `$${escrows.reduce((s, e) => s + (e.fundedAmount || 0), 0).toLocaleString()}`, color: 'text-white' },
+                  { label: 'Active In Escrow', value: `$${escrows.reduce((s, e) => s + Math.max(0, (e.fundedAmount || 0) - (e.releasedAmount || 0) - (e.refundedAmount || 0)), 0).toLocaleString()}`, color: 'text-cyan-400' },
+                  { label: 'Released To Talent', value: `$${escrows.reduce((s, e) => s + (e.releasedAmount || 0), 0).toLocaleString()}`, color: 'text-emerald-400' },
+                  { label: 'Invoices Issued', value: `${invoices.length}`, color: 'text-violet-400' }
+                ].map((stat, i) => (
+                  <div key={i} className="p-5 rounded-2xl bg-[#0B0B0F] border border-white/[0.08]">
+                    <span className="text-[10px] text-gray-500 uppercase tracking-wider block">{stat.label}</span>
+                    <p className={`text-xl font-black mt-1 ${stat.color}`}>{stat.value}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Escrow Accounts Table */}
+              <div className="p-6 rounded-3xl bg-[#0B0B0F] border border-white/[0.08] space-y-4">
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider">Active Contract Vaults</h3>
+
+                {escrows.length === 0 ? (
+                  <p className="text-xs text-gray-500 py-8 text-center">No active contract escrow vaults found.</p>
+                ) : (
+                  <div className="space-y-4">
+                    {escrows.map((esc) => {
+                      const unreleased = Math.max(0, esc.fundedAmount - esc.releasedAmount - esc.refundedAmount);
+                      return (
+                        <div key={esc.id} className="p-5 rounded-2xl bg-[#121218] border border-white/[0.08] space-y-4">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className={`px-2 py-0.5 rounded text-[10px] font-mono uppercase font-bold ${
+                                  esc.isDisputed 
+                                    ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40' 
+                                    : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
+                                }`}>
+                                  {esc.isDisputed ? 'LOCKED UNDER DISPUTE' : esc.status.replace(/_/g, ' ')}
+                                </span>
+                                <span className="text-xs font-mono text-gray-500">{esc.id}</span>
+                              </div>
+                              <h4 className="text-base font-bold text-white mt-1">{esc.projectTitle}</h4>
+                              <p className="text-xs text-gray-400">
+                                Assigned Talent: <strong className="text-white">{esc.freelancerName}</strong> &bull; Total Escrow: <strong className="text-cyan-400">${esc.totalGrossAmount.toLocaleString()}</strong>
+                              </p>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              {unreleased > 0 && !esc.isDisputed && (
+                                <button
+                                  onClick={() => {
+                                    setDisputeContractId(esc.contractId);
+                                    setDisputeModalOpen(true);
+                                  }}
+                                  className="px-3 py-1.5 rounded-xl border border-rose-500/40 hover:bg-rose-500/10 text-rose-300 text-xs font-mono transition-all"
+                                >
+                                  Dispute Vault
+                                </button>
+                              )}
+                              <a
+                                href={`/api/finance/invoices?contractId=${esc.contractId}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-3 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-xs font-mono text-gray-300 transition-all flex items-center gap-1.5"
+                              >
+                                <FileText className="w-3.5 h-3.5 text-cyan-400" />
+                                <span>Tax Invoices</span>
+                              </a>
+                            </div>
+                          </div>
+
+                          {/* Milestones in this Escrow */}
+                          <div className="pt-2 border-t border-white/[0.06] space-y-2">
+                            <span className="text-[10px] font-mono text-gray-400 uppercase tracking-wider block">Milestones & Release Controls</span>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                              {esc.milestones.map((m) => (
+                                <div key={m.milestoneId} className="p-3 rounded-xl bg-[#0B0B0F] border border-white/[0.04] flex items-center justify-between gap-3 text-xs">
+                                  <div>
+                                    <p className="font-semibold text-gray-200">{m.title}</p>
+                                    <span className="text-[10px] font-mono text-gray-500 capitalize">
+                                      ${m.amount.toLocaleString()} &bull; {m.status.replace(/_/g, ' ')}
+                                    </span>
+                                  </div>
+
+                                  {m.status !== 'payment_released' && !esc.isDisputed && (
+                                    <button
+                                      onClick={() => handleReleaseMilestone(esc.contractId, m.milestoneId)}
+                                      className="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-[10px] uppercase font-bold transition-all shadow-neon-emerald"
+                                    >
+                                      Approve & Release
+                                    </button>
+                                  )}
+                                  {m.status === 'payment_released' && (
+                                    <span className="text-emerald-400 font-mono text-[10px] flex items-center gap-1">
+                                      <CheckCircle2 className="w-3 h-3" />
+                                      <span>Released</span>
+                                    </span>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Invoices & Receipts Section */}
+              <div className="p-6 rounded-3xl bg-[#0B0B0F] border border-white/[0.08] space-y-4">
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider">Client Billing Invoices & Receipts</h3>
+                {invoices.length === 0 ? (
+                  <p className="text-xs text-gray-500 py-6 text-center">No invoices issued yet.</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead>
+                        <tr className="border-b border-white/[0.08] text-[10px] font-mono text-gray-500 uppercase">
+                          <th className="py-3 px-4">Invoice #</th>
+                          <th className="py-3 px-4">Date</th>
+                          <th className="py-3 px-4">Type</th>
+                          <th className="py-3 px-4">Amount</th>
+                          <th className="py-3 px-4 text-right">View / Print</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-white/[0.04]">
+                        {invoices.map((inv) => (
+                          <tr key={inv.id} className="hover:bg-white/[0.02]">
+                            <td className="py-3 px-4 font-mono text-cyan-400 font-medium">{inv.invoiceNumber}</td>
+                            <td className="py-3 px-4 text-gray-400 font-mono">{new Date(inv.issueDate).toLocaleDateString()}</td>
+                            <td className="py-3 px-4 text-gray-300 capitalize">{inv.type.replace(/_/g, ' ')}</td>
+                            <td className="py-3 px-4 font-mono font-bold text-white">${inv.grandTotal.toFixed(2)}</td>
+                            <td className="py-3 px-4 text-right">
+                              <a
+                                href={`/api/finance/invoices/${inv.id}?format=html`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-3 py-1 rounded-lg border border-white/[0.1] hover:border-cyan-400 text-[10px] font-mono text-cyan-400 uppercase"
+                              >
+                                View PDF
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+
+            </div>
+          )}
+
+          {/* DISPUTE MODAL */}
+          {disputeModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+              <div className="bg-[#0B0B0F] border border-red-500/40 rounded-3xl w-full max-w-md p-6 space-y-4 shadow-2xl">
+                <div className="flex items-center gap-2 text-rose-400 text-sm font-bold uppercase tracking-wider">
+                  <AlertTriangle className="w-4 h-4" />
+                  <span>Raise Formal Escrow Dispute</span>
+                </div>
+                <p className="text-xs text-gray-400">
+                  Initiating a dispute places an immediate administrative freeze on all unreleased contract funds.
+                </p>
+
+                <form onSubmit={handleSubmitDispute} className="space-y-4">
+                  <div>
+                    <label className="text-[10px] font-mono text-gray-400 uppercase block mb-1">Primary Reason</label>
+                    <select
+                      value={disputeReason}
+                      onChange={(e) => setDisputeReason(e.target.value)}
+                      className="w-full bg-[#121218] border border-white/[0.1] rounded-xl px-3 py-2 text-xs text-white font-mono"
+                    >
+                      <option value="Deliverable does not meet specification">Deliverable does not meet specification</option>
+                      <option value="Unresponsive specialist">Unresponsive specialist</option>
+                      <option value="Quality below agreed standard">Quality below agreed standard</option>
+                      <option value="Mutual cancellation request">Mutual cancellation request</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-[10px] font-mono text-gray-400 uppercase block mb-1">Detailed Explanation & Evidence</label>
+                    <textarea
+                      rows={3}
+                      value={disputeDesc}
+                      onChange={(e) => setDisputeDesc(e.target.value)}
+                      placeholder="Explain the milestone non-conformance or reason..."
+                      className="w-full bg-[#121218] border border-white/[0.1] rounded-xl p-3 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-red-400"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setDisputeModalOpen(false)}
+                      className="px-4 py-2 rounded-xl text-xs text-gray-400 hover:text-white"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={submittingDispute}
+                      className="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold uppercase tracking-wider disabled:opacity-50"
+                    >
+                      {submittingDispute ? 'Filing...' : 'Lock Funds & Open Dispute'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
-
       </div>
-
     </div>
   );
 }

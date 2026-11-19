@@ -19,7 +19,20 @@ export async function PATCH(req: Request) {
     }
 
     const body = await req.json();
-    const { commissionPercentage, minWithdrawalAmount, payoutGatewayMode } = body;
+    const { 
+      commissionPercentage, 
+      minWithdrawalAmount, 
+      payoutGatewayMode,
+      gstPercentage,
+      tdsPercentage,
+      autoPayoutFrequency,
+      sacCode,
+      legalBusinessName,
+      legalAddress,
+      platformGstin,
+      platformPan,
+      escrowReviewPeriodDays
+    } = body;
 
     const updates: any = {};
     if (commissionPercentage !== undefined) {
@@ -38,9 +51,16 @@ export async function PATCH(req: Request) {
       updates.minWithdrawalAmount = minWth;
     }
 
-    if (payoutGatewayMode) {
-      updates.payoutGatewayMode = payoutGatewayMode;
-    }
+    if (payoutGatewayMode) updates.payoutGatewayMode = payoutGatewayMode;
+    if (gstPercentage !== undefined) updates.gstPercentage = Number(gstPercentage);
+    if (tdsPercentage !== undefined) updates.tdsPercentage = Number(tdsPercentage);
+    if (autoPayoutFrequency) updates.autoPayoutFrequency = autoPayoutFrequency;
+    if (sacCode) updates.sacCode = sacCode;
+    if (legalBusinessName) updates.legalBusinessName = legalBusinessName;
+    if (legalAddress) updates.legalAddress = legalAddress;
+    if (platformGstin) updates.platformGstin = platformGstin;
+    if (platformPan) updates.platformPan = platformPan;
+    if (escrowReviewPeriodDays !== undefined) updates.escrowReviewPeriodDays = Number(escrowReviewPeriodDays);
 
     const updated = db.updatePlatformSettings(updates);
     return NextResponse.json({ settings: updated, message: 'Platform financial settings updated successfully' });

@@ -112,7 +112,7 @@
       "rating": 4.98,
       "reviewCount": 38,
       "completedProjectsCount": 42,
-      "totalEarnings": 84250,
+      "totalEarnings": 102050,
       "profileCompletionPercentage": 100,
       "performanceScore": {
         "clientReviewQuality": 98,
@@ -166,7 +166,7 @@
         "website": "https://elenavance.dev"
       },
       "createdAt": "2026-01-10T10:00:00.000Z",
-      "updatedAt": "2026-02-15T15:00:00.000Z"
+      "updatedAt": "2026-11-19T18:01:48.146Z"
     },
     {
       "id": "profile-freelancer-2",
@@ -700,8 +700,8 @@
       "freelancerName": "Elena Vance",
       "freelancerAvatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
       "totalAmount": 5800,
-      "paidAmount": 2000,
-      "status": "active",
+      "paidAmount": 22000,
+      "status": "completed",
       "startDate": "2026-02-13T09:00:00.000Z",
       "completionDeadline": "2026-03-15T00:00:00.000Z",
       "milestones": [
@@ -721,7 +721,7 @@
           "description": "Sub-100ms cache with Redis and streaming response generator.",
           "amount": 2000,
           "dueDate": "2026-03-05T00:00:00.000Z",
-          "status": "in_progress"
+          "status": "approved"
         },
         {
           "id": "ms-3",
@@ -844,6 +844,206 @@
   ],
   "notifications": [
     {
+      "id": "notif-1795111308269-f",
+      "userId": "user-freelancer-1",
+      "title": "Dispute Registered on Contract",
+      "message": "A formal dispute has been opened for \"Autonomous Multi-Model LLM Orchestration Platform\". Our arbitration team will review milestones and evidence.",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-19T18:01:48.267Z"
+    },
+    {
+      "id": "notif-1795111308268-c",
+      "userId": "user-client-1",
+      "title": "Dispute Registered — Escrow Vault Locked",
+      "message": "A dispute has been logged for \"Autonomous Multi-Model LLM Orchestration Platform\". Unreleased funds ($3,800) are locked pending administrative arbitration.",
+      "type": "payment",
+      "link": "/dashboard/client",
+      "isRead": false,
+      "createdAt": "2026-11-19T18:01:48.267Z"
+    },
+    {
+      "id": "notif-1795111308196",
+      "userId": "user-freelancer-1",
+      "title": "Withdrawal Paid Successfully!",
+      "message": "Your payout of $3,560 has been transferred. Reference/UTR: UTR-IMPS-11308194DF98F1AD.",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-19T18:01:48.196Z"
+    },
+    {
+      "id": "notif-1795111308191",
+      "userId": "user-freelancer-1",
+      "title": "Withdrawal Request Submitted",
+      "message": "Your withdrawal of $3,560 has been queued for review and payout. Estimated time: 24–48 Business Hours.",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-19T18:01:48.191Z"
+    },
+    {
+      "id": "notif-1795111308148",
+      "userId": "user-freelancer-1",
+      "title": "Milestone Released to Available Balance!",
+      "message": "$1,780 credited for \"Phase 2: Streaming Telemetry & Vector Cache Integration\". (Gross: $2000, Platform Fee: $200, TDS: $20).",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-19T18:01:48.143Z"
+    },
+    {
+      "id": "notif-1795111289404-f",
+      "userId": "user-freelancer-1",
+      "title": "Dispute Registered on Contract",
+      "message": "A formal dispute has been opened for \"Autonomous Multi-Model LLM Orchestration Platform\". Our arbitration team will review milestones and evidence.",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-19T18:01:29.400Z"
+    },
+    {
+      "id": "notif-1795111289402-c",
+      "userId": "user-client-1",
+      "title": "Dispute Registered — Escrow Vault Locked",
+      "message": "A dispute has been logged for \"Autonomous Multi-Model LLM Orchestration Platform\". Unreleased funds ($55,400) are locked pending administrative arbitration.",
+      "type": "payment",
+      "link": "/dashboard/client",
+      "isRead": false,
+      "createdAt": "2026-11-19T18:01:29.400Z"
+    },
+    {
+      "id": "notif-1795111289273",
+      "userId": "user-freelancer-1",
+      "title": "Milestone Released to Available Balance!",
+      "message": "$1,780 credited for \"Phase 2: Streaming Telemetry & Vector Cache Integration\". (Gross: $2000, Platform Fee: $200, TDS: $20).",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-19T18:01:29.270Z"
+    },
+    {
+      "id": "notif-1795111262170",
+      "userId": "user-freelancer-1",
+      "title": "Withdrawal Paid Successfully!",
+      "message": "Your payout of $3,560 has been transferred. Reference/UTR: UTR-IMPS-11262168EF4E376C.",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-19T18:01:02.170Z"
+    },
+    {
+      "id": "notif-1795111262166",
+      "userId": "user-freelancer-1",
+      "title": "Withdrawal Request Submitted",
+      "message": "Your withdrawal of $3,560 has been queued for review and payout. Estimated time: 24–48 Business Hours.",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-19T18:01:02.166Z"
+    },
+    {
+      "id": "notif-1795111262107",
+      "userId": "user-freelancer-1",
+      "title": "Milestone Released to Available Balance!",
+      "message": "$1,780 credited for \"Phase 2: Streaming Telemetry & Vector Cache Integration\". (Gross: $2000, Platform Fee: $200, TDS: $20).",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-19T18:01:02.103Z"
+    },
+    {
+      "id": "notif-1795111192980",
+      "userId": "user-freelancer-1",
+      "title": "Milestone Released to Available Balance!",
+      "message": "$1,780 credited for \"Phase 2: Streaming Telemetry & Vector Cache Integration\". (Gross: $2000, Platform Fee: $200, TDS: $20).",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-19T17:59:52.977Z"
+    },
+    {
+      "id": "notif-1795111153035",
+      "userId": "user-freelancer-1",
+      "title": "Withdrawal Paid Successfully!",
+      "message": "Your payout of $14,075 has been transferred. Reference/UTR: UTR-IMPS-11153034BFE6ADE0.",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-19T17:59:13.035Z"
+    },
+    {
+      "id": "notif-1795111153032",
+      "userId": "user-freelancer-1",
+      "title": "Withdrawal Request Submitted",
+      "message": "Your withdrawal of $14,075 has been queued for review and payout. Estimated time: 24–48 Business Hours.",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-19T17:59:13.032Z"
+    },
+    {
+      "id": "notif-1795111152996",
+      "userId": "user-freelancer-1",
+      "title": "Milestone Released to Available Balance!",
+      "message": "$1,780 credited for \"Phase 2: Streaming Telemetry & Vector Cache Integration\". (Gross: $2000, Platform Fee: $200, TDS: $20).",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-19T17:59:12.993Z"
+    },
+    {
+      "id": "notif-1795110852437",
+      "userId": "user-freelancer-1",
+      "title": "Milestone Released to Available Balance!",
+      "message": "$1,780 credited for \"Phase 2: Streaming Telemetry & Vector Cache Integration\". (Gross: $2000, Platform Fee: $200, TDS: $20).",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-19T17:54:12.434Z"
+    },
+    {
+      "id": "notif-1795110832670",
+      "userId": "user-freelancer-1",
+      "title": "Milestone Released to Available Balance!",
+      "message": "$1,780 credited for \"Phase 2: Streaming Telemetry & Vector Cache Integration\". (Gross: $2000, Platform Fee: $200, TDS: $20).",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-19T17:53:52.665Z"
+    },
+    {
+      "id": "notif-1795110797013",
+      "userId": "user-freelancer-1",
+      "title": "Milestone Released to Available Balance!",
+      "message": "$1,780 credited for \"Phase 2: Streaming Telemetry & Vector Cache Integration\". (Gross: $2000, Platform Fee: $200, TDS: $20).",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-19T17:53:17.011Z"
+    },
+    {
+      "id": "notif-1795110772241",
+      "userId": "user-freelancer-1",
+      "title": "Milestone Released to Available Balance!",
+      "message": "$1,780 credited for \"Phase 2: Streaming Telemetry & Vector Cache Integration\". (Gross: $2000, Platform Fee: $200, TDS: $20).",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-19T17:52:52.236Z"
+    },
+    {
+      "id": "notif-1795110623740",
+      "userId": "user-freelancer-1",
+      "title": "Milestone Released to Available Balance!",
+      "message": "$1,780 credited for \"Phase 2: Streaming Telemetry & Vector Cache Integration\". (Gross: $2000, Platform Fee: $200, TDS: $20).",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-19T17:50:23.737Z"
+    },
+    {
       "id": "notif-1",
       "userId": "user-freelancer-1",
       "title": "Proposal Shortlisted!",
@@ -876,6 +1076,166 @@
   ],
   "transactions": [
     {
+      "id": "tx-w-1795111308189",
+      "userId": "user-freelancer-1",
+      "type": "withdrawal",
+      "amount": -3560,
+      "status": "completed",
+      "description": "Withdrawal request of $3560 to undefined",
+      "referenceId": "WTH-1795111308189-1QZI",
+      "createdAt": "2026-11-19T18:01:48.189Z"
+    },
+    {
+      "id": "tx-fnd-1795111308113",
+      "userId": "user-client-1",
+      "type": "deposit",
+      "amount": 5800,
+      "status": "completed",
+      "description": "Escrow Funded ($5800) for \"Autonomous Multi-Model LLM Orchestration Platform\"",
+      "referenceId": "ESC-DEMO-001",
+      "createdAt": "2026-11-19T18:01:48.111Z"
+    },
+    {
+      "id": "tx-fnd-1795111289256",
+      "userId": "user-client-1",
+      "type": "deposit",
+      "amount": 5800,
+      "status": "completed",
+      "description": "Escrow Funded ($5800) for \"Autonomous Multi-Model LLM Orchestration Platform\"",
+      "referenceId": "ESC-DEMO-001",
+      "createdAt": "2026-11-19T18:01:29.255Z"
+    },
+    {
+      "id": "tx-w-1795111262165",
+      "userId": "user-freelancer-1",
+      "type": "withdrawal",
+      "amount": -3560,
+      "status": "completed",
+      "description": "Withdrawal request of $3560 to undefined",
+      "referenceId": "WTH-1795111262165-35V5",
+      "createdAt": "2026-11-19T18:01:02.165Z"
+    },
+    {
+      "id": "tx-fnd-1795111262091",
+      "userId": "user-client-1",
+      "type": "deposit",
+      "amount": 5800,
+      "status": "completed",
+      "description": "Escrow Funded ($5800) for \"Autonomous Multi-Model LLM Orchestration Platform\"",
+      "referenceId": "ESC-DEMO-001",
+      "createdAt": "2026-11-19T18:01:02.089Z"
+    },
+    {
+      "id": "tx-fnd-1795111192958",
+      "userId": "user-client-1",
+      "type": "deposit",
+      "amount": 5800,
+      "status": "completed",
+      "description": "Escrow Funded ($5800) for \"Autonomous Multi-Model LLM Orchestration Platform\"",
+      "referenceId": "ESC-DEMO-001",
+      "createdAt": "2026-11-19T17:59:52.956Z"
+    },
+    {
+      "id": "tx-w-1795111153031",
+      "userId": "user-freelancer-1",
+      "type": "withdrawal",
+      "amount": -14075,
+      "status": "completed",
+      "description": "Withdrawal request of $14075 to undefined",
+      "referenceId": "WTH-1795111153031-V2UU",
+      "createdAt": "2026-11-19T17:59:13.031Z"
+    },
+    {
+      "id": "tx-fnd-1795111152950",
+      "userId": "user-client-1",
+      "type": "deposit",
+      "amount": 5800,
+      "status": "completed",
+      "description": "Escrow Funded ($5800) for \"Autonomous Multi-Model LLM Orchestration Platform\"",
+      "referenceId": "ESC-DEMO-001",
+      "createdAt": "2026-11-19T17:59:12.949Z"
+    },
+    {
+      "id": "tx-fnd-1795110852417",
+      "userId": "user-client-1",
+      "type": "deposit",
+      "amount": 5800,
+      "status": "completed",
+      "description": "Escrow Funded ($5800) for \"Autonomous Multi-Model LLM Orchestration Platform\"",
+      "referenceId": "ESC-DEMO-001",
+      "createdAt": "2026-11-19T17:54:12.416Z"
+    },
+    {
+      "id": "tx-fnd-1795110832637",
+      "userId": "user-client-1",
+      "type": "deposit",
+      "amount": 5800,
+      "status": "completed",
+      "description": "Escrow Funded ($5800) for \"Autonomous Multi-Model LLM Orchestration Platform\"",
+      "referenceId": "ESC-DEMO-001",
+      "createdAt": "2026-11-19T17:53:52.635Z"
+    },
+    {
+      "id": "tx-fnd-1795110796981",
+      "userId": "user-client-1",
+      "type": "deposit",
+      "amount": 5800,
+      "status": "completed",
+      "description": "Escrow Funded ($5800) for \"Autonomous Multi-Model LLM Orchestration Platform\"",
+      "referenceId": "ESC-DEMO-001",
+      "createdAt": "2026-11-19T17:53:16.980Z"
+    },
+    {
+      "id": "tx-fnd-1795110772195",
+      "userId": "user-client-1",
+      "type": "deposit",
+      "amount": 5800,
+      "status": "completed",
+      "description": "Escrow Funded ($5800) for \"Autonomous Multi-Model LLM Orchestration Platform\"",
+      "referenceId": "ESC-DEMO-001",
+      "createdAt": "2026-11-19T17:52:52.194Z"
+    },
+    {
+      "id": "tx-fnd-1795110623708",
+      "userId": "user-client-1",
+      "type": "deposit",
+      "amount": 5800,
+      "status": "completed",
+      "description": "Escrow Funded ($5800) for \"Autonomous Multi-Model LLM Orchestration Platform\"",
+      "referenceId": "ESC-DEMO-001",
+      "createdAt": "2026-11-19T17:50:23.707Z"
+    },
+    {
+      "id": "tx-fnd-1795110563421",
+      "userId": "user-client-1",
+      "type": "deposit",
+      "amount": 5800,
+      "status": "completed",
+      "description": "Escrow Funded ($5800) for \"Autonomous Multi-Model LLM Orchestration Platform\"",
+      "referenceId": "ESC-DEMO-001",
+      "createdAt": "2026-11-19T17:49:23.420Z"
+    },
+    {
+      "id": "tx-fnd-1795110469721",
+      "userId": "user-client-1",
+      "type": "deposit",
+      "amount": 5800,
+      "status": "completed",
+      "description": "Escrow Funded ($5800) for \"Autonomous Multi-Model LLM Orchestration Platform\"",
+      "referenceId": "ESC-DEMO-001",
+      "createdAt": "2026-11-19T17:47:49.719Z"
+    },
+    {
+      "id": "tx-fnd-1795109631191",
+      "userId": "user-client-1",
+      "type": "deposit",
+      "amount": 5800,
+      "status": "completed",
+      "description": "Escrow Funded ($5800) for \"Autonomous Multi-Model LLM Orchestration Platform\"",
+      "referenceId": "ESC-DEMO-001",
+      "createdAt": "2026-11-19T17:33:51.188Z"
+    },
+    {
       "id": "tx-1",
       "userId": "user-freelancer-1",
       "type": "payment_release",
@@ -896,6 +1256,3177 @@
       "createdAt": "2026-02-14T12:00:00.000Z"
     }
   ],
-  "withdrawals": [],
-  "disputes": []
+  "withdrawals": [
+    {
+      "id": "WTH-1795111308189-1QZI",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "amount": 3560,
+      "fee": 0,
+      "finalAmount": 3560,
+      "method": "bank_transfer",
+      "payoutDetails": {
+        "bankAccount": {
+          "accountNumber": "918273645012",
+          "ifscCode": "HDFC0001234",
+          "accountHolderName": "Elena Vance",
+          "bankName": "HDFC Bank Ltd"
+        },
+        "upi": {
+          "vpa": "elena@okhdfcbank"
+        },
+        "isVerified": true
+      },
+      "status": "paid",
+      "estimatedProcessingTime": "24–48 Business Hours",
+      "idempotencyKey": "AUTO-POUT-user-freelancer-1-17951113",
+      "createdAt": "2026-11-19T18:01:48.189Z",
+      "updatedAt": "2026-11-19T18:01:48.194Z",
+      "paymentReference": "UTR-IMPS-11308194DF98F1AD",
+      "processedAt": "2026-11-19T18:01:48.194Z"
+    },
+    {
+      "id": "WTH-1795111262165-35V5",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "amount": 3560,
+      "fee": 0,
+      "finalAmount": 3560,
+      "method": "bank_transfer",
+      "payoutDetails": {
+        "bankAccount": {
+          "accountNumber": "918273645012",
+          "ifscCode": "HDFC0001234",
+          "accountHolderName": "Elena Vance",
+          "bankName": "HDFC Bank Ltd"
+        },
+        "upi": {
+          "vpa": "elena@okhdfcbank"
+        },
+        "isVerified": true
+      },
+      "status": "paid",
+      "estimatedProcessingTime": "24–48 Business Hours",
+      "idempotencyKey": "AUTO-POUT-user-freelancer-1-17951112",
+      "createdAt": "2026-11-19T18:01:02.165Z",
+      "updatedAt": "2026-11-19T18:01:02.168Z",
+      "paymentReference": "UTR-IMPS-11262168EF4E376C",
+      "processedAt": "2026-11-19T18:01:02.168Z"
+    },
+    {
+      "id": "WTH-1795111153031-V2UU",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "amount": 14075,
+      "fee": 0,
+      "finalAmount": 14075,
+      "method": "bank_transfer",
+      "payoutDetails": {
+        "bankAccount": {
+          "accountNumber": "918273645012",
+          "ifscCode": "HDFC0001234",
+          "accountHolderName": "Elena Vance",
+          "bankName": "HDFC Bank Ltd"
+        },
+        "upi": {
+          "vpa": "elena@okhdfcbank"
+        },
+        "isVerified": true
+      },
+      "status": "paid",
+      "estimatedProcessingTime": "24–48 Business Hours",
+      "idempotencyKey": "AUTO-POUT-user-freelancer-1-17951111",
+      "createdAt": "2026-11-19T17:59:13.031Z",
+      "updatedAt": "2026-11-19T17:59:13.035Z",
+      "paymentReference": "UTR-IMPS-11153034BFE6ADE0",
+      "processedAt": "2026-11-19T17:59:13.035Z"
+    },
+    {
+      "id": "WTH-DEMO-001",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "amount": 1500,
+      "fee": 0,
+      "finalAmount": 1500,
+      "method": "bank_transfer",
+      "payoutDetails": {
+        "accountHolderName": "Elena Vance",
+        "bankName": "HDFC Bank",
+        "ifsc": "HDFC0001234",
+        "maskedAccount": "•••• •••• 8912",
+        "isVerified": true
+      },
+      "status": "paid",
+      "estimatedProcessingTime": "24–48 Business Hours",
+      "paymentReference": "UTR-HDFC-9948210381",
+      "createdAt": "2026-02-16T10:00:00.000Z",
+      "processedAt": "2026-02-16T14:30:00.000Z"
+    }
+  ],
+  "disputes": [],
+  "ledgerTransactions": [
+    {
+      "id": "LED-1795111308189-WTH",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "projectId": "PAYOUT",
+      "projectTitle": "Withdrawal via Bank Transfer (undefined)",
+      "clientId": "GRAVITASS-TREASURY",
+      "clientName": "GRAVITASS Escrow & Payout",
+      "contractId": "WTH-1795111308189-1QZI",
+      "grossAmount": -3560,
+      "commissionPercentage": 0,
+      "platformFee": 0,
+      "netAmount": -3560,
+      "status": "paid",
+      "transactionReference": "WTH-REF-MWNUXA59",
+      "withdrawalId": "WTH-1795111308189-1QZI",
+      "createdAt": "2026-11-19T18:01:48.189Z",
+      "updatedAt": "2026-11-19T18:01:48.194Z",
+      "paidAt": "2026-11-19T18:01:48.194Z"
+    },
+    {
+      "id": "LED-1795111308144-RXE9",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "contractId": "contract-demo-1",
+      "milestoneId": "ms-2",
+      "milestoneTitle": "Phase 2: Streaming Telemetry & Vector Cache Integration",
+      "grossAmount": 2000,
+      "commissionPercentage": 10,
+      "platformFee": 200,
+      "netAmount": 1780,
+      "status": "available",
+      "transactionReference": "REF-GRAV-MWNUXA40",
+      "createdAt": "2026-11-19T18:01:48.143Z",
+      "updatedAt": "2026-11-19T18:01:48.143Z"
+    },
+    {
+      "id": "LED-1795111289272-VG6Y",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "contractId": "contract-demo-1",
+      "milestoneId": "ms-2",
+      "milestoneTitle": "Phase 2: Streaming Telemetry & Vector Cache Integration",
+      "grossAmount": 2000,
+      "commissionPercentage": 10,
+      "platformFee": 200,
+      "netAmount": 1780,
+      "status": "available",
+      "transactionReference": "REF-GRAV-MWNUWVJS",
+      "createdAt": "2026-11-19T18:01:29.270Z",
+      "updatedAt": "2026-11-19T18:01:29.270Z"
+    },
+    {
+      "id": "LED-1795111262165-WTH",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "projectId": "PAYOUT",
+      "projectTitle": "Withdrawal via Bank Transfer (undefined)",
+      "clientId": "GRAVITASS-TREASURY",
+      "clientName": "GRAVITASS Escrow & Payout",
+      "contractId": "WTH-1795111262165-35V5",
+      "grossAmount": -3560,
+      "commissionPercentage": 0,
+      "platformFee": 0,
+      "netAmount": -3560,
+      "status": "paid",
+      "transactionReference": "WTH-REF-MWNUWAMT",
+      "withdrawalId": "WTH-1795111262165-35V5",
+      "createdAt": "2026-11-19T18:01:02.165Z",
+      "updatedAt": "2026-11-19T18:01:02.168Z",
+      "paidAt": "2026-11-19T18:01:02.168Z"
+    },
+    {
+      "id": "LED-1795111262104-ZYMY",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "contractId": "contract-demo-1",
+      "milestoneId": "ms-2",
+      "milestoneTitle": "Phase 2: Streaming Telemetry & Vector Cache Integration",
+      "grossAmount": 2000,
+      "commissionPercentage": 10,
+      "platformFee": 200,
+      "netAmount": 1780,
+      "status": "available",
+      "transactionReference": "REF-GRAV-MWNUWAL4",
+      "createdAt": "2026-11-19T18:01:02.103Z",
+      "updatedAt": "2026-11-19T18:01:02.103Z"
+    },
+    {
+      "id": "LED-1795111192978-9Q44",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "contractId": "contract-demo-1",
+      "milestoneId": "ms-2",
+      "milestoneTitle": "Phase 2: Streaming Telemetry & Vector Cache Integration",
+      "grossAmount": 2000,
+      "commissionPercentage": 10,
+      "platformFee": 200,
+      "netAmount": 1780,
+      "status": "available",
+      "transactionReference": "REF-GRAV-MWNUUT8Y",
+      "createdAt": "2026-11-19T17:59:52.977Z",
+      "updatedAt": "2026-11-19T17:59:52.977Z"
+    },
+    {
+      "id": "LED-1795111153031-WTH",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "projectId": "PAYOUT",
+      "projectTitle": "Withdrawal via Bank Transfer (undefined)",
+      "clientId": "GRAVITASS-TREASURY",
+      "clientName": "GRAVITASS Escrow & Payout",
+      "contractId": "WTH-1795111153031-V2UU",
+      "grossAmount": -14075,
+      "commissionPercentage": 0,
+      "platformFee": 0,
+      "netAmount": -14075,
+      "status": "paid",
+      "transactionReference": "WTH-REF-MWNUTYFB",
+      "withdrawalId": "WTH-1795111153031-V2UU",
+      "createdAt": "2026-11-19T17:59:13.031Z",
+      "updatedAt": "2026-11-19T17:59:13.035Z",
+      "paidAt": "2026-11-19T17:59:13.035Z"
+    },
+    {
+      "id": "LED-1795111152994-JCGN",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "contractId": "contract-demo-1",
+      "milestoneId": "ms-2",
+      "milestoneTitle": "Phase 2: Streaming Telemetry & Vector Cache Integration",
+      "grossAmount": 2000,
+      "commissionPercentage": 10,
+      "platformFee": 200,
+      "netAmount": 1780,
+      "status": "available",
+      "transactionReference": "REF-GRAV-MWNUTYEA",
+      "createdAt": "2026-11-19T17:59:12.993Z",
+      "updatedAt": "2026-11-19T17:59:12.993Z"
+    },
+    {
+      "id": "LED-1795110852435-PQK6",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "contractId": "contract-demo-1",
+      "milestoneId": "ms-2",
+      "milestoneTitle": "Phase 2: Streaming Telemetry & Vector Cache Integration",
+      "grossAmount": 2000,
+      "commissionPercentage": 10,
+      "platformFee": 200,
+      "netAmount": 1780,
+      "status": "available",
+      "transactionReference": "REF-GRAV-MWNUNIHF",
+      "createdAt": "2026-11-19T17:54:12.434Z",
+      "updatedAt": "2026-11-19T17:54:12.434Z"
+    },
+    {
+      "id": "LED-1795110832668-BRKT",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "contractId": "contract-demo-1",
+      "milestoneId": "ms-2",
+      "milestoneTitle": "Phase 2: Streaming Telemetry & Vector Cache Integration",
+      "grossAmount": 2000,
+      "commissionPercentage": 10,
+      "platformFee": 200,
+      "netAmount": 1780,
+      "status": "available",
+      "transactionReference": "REF-GRAV-MWNUN38C",
+      "createdAt": "2026-11-19T17:53:52.665Z",
+      "updatedAt": "2026-11-19T17:53:52.665Z"
+    },
+    {
+      "id": "LED-1795110797012-L7L5",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "contractId": "contract-demo-1",
+      "milestoneId": "ms-2",
+      "milestoneTitle": "Phase 2: Streaming Telemetry & Vector Cache Integration",
+      "grossAmount": 2000,
+      "commissionPercentage": 10,
+      "platformFee": 200,
+      "netAmount": 1780,
+      "status": "available",
+      "transactionReference": "REF-GRAV-MWNUMBPW",
+      "createdAt": "2026-11-19T17:53:17.011Z",
+      "updatedAt": "2026-11-19T17:53:17.011Z"
+    },
+    {
+      "id": "LED-1795110772238-798O",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "contractId": "contract-demo-1",
+      "milestoneId": "ms-2",
+      "milestoneTitle": "Phase 2: Streaming Telemetry & Vector Cache Integration",
+      "grossAmount": 2000,
+      "commissionPercentage": 10,
+      "platformFee": 200,
+      "netAmount": 1780,
+      "status": "available",
+      "transactionReference": "REF-GRAV-MWNULSLQ",
+      "createdAt": "2026-11-19T17:52:52.236Z",
+      "updatedAt": "2026-11-19T17:52:52.236Z"
+    },
+    {
+      "id": "LED-1795110623738-HDD0",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "contractId": "contract-demo-1",
+      "milestoneId": "ms-2",
+      "milestoneTitle": "Phase 2: Streaming Telemetry & Vector Cache Integration",
+      "grossAmount": 2000,
+      "commissionPercentage": 10,
+      "platformFee": 200,
+      "netAmount": 1780,
+      "status": "available",
+      "transactionReference": "REF-GRAV-MWNUIM0Q",
+      "createdAt": "2026-11-19T17:50:23.737Z",
+      "updatedAt": "2026-11-19T17:50:23.737Z"
+    },
+    {
+      "id": "LED-DEMO-001",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "contractId": "contract-demo-1",
+      "milestoneId": "ms-demo-1",
+      "milestoneTitle": "Architecture Specification & Vector Pipeline",
+      "grossAmount": 2000,
+      "commissionPercentage": 10,
+      "platformFee": 200,
+      "netAmount": 1780,
+      "status": "available",
+      "transactionReference": "REF-GRAV-LLM941",
+      "createdAt": "2026-02-14T12:00:00.000Z",
+      "updatedAt": "2026-02-14T12:00:00.000Z"
+    },
+    {
+      "id": "LED-DEMO-002",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "projectId": "proj-2",
+      "projectTitle": "Real-time Streaming Vector Ingestion Engine",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "contractId": "contract-demo-1",
+      "milestoneId": "ms-demo-2",
+      "milestoneTitle": "Cluster Ingestion Benchmarks & SDK Release",
+      "grossAmount": 3500,
+      "commissionPercentage": 10,
+      "platformFee": 350,
+      "netAmount": 3115,
+      "status": "available",
+      "transactionReference": "REF-GRAV-VEC882",
+      "createdAt": "2026-02-15T16:00:00.000Z",
+      "updatedAt": "2026-02-15T16:00:00.000Z"
+    },
+    {
+      "id": "LED-DEMO-003",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "contractId": "contract-demo-1",
+      "milestoneId": "ms-demo-3",
+      "milestoneTitle": "Production Deployment & Load Testing",
+      "grossAmount": 2500,
+      "commissionPercentage": 10,
+      "platformFee": 250,
+      "netAmount": 2225,
+      "status": "pending_approval",
+      "transactionReference": "REF-GRAV-DEP319",
+      "createdAt": "2026-02-17T09:30:00.000Z",
+      "updatedAt": "2026-02-17T09:30:00.000Z"
+    }
+  ],
+  "platformSettings": {
+    "commissionPercentage": 10,
+    "minWithdrawalAmount": 20,
+    "withdrawalFeePercentage": 0,
+    "fixedWithdrawalFee": 0,
+    "payoutGatewayMode": "simulated_live",
+    "autoPayoutFrequency": "weekly",
+    "gstPercentage": 18,
+    "tdsPercentage": 1,
+    "sacCode": "998311",
+    "legalBusinessName": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+    "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+    "platformGstin": "07AAACG9928K1Z5",
+    "platformPan": "AAACG9928K",
+    "escrowReviewPeriodDays": 14,
+    "updatedAt": "2026-11-19T17:29:17.578Z"
+  },
+  "journalEntries": [
+    {
+      "id": "JRN-1795111308300-E4TV",
+      "timestamp": "2026-11-19T18:01:48.300Z",
+      "referenceType": "refund",
+      "referenceId": "ESC-DEMO-001",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-client-1",
+      "lines": [
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "Escrow Vault Trust",
+          "type": "debit",
+          "amount": 3800,
+          "currency": "USD"
+        },
+        {
+          "accountId": "asset:gateway_clearing",
+          "accountName": "Payment Gateway Clearing Account",
+          "type": "credit",
+          "amount": 3800,
+          "currency": "USD"
+        }
+      ],
+      "description": "Escrow Refund to Client: \"Autonomous Multi-Model LLM Orchestration Platform\" (Dispute Arbitration Decision: Full Refund to Client (Evidence reviewed. Milestone refunded back to client with Credit Note issued.))",
+      "immutable": true,
+      "createdAt": "2026-11-19T18:01:48.300Z"
+    },
+    {
+      "id": "JRN-1795111308194-ZLB2",
+      "timestamp": "2026-11-19T18:01:48.194Z",
+      "referenceType": "freelancer_payout",
+      "referenceId": "WTH-1795111308189-1QZI",
+      "userId": "user-freelancer-1",
+      "lines": [
+        {
+          "accountId": "liability:freelancer_payable",
+          "accountName": "Freelancer Payable Account",
+          "type": "debit",
+          "amount": 3560,
+          "currency": "USD"
+        },
+        {
+          "accountId": "asset:gateway_clearing",
+          "accountName": "Payment Gateway Clearing Account",
+          "type": "credit",
+          "amount": 3560,
+          "currency": "USD"
+        }
+      ],
+      "description": "Freelancer Payout Disbursed to Elena Vance ($3560) via BANK_TRANSFER (Ref: UTR-IMPS-11308194DF98F1AD)",
+      "immutable": true,
+      "createdAt": "2026-11-19T18:01:48.194Z"
+    },
+    {
+      "id": "JRN-1795111308143-O20J",
+      "timestamp": "2026-11-19T18:01:48.143Z",
+      "referenceType": "milestone_release",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-freelancer-1",
+      "lines": [
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "Escrow Vault Trust",
+          "type": "debit",
+          "amount": 2000,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:freelancer_payable",
+          "accountName": "Freelancer Payable Account",
+          "type": "credit",
+          "amount": 1780,
+          "currency": "USD"
+        },
+        {
+          "accountId": "revenue:platform_commission",
+          "accountName": "Platform Service Revenue",
+          "type": "credit",
+          "amount": 164,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_tds",
+          "accountName": "TDS Payable u/s 194-O",
+          "type": "credit",
+          "amount": 20,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_gst",
+          "accountName": "GST Output Tax Payable",
+          "type": "credit",
+          "amount": 36,
+          "currency": "USD"
+        }
+      ],
+      "description": "Milestone Release for \"Phase 2: Streaming Telemetry & Vector Cache Integration\" (Gross: $2000, Net: $1780)",
+      "immutable": true,
+      "createdAt": "2026-11-19T18:01:48.143Z"
+    },
+    {
+      "id": "JRN-1795111308111-Z0I4",
+      "timestamp": "2026-11-19T18:01:48.111Z",
+      "referenceType": "project_funding",
+      "referenceId": "ESC-DEMO-001",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-client-1",
+      "lines": [
+        {
+          "accountId": "asset:gateway_clearing",
+          "accountName": "Payment Gateway Clearing Account",
+          "type": "debit",
+          "amount": 5800,
+          "currency": "USD"
+        },
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "GRAVITASS Escrow Vault Trust",
+          "type": "credit",
+          "amount": 5800,
+          "currency": "USD"
+        }
+      ],
+      "description": "Client Escrow Deposit for \"Autonomous Multi-Model LLM Orchestration Platform\" (Ref: PAY-GATEWAY-MWNUXA33)",
+      "immutable": true,
+      "createdAt": "2026-11-19T18:01:48.111Z"
+    },
+    {
+      "id": "JRN-1795111289456-DJ7R",
+      "timestamp": "2026-11-19T18:01:29.456Z",
+      "referenceType": "refund",
+      "referenceId": "ESC-DEMO-001",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-client-1",
+      "lines": [
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "Escrow Vault Trust",
+          "type": "debit",
+          "amount": 55400,
+          "currency": "USD"
+        },
+        {
+          "accountId": "asset:gateway_clearing",
+          "accountName": "Payment Gateway Clearing Account",
+          "type": "credit",
+          "amount": 55400,
+          "currency": "USD"
+        }
+      ],
+      "description": "Escrow Refund to Client: \"Autonomous Multi-Model LLM Orchestration Platform\" (Dispute Arbitration Decision: Full Refund to Client (Evidence reviewed. Milestone refunded back to client with Credit Note issued.))",
+      "immutable": true,
+      "createdAt": "2026-11-19T18:01:29.456Z"
+    },
+    {
+      "id": "JRN-1795111289271-UYYK",
+      "timestamp": "2026-11-19T18:01:29.271Z",
+      "referenceType": "milestone_release",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-freelancer-1",
+      "lines": [
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "Escrow Vault Trust",
+          "type": "debit",
+          "amount": 2000,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:freelancer_payable",
+          "accountName": "Freelancer Payable Account",
+          "type": "credit",
+          "amount": 1780,
+          "currency": "USD"
+        },
+        {
+          "accountId": "revenue:platform_commission",
+          "accountName": "Platform Service Revenue",
+          "type": "credit",
+          "amount": 164,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_tds",
+          "accountName": "TDS Payable u/s 194-O",
+          "type": "credit",
+          "amount": 20,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_gst",
+          "accountName": "GST Output Tax Payable",
+          "type": "credit",
+          "amount": 36,
+          "currency": "USD"
+        }
+      ],
+      "description": "Milestone Release for \"Phase 2: Streaming Telemetry & Vector Cache Integration\" (Gross: $2000, Net: $1780)",
+      "immutable": true,
+      "createdAt": "2026-11-19T18:01:29.271Z"
+    },
+    {
+      "id": "JRN-1795111289255-3Y1D",
+      "timestamp": "2026-11-19T18:01:29.255Z",
+      "referenceType": "project_funding",
+      "referenceId": "ESC-DEMO-001",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-client-1",
+      "lines": [
+        {
+          "accountId": "asset:gateway_clearing",
+          "accountName": "Payment Gateway Clearing Account",
+          "type": "debit",
+          "amount": 5800,
+          "currency": "USD"
+        },
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "GRAVITASS Escrow Vault Trust",
+          "type": "credit",
+          "amount": 5800,
+          "currency": "USD"
+        }
+      ],
+      "description": "Client Escrow Deposit for \"Autonomous Multi-Model LLM Orchestration Platform\" (Ref: PAY-GATEWAY-MWNUWVJB)",
+      "immutable": true,
+      "createdAt": "2026-11-19T18:01:29.255Z"
+    },
+    {
+      "id": "JRN-1795111262168-D2NA",
+      "timestamp": "2026-11-19T18:01:02.168Z",
+      "referenceType": "freelancer_payout",
+      "referenceId": "WTH-1795111262165-35V5",
+      "userId": "user-freelancer-1",
+      "lines": [
+        {
+          "accountId": "liability:freelancer_payable",
+          "accountName": "Freelancer Payable Account",
+          "type": "debit",
+          "amount": 3560,
+          "currency": "USD"
+        },
+        {
+          "accountId": "asset:gateway_clearing",
+          "accountName": "Payment Gateway Clearing Account",
+          "type": "credit",
+          "amount": 3560,
+          "currency": "USD"
+        }
+      ],
+      "description": "Freelancer Payout Disbursed to Elena Vance ($3560) via BANK_TRANSFER (Ref: UTR-IMPS-11262168EF4E376C)",
+      "immutable": true,
+      "createdAt": "2026-11-19T18:01:02.168Z"
+    },
+    {
+      "id": "JRN-1795111262103-JIFD",
+      "timestamp": "2026-11-19T18:01:02.103Z",
+      "referenceType": "milestone_release",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-freelancer-1",
+      "lines": [
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "Escrow Vault Trust",
+          "type": "debit",
+          "amount": 2000,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:freelancer_payable",
+          "accountName": "Freelancer Payable Account",
+          "type": "credit",
+          "amount": 1780,
+          "currency": "USD"
+        },
+        {
+          "accountId": "revenue:platform_commission",
+          "accountName": "Platform Service Revenue",
+          "type": "credit",
+          "amount": 164,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_tds",
+          "accountName": "TDS Payable u/s 194-O",
+          "type": "credit",
+          "amount": 20,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_gst",
+          "accountName": "GST Output Tax Payable",
+          "type": "credit",
+          "amount": 36,
+          "currency": "USD"
+        }
+      ],
+      "description": "Milestone Release for \"Phase 2: Streaming Telemetry & Vector Cache Integration\" (Gross: $2000, Net: $1780)",
+      "immutable": true,
+      "createdAt": "2026-11-19T18:01:02.103Z"
+    },
+    {
+      "id": "JRN-1795111262089-B3L1",
+      "timestamp": "2026-11-19T18:01:02.089Z",
+      "referenceType": "project_funding",
+      "referenceId": "ESC-DEMO-001",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-client-1",
+      "lines": [
+        {
+          "accountId": "asset:gateway_clearing",
+          "accountName": "Payment Gateway Clearing Account",
+          "type": "debit",
+          "amount": 5800,
+          "currency": "USD"
+        },
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "GRAVITASS Escrow Vault Trust",
+          "type": "credit",
+          "amount": 5800,
+          "currency": "USD"
+        }
+      ],
+      "description": "Client Escrow Deposit for \"Autonomous Multi-Model LLM Orchestration Platform\" (Ref: PAY-GATEWAY-MWNUWAKP)",
+      "immutable": true,
+      "createdAt": "2026-11-19T18:01:02.089Z"
+    },
+    {
+      "id": "JRN-1795111192977-XWH6",
+      "timestamp": "2026-11-19T17:59:52.977Z",
+      "referenceType": "milestone_release",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-freelancer-1",
+      "lines": [
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "Escrow Vault Trust",
+          "type": "debit",
+          "amount": 2000,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:freelancer_payable",
+          "accountName": "Freelancer Payable Account",
+          "type": "credit",
+          "amount": 1780,
+          "currency": "USD"
+        },
+        {
+          "accountId": "revenue:platform_commission",
+          "accountName": "Platform Service Revenue",
+          "type": "credit",
+          "amount": 164,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_tds",
+          "accountName": "TDS Payable u/s 194-O",
+          "type": "credit",
+          "amount": 20,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_gst",
+          "accountName": "GST Output Tax Payable",
+          "type": "credit",
+          "amount": 36,
+          "currency": "USD"
+        }
+      ],
+      "description": "Milestone Release for \"Phase 2: Streaming Telemetry & Vector Cache Integration\" (Gross: $2000, Net: $1780)",
+      "immutable": true,
+      "createdAt": "2026-11-19T17:59:52.977Z"
+    },
+    {
+      "id": "JRN-1795111192956-HFVK",
+      "timestamp": "2026-11-19T17:59:52.956Z",
+      "referenceType": "project_funding",
+      "referenceId": "ESC-DEMO-001",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-client-1",
+      "lines": [
+        {
+          "accountId": "asset:gateway_clearing",
+          "accountName": "Payment Gateway Clearing Account",
+          "type": "debit",
+          "amount": 5800,
+          "currency": "USD"
+        },
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "GRAVITASS Escrow Vault Trust",
+          "type": "credit",
+          "amount": 5800,
+          "currency": "USD"
+        }
+      ],
+      "description": "Client Escrow Deposit for \"Autonomous Multi-Model LLM Orchestration Platform\" (Ref: PAY-GATEWAY-MWNUUT8C)",
+      "immutable": true,
+      "createdAt": "2026-11-19T17:59:52.956Z"
+    },
+    {
+      "id": "JRN-1795111153035-5I73",
+      "timestamp": "2026-11-19T17:59:13.035Z",
+      "referenceType": "freelancer_payout",
+      "referenceId": "WTH-1795111153031-V2UU",
+      "userId": "user-freelancer-1",
+      "lines": [
+        {
+          "accountId": "liability:freelancer_payable",
+          "accountName": "Freelancer Payable Account",
+          "type": "debit",
+          "amount": 14075,
+          "currency": "USD"
+        },
+        {
+          "accountId": "asset:gateway_clearing",
+          "accountName": "Payment Gateway Clearing Account",
+          "type": "credit",
+          "amount": 14075,
+          "currency": "USD"
+        }
+      ],
+      "description": "Freelancer Payout Disbursed to Elena Vance ($14075) via BANK_TRANSFER (Ref: UTR-IMPS-11153034BFE6ADE0)",
+      "immutable": true,
+      "createdAt": "2026-11-19T17:59:13.035Z"
+    },
+    {
+      "id": "JRN-1795111152993-ZROO",
+      "timestamp": "2026-11-19T17:59:12.993Z",
+      "referenceType": "milestone_release",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-freelancer-1",
+      "lines": [
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "Escrow Vault Trust",
+          "type": "debit",
+          "amount": 2000,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:freelancer_payable",
+          "accountName": "Freelancer Payable Account",
+          "type": "credit",
+          "amount": 1780,
+          "currency": "USD"
+        },
+        {
+          "accountId": "revenue:platform_commission",
+          "accountName": "Platform Service Revenue",
+          "type": "credit",
+          "amount": 164,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_tds",
+          "accountName": "TDS Payable u/s 194-O",
+          "type": "credit",
+          "amount": 20,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_gst",
+          "accountName": "GST Output Tax Payable",
+          "type": "credit",
+          "amount": 36,
+          "currency": "USD"
+        }
+      ],
+      "description": "Milestone Release for \"Phase 2: Streaming Telemetry & Vector Cache Integration\" (Gross: $2000, Net: $1780)",
+      "immutable": true,
+      "createdAt": "2026-11-19T17:59:12.993Z"
+    },
+    {
+      "id": "JRN-1795111152949-8XLA",
+      "timestamp": "2026-11-19T17:59:12.949Z",
+      "referenceType": "project_funding",
+      "referenceId": "ESC-DEMO-001",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-client-1",
+      "lines": [
+        {
+          "accountId": "asset:gateway_clearing",
+          "accountName": "Payment Gateway Clearing Account",
+          "type": "debit",
+          "amount": 5800,
+          "currency": "USD"
+        },
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "GRAVITASS Escrow Vault Trust",
+          "type": "credit",
+          "amount": 5800,
+          "currency": "USD"
+        }
+      ],
+      "description": "Client Escrow Deposit for \"Autonomous Multi-Model LLM Orchestration Platform\" (Ref: PAY-GATEWAY-MWNUTYD0)",
+      "immutable": true,
+      "createdAt": "2026-11-19T17:59:12.949Z"
+    },
+    {
+      "id": "JRN-1795110852434-ZODG",
+      "timestamp": "2026-11-19T17:54:12.434Z",
+      "referenceType": "milestone_release",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-freelancer-1",
+      "lines": [
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "Escrow Vault Trust",
+          "type": "debit",
+          "amount": 2000,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:freelancer_payable",
+          "accountName": "Freelancer Payable Account",
+          "type": "credit",
+          "amount": 1780,
+          "currency": "USD"
+        },
+        {
+          "accountId": "revenue:platform_commission",
+          "accountName": "Platform Service Revenue",
+          "type": "credit",
+          "amount": 164,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_tds",
+          "accountName": "TDS Payable u/s 194-O",
+          "type": "credit",
+          "amount": 20,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_gst",
+          "accountName": "GST Output Tax Payable",
+          "type": "credit",
+          "amount": 36,
+          "currency": "USD"
+        }
+      ],
+      "description": "Milestone Release for \"Phase 2: Streaming Telemetry & Vector Cache Integration\" (Gross: $2000, Net: $1780)",
+      "immutable": true,
+      "createdAt": "2026-11-19T17:54:12.434Z"
+    },
+    {
+      "id": "JRN-1795110852416-X5Q3",
+      "timestamp": "2026-11-19T17:54:12.416Z",
+      "referenceType": "project_funding",
+      "referenceId": "ESC-DEMO-001",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-client-1",
+      "lines": [
+        {
+          "accountId": "asset:gateway_clearing",
+          "accountName": "Payment Gateway Clearing Account",
+          "type": "debit",
+          "amount": 5800,
+          "currency": "USD"
+        },
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "GRAVITASS Escrow Vault Trust",
+          "type": "credit",
+          "amount": 5800,
+          "currency": "USD"
+        }
+      ],
+      "description": "Client Escrow Deposit for \"Autonomous Multi-Model LLM Orchestration Platform\" (Ref: PAY-GATEWAY-MWNUNIGW)",
+      "immutable": true,
+      "createdAt": "2026-11-19T17:54:12.416Z"
+    },
+    {
+      "id": "JRN-1795110832665-ONPQ",
+      "timestamp": "2026-11-19T17:53:52.665Z",
+      "referenceType": "milestone_release",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-freelancer-1",
+      "lines": [
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "Escrow Vault Trust",
+          "type": "debit",
+          "amount": 2000,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:freelancer_payable",
+          "accountName": "Freelancer Payable Account",
+          "type": "credit",
+          "amount": 1780,
+          "currency": "USD"
+        },
+        {
+          "accountId": "revenue:platform_commission",
+          "accountName": "Platform Service Revenue",
+          "type": "credit",
+          "amount": 164,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_tds",
+          "accountName": "TDS Payable u/s 194-O",
+          "type": "credit",
+          "amount": 20,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_gst",
+          "accountName": "GST Output Tax Payable",
+          "type": "credit",
+          "amount": 36,
+          "currency": "USD"
+        }
+      ],
+      "description": "Milestone Release for \"Phase 2: Streaming Telemetry & Vector Cache Integration\" (Gross: $2000, Net: $1780)",
+      "immutable": true,
+      "createdAt": "2026-11-19T17:53:52.665Z"
+    },
+    {
+      "id": "JRN-1795110832635-6FQW",
+      "timestamp": "2026-11-19T17:53:52.635Z",
+      "referenceType": "project_funding",
+      "referenceId": "ESC-DEMO-001",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-client-1",
+      "lines": [
+        {
+          "accountId": "asset:gateway_clearing",
+          "accountName": "Payment Gateway Clearing Account",
+          "type": "debit",
+          "amount": 5800,
+          "currency": "USD"
+        },
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "GRAVITASS Escrow Vault Trust",
+          "type": "credit",
+          "amount": 5800,
+          "currency": "USD"
+        }
+      ],
+      "description": "Client Escrow Deposit for \"Autonomous Multi-Model LLM Orchestration Platform\" (Ref: PAY-GATEWAY-MWNUN37F)",
+      "immutable": true,
+      "createdAt": "2026-11-19T17:53:52.635Z"
+    },
+    {
+      "id": "JRN-1795110797011-O5Q4",
+      "timestamp": "2026-11-19T17:53:17.011Z",
+      "referenceType": "milestone_release",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-freelancer-1",
+      "lines": [
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "Escrow Vault Trust",
+          "type": "debit",
+          "amount": 2000,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:freelancer_payable",
+          "accountName": "Freelancer Payable Account",
+          "type": "credit",
+          "amount": 1780,
+          "currency": "USD"
+        },
+        {
+          "accountId": "revenue:platform_commission",
+          "accountName": "Platform Service Revenue",
+          "type": "credit",
+          "amount": 164,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_tds",
+          "accountName": "TDS Payable u/s 194-O",
+          "type": "credit",
+          "amount": 20,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_gst",
+          "accountName": "GST Output Tax Payable",
+          "type": "credit",
+          "amount": 36,
+          "currency": "USD"
+        }
+      ],
+      "description": "Milestone Release for \"Phase 2: Streaming Telemetry & Vector Cache Integration\" (Gross: $2000, Net: $1780)",
+      "immutable": true,
+      "createdAt": "2026-11-19T17:53:17.011Z"
+    },
+    {
+      "id": "JRN-1795110796980-S4ZJ",
+      "timestamp": "2026-11-19T17:53:16.980Z",
+      "referenceType": "project_funding",
+      "referenceId": "ESC-DEMO-001",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-client-1",
+      "lines": [
+        {
+          "accountId": "asset:gateway_clearing",
+          "accountName": "Payment Gateway Clearing Account",
+          "type": "debit",
+          "amount": 5800,
+          "currency": "USD"
+        },
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "GRAVITASS Escrow Vault Trust",
+          "type": "credit",
+          "amount": 5800,
+          "currency": "USD"
+        }
+      ],
+      "description": "Client Escrow Deposit for \"Autonomous Multi-Model LLM Orchestration Platform\" (Ref: PAY-GATEWAY-MWNUMBP0)",
+      "immutable": true,
+      "createdAt": "2026-11-19T17:53:16.980Z"
+    },
+    {
+      "id": "JRN-1795110772236-01ZW",
+      "timestamp": "2026-11-19T17:52:52.236Z",
+      "referenceType": "milestone_release",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-freelancer-1",
+      "lines": [
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "Escrow Vault Trust",
+          "type": "debit",
+          "amount": 2000,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:freelancer_payable",
+          "accountName": "Freelancer Payable Account",
+          "type": "credit",
+          "amount": 1780,
+          "currency": "USD"
+        },
+        {
+          "accountId": "revenue:platform_commission",
+          "accountName": "Platform Service Revenue",
+          "type": "credit",
+          "amount": 164,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_tds",
+          "accountName": "TDS Payable u/s 194-O",
+          "type": "credit",
+          "amount": 20,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_gst",
+          "accountName": "GST Output Tax Payable",
+          "type": "credit",
+          "amount": 36,
+          "currency": "USD"
+        }
+      ],
+      "description": "Milestone Release for \"Phase 2: Streaming Telemetry & Vector Cache Integration\" (Gross: $2000, Net: $1780)",
+      "immutable": true,
+      "createdAt": "2026-11-19T17:52:52.236Z"
+    },
+    {
+      "id": "JRN-1795110772194-B1D0",
+      "timestamp": "2026-11-19T17:52:52.194Z",
+      "referenceType": "project_funding",
+      "referenceId": "ESC-DEMO-001",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-client-1",
+      "lines": [
+        {
+          "accountId": "asset:gateway_clearing",
+          "accountName": "Payment Gateway Clearing Account",
+          "type": "debit",
+          "amount": 5800,
+          "currency": "USD"
+        },
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "GRAVITASS Escrow Vault Trust",
+          "type": "credit",
+          "amount": 5800,
+          "currency": "USD"
+        }
+      ],
+      "description": "Client Escrow Deposit for \"Autonomous Multi-Model LLM Orchestration Platform\" (Ref: PAY-GATEWAY-MWNULSKI)",
+      "immutable": true,
+      "createdAt": "2026-11-19T17:52:52.194Z"
+    },
+    {
+      "id": "JRN-1795110623737-4Q23",
+      "timestamp": "2026-11-19T17:50:23.737Z",
+      "referenceType": "milestone_release",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-freelancer-1",
+      "lines": [
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "Escrow Vault Trust",
+          "type": "debit",
+          "amount": 2000,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:freelancer_payable",
+          "accountName": "Freelancer Payable Account",
+          "type": "credit",
+          "amount": 1780,
+          "currency": "USD"
+        },
+        {
+          "accountId": "revenue:platform_commission",
+          "accountName": "Platform Service Revenue",
+          "type": "credit",
+          "amount": 164,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_tds",
+          "accountName": "TDS Payable u/s 194-O",
+          "type": "credit",
+          "amount": 20,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_gst",
+          "accountName": "GST Output Tax Payable",
+          "type": "credit",
+          "amount": 36,
+          "currency": "USD"
+        }
+      ],
+      "description": "Milestone Release for \"Phase 2: Streaming Telemetry & Vector Cache Integration\" (Gross: $2000, Net: $1780)",
+      "immutable": true,
+      "createdAt": "2026-11-19T17:50:23.737Z"
+    },
+    {
+      "id": "JRN-1795110623707-OMUI",
+      "timestamp": "2026-11-19T17:50:23.707Z",
+      "referenceType": "project_funding",
+      "referenceId": "ESC-DEMO-001",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-client-1",
+      "lines": [
+        {
+          "accountId": "asset:gateway_clearing",
+          "accountName": "Payment Gateway Clearing Account",
+          "type": "debit",
+          "amount": 5800,
+          "currency": "USD"
+        },
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "GRAVITASS Escrow Vault Trust",
+          "type": "credit",
+          "amount": 5800,
+          "currency": "USD"
+        }
+      ],
+      "description": "Client Escrow Deposit for \"Autonomous Multi-Model LLM Orchestration Platform\" (Ref: PAY-GATEWAY-MWNUILZV)",
+      "immutable": true,
+      "createdAt": "2026-11-19T17:50:23.707Z"
+    },
+    {
+      "id": "JRN-1795110563420-4CHM",
+      "timestamp": "2026-11-19T17:49:23.420Z",
+      "referenceType": "project_funding",
+      "referenceId": "ESC-DEMO-001",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-client-1",
+      "lines": [
+        {
+          "accountId": "asset:gateway_clearing",
+          "accountName": "Payment Gateway Clearing Account",
+          "type": "debit",
+          "amount": 5800,
+          "currency": "USD"
+        },
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "GRAVITASS Escrow Vault Trust",
+          "type": "credit",
+          "amount": 5800,
+          "currency": "USD"
+        }
+      ],
+      "description": "Client Escrow Deposit for \"Autonomous Multi-Model LLM Orchestration Platform\" (Ref: PAY-GATEWAY-MWNUHBH8)",
+      "immutable": true,
+      "createdAt": "2026-11-19T17:49:23.420Z"
+    },
+    {
+      "id": "JRN-1795110469719-PNGD",
+      "timestamp": "2026-11-19T17:47:49.719Z",
+      "referenceType": "project_funding",
+      "referenceId": "ESC-DEMO-001",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-client-1",
+      "lines": [
+        {
+          "accountId": "asset:gateway_clearing",
+          "accountName": "Payment Gateway Clearing Account",
+          "type": "debit",
+          "amount": 5800,
+          "currency": "USD"
+        },
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "GRAVITASS Escrow Vault Trust",
+          "type": "credit",
+          "amount": 5800,
+          "currency": "USD"
+        }
+      ],
+      "description": "Client Escrow Deposit for \"Autonomous Multi-Model LLM Orchestration Platform\" (Ref: PAY-GATEWAY-MWNUFB6F)",
+      "immutable": true,
+      "createdAt": "2026-11-19T17:47:49.719Z"
+    },
+    {
+      "id": "JRN-1795109631189-6O2S",
+      "timestamp": "2026-11-19T17:33:51.189Z",
+      "referenceType": "project_funding",
+      "referenceId": "ESC-DEMO-001",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-client-1",
+      "lines": [
+        {
+          "accountId": "asset:gateway_clearing",
+          "accountName": "Payment Gateway Clearing Account",
+          "type": "debit",
+          "amount": 5800,
+          "currency": "USD"
+        },
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "GRAVITASS Escrow Vault Trust",
+          "type": "credit",
+          "amount": 5800,
+          "currency": "USD"
+        }
+      ],
+      "description": "Client Escrow Deposit for \"Autonomous Multi-Model LLM Orchestration Platform\" (Ref: PAY-GATEWAY-MWNTXC5V)",
+      "immutable": true,
+      "createdAt": "2026-11-19T17:33:51.189Z"
+    },
+    {
+      "id": "JRN-DEMO-001",
+      "timestamp": "2026-02-13T09:00:00.000Z",
+      "referenceType": "project_funding",
+      "referenceId": "ESC-DEMO-001",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-client-1",
+      "lines": [
+        {
+          "accountId": "asset:gateway_clearing",
+          "accountName": "Gateway Clearing Account",
+          "type": "debit",
+          "amount": 5800,
+          "currency": "USD"
+        },
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "Escrow Vault Trust Account",
+          "type": "credit",
+          "amount": 5800,
+          "currency": "USD"
+        }
+      ],
+      "description": "Client full contract escrow deposit funded for Autonomous Multi-Model LLM Orchestration Platform",
+      "immutable": true,
+      "createdAt": "2026-02-13T09:00:00.000Z"
+    },
+    {
+      "id": "JRN-DEMO-002",
+      "timestamp": "2026-02-14T12:00:00.000Z",
+      "referenceType": "milestone_release",
+      "referenceId": "ms-demo-1",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "userId": "user-freelancer-1",
+      "lines": [
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "Escrow Vault Trust Account",
+          "type": "debit",
+          "amount": 2000,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:freelancer_payable",
+          "accountName": "Freelancer Payable Account",
+          "type": "credit",
+          "amount": 1780,
+          "currency": "USD"
+        },
+        {
+          "accountId": "revenue:platform_commission",
+          "accountName": "Platform Commission Revenue",
+          "type": "credit",
+          "amount": 200,
+          "currency": "USD"
+        },
+        {
+          "accountId": "liability:tax_payable_tds",
+          "accountName": "TDS Payable u/s 194-O",
+          "type": "credit",
+          "amount": 20,
+          "currency": "USD"
+        }
+      ],
+      "description": "Milestone 1 approved and released: Architecture Specification & Vector Pipeline",
+      "immutable": true,
+      "createdAt": "2026-02-14T12:00:00.000Z"
+    }
+  ],
+  "escrowAccounts": [
+    {
+      "id": "ESC-DEMO-001",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "totalGrossAmount": 5800,
+      "fundedAmount": 81200,
+      "releasedAmount": 22000,
+      "refundedAmount": 59200,
+      "currency": "USD",
+      "status": "refunded",
+      "gatewayOrderId": "order_sec_88419024",
+      "gatewayPaymentId": "pay_sec_99410382",
+      "isDisputed": false,
+      "milestones": [
+        {
+          "milestoneId": "ms-demo-1",
+          "title": "Architecture Specification & Vector Pipeline",
+          "amount": 2000,
+          "status": "payment_released",
+          "fundedAt": "2026-02-13T09:00:00.000Z",
+          "approvedAt": "2026-02-14T12:00:00.000Z",
+          "releasedAt": "2026-02-14T12:00:00.000Z",
+          "releaseTxId": "LED-DEMO-001"
+        },
+        {
+          "milestoneId": "ms-demo-2",
+          "title": "Agent Workflow Runtime & Evaluators",
+          "amount": 2000,
+          "status": "payment_released",
+          "fundedAt": "2026-02-13T09:00:00.000Z",
+          "submittedAt": "2026-02-17T14:00:00.000Z",
+          "autoReleaseDate": "2026-03-03T14:00:00.000Z",
+          "releasedAt": "2026-11-19T18:01:48.143Z",
+          "releaseTxId": "LED-1795111308144-RXE9"
+        },
+        {
+          "milestoneId": "ms-demo-3",
+          "title": "Production Deployment & Load Testing",
+          "amount": 1800,
+          "status": "funds_secured",
+          "fundedAt": "2026-02-13T09:00:00.000Z"
+        }
+      ],
+      "createdAt": "2026-02-13T09:00:00.000Z",
+      "updatedAt": "2026-11-19T18:01:48.300Z",
+      "disputeId": "DSP-1795111308267"
+    }
+  ],
+  "commissionRules": [
+    {
+      "id": "COMM-2026-v1",
+      "version": "v2026.1",
+      "defaultPercentage": 10,
+      "categoryRates": {
+        "development": 8,
+        "design": 10,
+        "ai": 7,
+        "marketing": 12
+      },
+      "freelancerRates": {},
+      "minFee": 20,
+      "maxFee": 50000,
+      "effectiveDate": "2026-01-01T00:00:00.000Z",
+      "description": "Tiered production platform commission framework with category concessions",
+      "isActive": true,
+      "updatedAt": "2026-11-19T17:29:17.579Z"
+    }
+  ],
+  "taxRules": [
+    {
+      "id": "TAX-GST-COMM-18",
+      "name": "GST on Platform Service Commission (18%)",
+      "type": "gst_on_commission",
+      "ratePercentage": 18,
+      "cgstPercentage": 9,
+      "sgstPercentage": 9,
+      "igstPercentage": 18,
+      "appliesTo": "platform_fee",
+      "panRequired": false,
+      "sacCode": "998311",
+      "legalSection": "CGST Act 2017 - SAC 998311 Information Technology Software & Marketplace Intermediation Services",
+      "isEnabled": true,
+      "effectiveDate": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "TAX-TDS-194O-1",
+      "name": "Section 194-O TDS on E-Commerce Marketplace Participant Payments",
+      "type": "tds_194o",
+      "ratePercentage": 1,
+      "appliesTo": "gross_project_amount",
+      "panRequired": true,
+      "thresholdAmount": 0,
+      "legalSection": "Section 194-O of Income Tax Act 1961 (TDS on E-commerce operator payments)",
+      "isEnabled": true,
+      "effectiveDate": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "taxTransactions": [
+    {
+      "id": "TAX-1795111308144-TDS",
+      "transactionId": "TX-REL-1795111308144",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "clientId": "user-client-1",
+      "taxRuleId": "TAX-TDS-194O-1",
+      "taxType": "tds_194o",
+      "taxableAmount": 2000,
+      "ratePercentage": 1,
+      "taxAmount": 20,
+      "tdsAmount": 20,
+      "financialYear": "2025-2026",
+      "month": "2026-11",
+      "createdAt": "2026-11-19T18:01:48.143Z"
+    },
+    {
+      "id": "TAX-1795111289271-TDS",
+      "transactionId": "TX-REL-1795111289271",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "clientId": "user-client-1",
+      "taxRuleId": "TAX-TDS-194O-1",
+      "taxType": "tds_194o",
+      "taxableAmount": 2000,
+      "ratePercentage": 1,
+      "taxAmount": 20,
+      "tdsAmount": 20,
+      "financialYear": "2025-2026",
+      "month": "2026-11",
+      "createdAt": "2026-11-19T18:01:29.270Z"
+    },
+    {
+      "id": "TAX-1795111262104-TDS",
+      "transactionId": "TX-REL-1795111262104",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "clientId": "user-client-1",
+      "taxRuleId": "TAX-TDS-194O-1",
+      "taxType": "tds_194o",
+      "taxableAmount": 2000,
+      "ratePercentage": 1,
+      "taxAmount": 20,
+      "tdsAmount": 20,
+      "financialYear": "2025-2026",
+      "month": "2026-11",
+      "createdAt": "2026-11-19T18:01:02.103Z"
+    },
+    {
+      "id": "TAX-1795111192978-TDS",
+      "transactionId": "TX-REL-1795111192978",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "clientId": "user-client-1",
+      "taxRuleId": "TAX-TDS-194O-1",
+      "taxType": "tds_194o",
+      "taxableAmount": 2000,
+      "ratePercentage": 1,
+      "taxAmount": 20,
+      "tdsAmount": 20,
+      "financialYear": "2025-2026",
+      "month": "2026-11",
+      "createdAt": "2026-11-19T17:59:52.977Z"
+    },
+    {
+      "id": "TAX-1795111152994-TDS",
+      "transactionId": "TX-REL-1795111152994",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "clientId": "user-client-1",
+      "taxRuleId": "TAX-TDS-194O-1",
+      "taxType": "tds_194o",
+      "taxableAmount": 2000,
+      "ratePercentage": 1,
+      "taxAmount": 20,
+      "tdsAmount": 20,
+      "financialYear": "2025-2026",
+      "month": "2026-11",
+      "createdAt": "2026-11-19T17:59:12.993Z"
+    },
+    {
+      "id": "TAX-1795110852435-TDS",
+      "transactionId": "TX-REL-1795110852435",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "clientId": "user-client-1",
+      "taxRuleId": "TAX-TDS-194O-1",
+      "taxType": "tds_194o",
+      "taxableAmount": 2000,
+      "ratePercentage": 1,
+      "taxAmount": 20,
+      "tdsAmount": 20,
+      "financialYear": "2025-2026",
+      "month": "2026-11",
+      "createdAt": "2026-11-19T17:54:12.434Z"
+    },
+    {
+      "id": "TAX-1795110832668-TDS",
+      "transactionId": "TX-REL-1795110832668",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "clientId": "user-client-1",
+      "taxRuleId": "TAX-TDS-194O-1",
+      "taxType": "tds_194o",
+      "taxableAmount": 2000,
+      "ratePercentage": 1,
+      "taxAmount": 20,
+      "tdsAmount": 20,
+      "financialYear": "2025-2026",
+      "month": "2026-11",
+      "createdAt": "2026-11-19T17:53:52.665Z"
+    },
+    {
+      "id": "TAX-1795110797012-TDS",
+      "transactionId": "TX-REL-1795110797012",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "clientId": "user-client-1",
+      "taxRuleId": "TAX-TDS-194O-1",
+      "taxType": "tds_194o",
+      "taxableAmount": 2000,
+      "ratePercentage": 1,
+      "taxAmount": 20,
+      "tdsAmount": 20,
+      "financialYear": "2025-2026",
+      "month": "2026-11",
+      "createdAt": "2026-11-19T17:53:17.011Z"
+    },
+    {
+      "id": "TAX-1795110772238-TDS",
+      "transactionId": "TX-REL-1795110772238",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "clientId": "user-client-1",
+      "taxRuleId": "TAX-TDS-194O-1",
+      "taxType": "tds_194o",
+      "taxableAmount": 2000,
+      "ratePercentage": 1,
+      "taxAmount": 20,
+      "tdsAmount": 20,
+      "financialYear": "2025-2026",
+      "month": "2026-11",
+      "createdAt": "2026-11-19T17:52:52.236Z"
+    },
+    {
+      "id": "TAX-1795110623738-TDS",
+      "transactionId": "TX-REL-1795110623738",
+      "referenceId": "ms-2",
+      "contractId": "contract-demo-1",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "clientId": "user-client-1",
+      "taxRuleId": "TAX-TDS-194O-1",
+      "taxType": "tds_194o",
+      "taxableAmount": 2000,
+      "ratePercentage": 1,
+      "taxAmount": 20,
+      "tdsAmount": 20,
+      "financialYear": "2025-2026",
+      "month": "2026-11",
+      "createdAt": "2026-11-19T17:50:23.737Z"
+    },
+    {
+      "id": "TAX-DEMO-001",
+      "transactionId": "LED-DEMO-001",
+      "referenceId": "ms-demo-1",
+      "contractId": "contract-demo-1",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "clientId": "user-client-1",
+      "taxRuleId": "TAX-TDS-194O-1",
+      "taxType": "tds_194o",
+      "taxableAmount": 2000,
+      "ratePercentage": 1,
+      "taxAmount": 20,
+      "tdsAmount": 20,
+      "financialYear": "2025-2026",
+      "month": "2026-02",
+      "createdAt": "2026-02-14T12:00:00.000Z"
+    },
+    {
+      "id": "TAX-DEMO-002",
+      "transactionId": "INV-2026-0002",
+      "referenceId": "ms-demo-1",
+      "contractId": "contract-demo-1",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "clientId": "user-client-1",
+      "taxRuleId": "TAX-GST-COMM-18",
+      "taxType": "gst_on_commission",
+      "taxableAmount": 200,
+      "ratePercentage": 18,
+      "taxAmount": 36,
+      "cgst": 18,
+      "sgst": 18,
+      "financialYear": "2025-2026",
+      "month": "2026-02",
+      "createdAt": "2026-02-14T12:00:00.000Z"
+    }
+  ],
+  "invoices": [
+    {
+      "id": "CRN-2026-0002",
+      "invoiceNumber": "CRN-2026-0002",
+      "type": "refund_credit_note",
+      "status": "refunded",
+      "issueDate": "2026-11-19T18:01:48.300Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Aetheria Labs",
+        "email": "client@gravitass.com",
+        "legalAddress": "Verified Enterprise Client"
+      },
+      "items": [
+        {
+          "id": "crn-item-1795111308302",
+          "description": "Escrow Refund Reversal: Autonomous Multi-Model LLM Orchestration Platform (Dispute Arbitration Decision: Full Refund to Client (Evidence reviewed. Milestone refunded back to client with Credit Note issued.))",
+          "quantity": 1,
+          "unitPrice": 3800,
+          "taxableAmount": 3800,
+          "taxRate": 0,
+          "taxAmount": 0,
+          "totalAmount": 3800
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 3800,
+      "taxTotal": 0,
+      "grandTotal": 3800,
+      "notes": "Refund memorandum executed under dispute/cancellation protocol. Reason: Dispute Arbitration Decision: Full Refund to Client (Evidence reviewed. Milestone refunded back to client with Credit Note issued.)",
+      "createdAt": "2026-11-19T18:01:48.300Z"
+    },
+    {
+      "id": "PAY-2026-0003",
+      "invoiceNumber": "PAY-2026-0003",
+      "type": "freelancer_payout_statement",
+      "status": "paid",
+      "issueDate": "2026-11-19T18:01:48.196Z",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Elena Vance",
+        "legalAddress": "Verified Sovereign Specialist",
+        "email": "freelancer@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-1795111308196",
+          "description": "Freelancer Earnings Payout via BANK_TRANSFER (UTR-IMPS-11308194DF98F1AD)",
+          "quantity": 1,
+          "unitPrice": 3560,
+          "taxableAmount": 3560,
+          "taxRate": 0,
+          "taxAmount": 0,
+          "totalAmount": 3560
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 3560,
+      "taxTotal": 0,
+      "grandTotal": 3560,
+      "paymentReference": "UTR-IMPS-11308194DF98F1AD",
+      "notes": "Settled via Indian Banking/UPI network to verified destination.",
+      "createdAt": "2026-11-19T18:01:48.196Z"
+    },
+    {
+      "id": "INV-2026-0025",
+      "invoiceNumber": "INV-2026-0025",
+      "type": "platform_commission_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T18:01:48.143Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "ms-2",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Elena Vance",
+        "legalAddress": "Verified Sovereign Specialist",
+        "email": "freelancer@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-comm-1795111308144",
+          "description": "Platform Commission Fee (10% on Milestone Gross $2000)",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 200,
+          "taxableAmount": 200,
+          "taxRate": 18,
+          "taxAmount": 36,
+          "totalAmount": 236
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 200,
+      "taxTotal": 36,
+      "grandTotal": 236,
+      "paymentReference": "REF-GRAV-MWNUXA40",
+      "notes": "Section 194-O TDS withheld: $20. Tax compliance auto-filed.",
+      "createdAt": "2026-11-19T18:01:48.143Z"
+    },
+    {
+      "id": "INV-2026-0024",
+      "invoiceNumber": "INV-2026-0024",
+      "type": "client_tax_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T18:01:48.111Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "all",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Aetheria Labs",
+        "legalAddress": "Verified Enterprise Client",
+        "email": "client@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-1795111308113",
+          "description": "Escrow Fund Deposit: Autonomous Multi-Model LLM Orchestration Platform",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 5800,
+          "taxableAmount": 5800,
+          "taxRate": 0,
+          "taxAmount": 0,
+          "totalAmount": 5800
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 5800,
+      "taxTotal": 0,
+      "grandTotal": 5800,
+      "paymentReference": "PAY-GATEWAY-MWNUXA33",
+      "notes": "Funds held in segregated escrow reserve pending milestone completion and verification.",
+      "createdAt": "2026-11-19T18:01:48.111Z"
+    },
+    {
+      "id": "CRN-2026-0001",
+      "invoiceNumber": "CRN-2026-0001",
+      "type": "refund_credit_note",
+      "status": "refunded",
+      "issueDate": "2026-11-19T18:01:29.456Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Aetheria Labs",
+        "email": "client@gravitass.com",
+        "legalAddress": "Verified Enterprise Client"
+      },
+      "items": [
+        {
+          "id": "crn-item-1795111289457",
+          "description": "Escrow Refund Reversal: Autonomous Multi-Model LLM Orchestration Platform (Dispute Arbitration Decision: Full Refund to Client (Evidence reviewed. Milestone refunded back to client with Credit Note issued.))",
+          "quantity": 1,
+          "unitPrice": 55400,
+          "taxableAmount": 55400,
+          "taxRate": 0,
+          "taxAmount": 0,
+          "totalAmount": 55400
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 55400,
+      "taxTotal": 0,
+      "grandTotal": 55400,
+      "notes": "Refund memorandum executed under dispute/cancellation protocol. Reason: Dispute Arbitration Decision: Full Refund to Client (Evidence reviewed. Milestone refunded back to client with Credit Note issued.)",
+      "createdAt": "2026-11-19T18:01:29.456Z"
+    },
+    {
+      "id": "INV-2026-0023",
+      "invoiceNumber": "INV-2026-0023",
+      "type": "platform_commission_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T18:01:29.270Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "ms-2",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Elena Vance",
+        "legalAddress": "Verified Sovereign Specialist",
+        "email": "freelancer@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-comm-1795111289272",
+          "description": "Platform Commission Fee (10% on Milestone Gross $2000)",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 200,
+          "taxableAmount": 200,
+          "taxRate": 18,
+          "taxAmount": 36,
+          "totalAmount": 236
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 200,
+      "taxTotal": 36,
+      "grandTotal": 236,
+      "paymentReference": "REF-GRAV-MWNUWVJS",
+      "notes": "Section 194-O TDS withheld: $20. Tax compliance auto-filed.",
+      "createdAt": "2026-11-19T18:01:29.270Z"
+    },
+    {
+      "id": "INV-2026-0022",
+      "invoiceNumber": "INV-2026-0022",
+      "type": "client_tax_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T18:01:29.255Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "all",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Aetheria Labs",
+        "legalAddress": "Verified Enterprise Client",
+        "email": "client@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-1795111289256",
+          "description": "Escrow Fund Deposit: Autonomous Multi-Model LLM Orchestration Platform",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 5800,
+          "taxableAmount": 5800,
+          "taxRate": 0,
+          "taxAmount": 0,
+          "totalAmount": 5800
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 5800,
+      "taxTotal": 0,
+      "grandTotal": 5800,
+      "paymentReference": "PAY-GATEWAY-MWNUWVJB",
+      "notes": "Funds held in segregated escrow reserve pending milestone completion and verification.",
+      "createdAt": "2026-11-19T18:01:29.255Z"
+    },
+    {
+      "id": "PAY-2026-0002",
+      "invoiceNumber": "PAY-2026-0002",
+      "type": "freelancer_payout_statement",
+      "status": "paid",
+      "issueDate": "2026-11-19T18:01:02.170Z",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Elena Vance",
+        "legalAddress": "Verified Sovereign Specialist",
+        "email": "freelancer@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-1795111262170",
+          "description": "Freelancer Earnings Payout via BANK_TRANSFER (UTR-IMPS-11262168EF4E376C)",
+          "quantity": 1,
+          "unitPrice": 3560,
+          "taxableAmount": 3560,
+          "taxRate": 0,
+          "taxAmount": 0,
+          "totalAmount": 3560
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 3560,
+      "taxTotal": 0,
+      "grandTotal": 3560,
+      "paymentReference": "UTR-IMPS-11262168EF4E376C",
+      "notes": "Settled via Indian Banking/UPI network to verified destination.",
+      "createdAt": "2026-11-19T18:01:02.170Z"
+    },
+    {
+      "id": "INV-2026-0021",
+      "invoiceNumber": "INV-2026-0021",
+      "type": "platform_commission_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T18:01:02.103Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "ms-2",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Elena Vance",
+        "legalAddress": "Verified Sovereign Specialist",
+        "email": "freelancer@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-comm-1795111262104",
+          "description": "Platform Commission Fee (10% on Milestone Gross $2000)",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 200,
+          "taxableAmount": 200,
+          "taxRate": 18,
+          "taxAmount": 36,
+          "totalAmount": 236
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 200,
+      "taxTotal": 36,
+      "grandTotal": 236,
+      "paymentReference": "REF-GRAV-MWNUWAL4",
+      "notes": "Section 194-O TDS withheld: $20. Tax compliance auto-filed.",
+      "createdAt": "2026-11-19T18:01:02.103Z"
+    },
+    {
+      "id": "INV-2026-0020",
+      "invoiceNumber": "INV-2026-0020",
+      "type": "client_tax_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T18:01:02.089Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "all",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Aetheria Labs",
+        "legalAddress": "Verified Enterprise Client",
+        "email": "client@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-1795111262091",
+          "description": "Escrow Fund Deposit: Autonomous Multi-Model LLM Orchestration Platform",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 5800,
+          "taxableAmount": 5800,
+          "taxRate": 0,
+          "taxAmount": 0,
+          "totalAmount": 5800
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 5800,
+      "taxTotal": 0,
+      "grandTotal": 5800,
+      "paymentReference": "PAY-GATEWAY-MWNUWAKP",
+      "notes": "Funds held in segregated escrow reserve pending milestone completion and verification.",
+      "createdAt": "2026-11-19T18:01:02.089Z"
+    },
+    {
+      "id": "INV-2026-0019",
+      "invoiceNumber": "INV-2026-0019",
+      "type": "platform_commission_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T17:59:52.977Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "ms-2",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Elena Vance",
+        "legalAddress": "Verified Sovereign Specialist",
+        "email": "freelancer@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-comm-1795111192978",
+          "description": "Platform Commission Fee (10% on Milestone Gross $2000)",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 200,
+          "taxableAmount": 200,
+          "taxRate": 18,
+          "taxAmount": 36,
+          "totalAmount": 236
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 200,
+      "taxTotal": 36,
+      "grandTotal": 236,
+      "paymentReference": "REF-GRAV-MWNUUT8Y",
+      "notes": "Section 194-O TDS withheld: $20. Tax compliance auto-filed.",
+      "createdAt": "2026-11-19T17:59:52.977Z"
+    },
+    {
+      "id": "INV-2026-0018",
+      "invoiceNumber": "INV-2026-0018",
+      "type": "client_tax_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T17:59:52.956Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "all",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Aetheria Labs",
+        "legalAddress": "Verified Enterprise Client",
+        "email": "client@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-1795111192958",
+          "description": "Escrow Fund Deposit: Autonomous Multi-Model LLM Orchestration Platform",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 5800,
+          "taxableAmount": 5800,
+          "taxRate": 0,
+          "taxAmount": 0,
+          "totalAmount": 5800
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 5800,
+      "taxTotal": 0,
+      "grandTotal": 5800,
+      "paymentReference": "PAY-GATEWAY-MWNUUT8C",
+      "notes": "Funds held in segregated escrow reserve pending milestone completion and verification.",
+      "createdAt": "2026-11-19T17:59:52.956Z"
+    },
+    {
+      "id": "PAY-2026-0001",
+      "invoiceNumber": "PAY-2026-0001",
+      "type": "freelancer_payout_statement",
+      "status": "paid",
+      "issueDate": "2026-11-19T17:59:13.035Z",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Elena Vance",
+        "legalAddress": "Verified Sovereign Specialist",
+        "email": "freelancer@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-1795111153035",
+          "description": "Freelancer Earnings Payout via BANK_TRANSFER (UTR-IMPS-11153034BFE6ADE0)",
+          "quantity": 1,
+          "unitPrice": 14075,
+          "taxableAmount": 14075,
+          "taxRate": 0,
+          "taxAmount": 0,
+          "totalAmount": 14075
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 14075,
+      "taxTotal": 0,
+      "grandTotal": 14075,
+      "paymentReference": "UTR-IMPS-11153034BFE6ADE0",
+      "notes": "Settled via Indian Banking/UPI network to verified destination.",
+      "createdAt": "2026-11-19T17:59:13.035Z"
+    },
+    {
+      "id": "INV-2026-0017",
+      "invoiceNumber": "INV-2026-0017",
+      "type": "platform_commission_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T17:59:12.993Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "ms-2",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Elena Vance",
+        "legalAddress": "Verified Sovereign Specialist",
+        "email": "freelancer@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-comm-1795111152994",
+          "description": "Platform Commission Fee (10% on Milestone Gross $2000)",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 200,
+          "taxableAmount": 200,
+          "taxRate": 18,
+          "taxAmount": 36,
+          "totalAmount": 236
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 200,
+      "taxTotal": 36,
+      "grandTotal": 236,
+      "paymentReference": "REF-GRAV-MWNUTYEA",
+      "notes": "Section 194-O TDS withheld: $20. Tax compliance auto-filed.",
+      "createdAt": "2026-11-19T17:59:12.993Z"
+    },
+    {
+      "id": "INV-2026-0016",
+      "invoiceNumber": "INV-2026-0016",
+      "type": "client_tax_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T17:59:12.949Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "all",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Aetheria Labs",
+        "legalAddress": "Verified Enterprise Client",
+        "email": "client@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-1795111152950",
+          "description": "Escrow Fund Deposit: Autonomous Multi-Model LLM Orchestration Platform",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 5800,
+          "taxableAmount": 5800,
+          "taxRate": 0,
+          "taxAmount": 0,
+          "totalAmount": 5800
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 5800,
+      "taxTotal": 0,
+      "grandTotal": 5800,
+      "paymentReference": "PAY-GATEWAY-MWNUTYD0",
+      "notes": "Funds held in segregated escrow reserve pending milestone completion and verification.",
+      "createdAt": "2026-11-19T17:59:12.949Z"
+    },
+    {
+      "id": "INV-2026-0015",
+      "invoiceNumber": "INV-2026-0015",
+      "type": "platform_commission_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T17:54:12.434Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "ms-2",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Elena Vance",
+        "legalAddress": "Verified Sovereign Specialist",
+        "email": "freelancer@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-comm-1795110852435",
+          "description": "Platform Commission Fee (10% on Milestone Gross $2000)",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 200,
+          "taxableAmount": 200,
+          "taxRate": 18,
+          "taxAmount": 36,
+          "totalAmount": 236
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 200,
+      "taxTotal": 36,
+      "grandTotal": 236,
+      "paymentReference": "REF-GRAV-MWNUNIHF",
+      "notes": "Section 194-O TDS withheld: $20. Tax compliance auto-filed.",
+      "createdAt": "2026-11-19T17:54:12.434Z"
+    },
+    {
+      "id": "INV-2026-0014",
+      "invoiceNumber": "INV-2026-0014",
+      "type": "client_tax_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T17:54:12.416Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "all",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Aetheria Labs",
+        "legalAddress": "Verified Enterprise Client",
+        "email": "client@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-1795110852417",
+          "description": "Escrow Fund Deposit: Autonomous Multi-Model LLM Orchestration Platform",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 5800,
+          "taxableAmount": 5800,
+          "taxRate": 0,
+          "taxAmount": 0,
+          "totalAmount": 5800
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 5800,
+      "taxTotal": 0,
+      "grandTotal": 5800,
+      "paymentReference": "PAY-GATEWAY-MWNUNIGW",
+      "notes": "Funds held in segregated escrow reserve pending milestone completion and verification.",
+      "createdAt": "2026-11-19T17:54:12.416Z"
+    },
+    {
+      "id": "INV-2026-0013",
+      "invoiceNumber": "INV-2026-0013",
+      "type": "platform_commission_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T17:53:52.665Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "ms-2",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Elena Vance",
+        "legalAddress": "Verified Sovereign Specialist",
+        "email": "freelancer@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-comm-1795110832668",
+          "description": "Platform Commission Fee (10% on Milestone Gross $2000)",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 200,
+          "taxableAmount": 200,
+          "taxRate": 18,
+          "taxAmount": 36,
+          "totalAmount": 236
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 200,
+      "taxTotal": 36,
+      "grandTotal": 236,
+      "paymentReference": "REF-GRAV-MWNUN38C",
+      "notes": "Section 194-O TDS withheld: $20. Tax compliance auto-filed.",
+      "createdAt": "2026-11-19T17:53:52.665Z"
+    },
+    {
+      "id": "INV-2026-0012",
+      "invoiceNumber": "INV-2026-0012",
+      "type": "client_tax_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T17:53:52.635Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "all",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Aetheria Labs",
+        "legalAddress": "Verified Enterprise Client",
+        "email": "client@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-1795110832637",
+          "description": "Escrow Fund Deposit: Autonomous Multi-Model LLM Orchestration Platform",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 5800,
+          "taxableAmount": 5800,
+          "taxRate": 0,
+          "taxAmount": 0,
+          "totalAmount": 5800
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 5800,
+      "taxTotal": 0,
+      "grandTotal": 5800,
+      "paymentReference": "PAY-GATEWAY-MWNUN37F",
+      "notes": "Funds held in segregated escrow reserve pending milestone completion and verification.",
+      "createdAt": "2026-11-19T17:53:52.635Z"
+    },
+    {
+      "id": "INV-2026-0011",
+      "invoiceNumber": "INV-2026-0011",
+      "type": "platform_commission_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T17:53:17.011Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "ms-2",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Elena Vance",
+        "legalAddress": "Verified Sovereign Specialist",
+        "email": "freelancer@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-comm-1795110797012",
+          "description": "Platform Commission Fee (10% on Milestone Gross $2000)",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 200,
+          "taxableAmount": 200,
+          "taxRate": 18,
+          "taxAmount": 36,
+          "totalAmount": 236
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 200,
+      "taxTotal": 36,
+      "grandTotal": 236,
+      "paymentReference": "REF-GRAV-MWNUMBPW",
+      "notes": "Section 194-O TDS withheld: $20. Tax compliance auto-filed.",
+      "createdAt": "2026-11-19T17:53:17.011Z"
+    },
+    {
+      "id": "INV-2026-0010",
+      "invoiceNumber": "INV-2026-0010",
+      "type": "client_tax_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T17:53:16.980Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "all",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Aetheria Labs",
+        "legalAddress": "Verified Enterprise Client",
+        "email": "client@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-1795110796981",
+          "description": "Escrow Fund Deposit: Autonomous Multi-Model LLM Orchestration Platform",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 5800,
+          "taxableAmount": 5800,
+          "taxRate": 0,
+          "taxAmount": 0,
+          "totalAmount": 5800
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 5800,
+      "taxTotal": 0,
+      "grandTotal": 5800,
+      "paymentReference": "PAY-GATEWAY-MWNUMBP0",
+      "notes": "Funds held in segregated escrow reserve pending milestone completion and verification.",
+      "createdAt": "2026-11-19T17:53:16.980Z"
+    },
+    {
+      "id": "INV-2026-0009",
+      "invoiceNumber": "INV-2026-0009",
+      "type": "platform_commission_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T17:52:52.236Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "ms-2",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Elena Vance",
+        "legalAddress": "Verified Sovereign Specialist",
+        "email": "freelancer@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-comm-1795110772238",
+          "description": "Platform Commission Fee (10% on Milestone Gross $2000)",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 200,
+          "taxableAmount": 200,
+          "taxRate": 18,
+          "taxAmount": 36,
+          "totalAmount": 236
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 200,
+      "taxTotal": 36,
+      "grandTotal": 236,
+      "paymentReference": "REF-GRAV-MWNULSLQ",
+      "notes": "Section 194-O TDS withheld: $20. Tax compliance auto-filed.",
+      "createdAt": "2026-11-19T17:52:52.236Z"
+    },
+    {
+      "id": "INV-2026-0008",
+      "invoiceNumber": "INV-2026-0008",
+      "type": "client_tax_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T17:52:52.194Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "all",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Aetheria Labs",
+        "legalAddress": "Verified Enterprise Client",
+        "email": "client@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-1795110772195",
+          "description": "Escrow Fund Deposit: Autonomous Multi-Model LLM Orchestration Platform",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 5800,
+          "taxableAmount": 5800,
+          "taxRate": 0,
+          "taxAmount": 0,
+          "totalAmount": 5800
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 5800,
+      "taxTotal": 0,
+      "grandTotal": 5800,
+      "paymentReference": "PAY-GATEWAY-MWNULSKI",
+      "notes": "Funds held in segregated escrow reserve pending milestone completion and verification.",
+      "createdAt": "2026-11-19T17:52:52.194Z"
+    },
+    {
+      "id": "INV-2026-0007",
+      "invoiceNumber": "INV-2026-0007",
+      "type": "platform_commission_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T17:50:23.737Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "ms-2",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Elena Vance",
+        "legalAddress": "Verified Sovereign Specialist",
+        "email": "freelancer@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-comm-1795110623738",
+          "description": "Platform Commission Fee (10% on Milestone Gross $2000)",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 200,
+          "taxableAmount": 200,
+          "taxRate": 18,
+          "taxAmount": 36,
+          "totalAmount": 236
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 200,
+      "taxTotal": 36,
+      "grandTotal": 236,
+      "paymentReference": "REF-GRAV-MWNUIM0Q",
+      "notes": "Section 194-O TDS withheld: $20. Tax compliance auto-filed.",
+      "createdAt": "2026-11-19T17:50:23.737Z"
+    },
+    {
+      "id": "INV-2026-0006",
+      "invoiceNumber": "INV-2026-0006",
+      "type": "client_tax_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T17:50:23.707Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "all",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Aetheria Labs",
+        "legalAddress": "Verified Enterprise Client",
+        "email": "client@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-1795110623708",
+          "description": "Escrow Fund Deposit: Autonomous Multi-Model LLM Orchestration Platform",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 5800,
+          "taxableAmount": 5800,
+          "taxRate": 0,
+          "taxAmount": 0,
+          "totalAmount": 5800
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 5800,
+      "taxTotal": 0,
+      "grandTotal": 5800,
+      "paymentReference": "PAY-GATEWAY-MWNUILZV",
+      "notes": "Funds held in segregated escrow reserve pending milestone completion and verification.",
+      "createdAt": "2026-11-19T17:50:23.707Z"
+    },
+    {
+      "id": "INV-2026-0005",
+      "invoiceNumber": "INV-2026-0005",
+      "type": "client_tax_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T17:49:23.420Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "all",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Aetheria Labs",
+        "legalAddress": "Verified Enterprise Client",
+        "email": "client@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-1795110563421",
+          "description": "Escrow Fund Deposit: Autonomous Multi-Model LLM Orchestration Platform",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 5800,
+          "taxableAmount": 5800,
+          "taxRate": 0,
+          "taxAmount": 0,
+          "totalAmount": 5800
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 5800,
+      "taxTotal": 0,
+      "grandTotal": 5800,
+      "paymentReference": "PAY-GATEWAY-MWNUHBH8",
+      "notes": "Funds held in segregated escrow reserve pending milestone completion and verification.",
+      "createdAt": "2026-11-19T17:49:23.420Z"
+    },
+    {
+      "id": "INV-2026-0004",
+      "invoiceNumber": "INV-2026-0004",
+      "type": "client_tax_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T17:47:49.719Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "all",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Aetheria Labs",
+        "legalAddress": "Verified Enterprise Client",
+        "email": "client@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-1795110469721",
+          "description": "Escrow Fund Deposit: Autonomous Multi-Model LLM Orchestration Platform",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 5800,
+          "taxableAmount": 5800,
+          "taxRate": 0,
+          "taxAmount": 0,
+          "totalAmount": 5800
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 5800,
+      "taxTotal": 0,
+      "grandTotal": 5800,
+      "paymentReference": "PAY-GATEWAY-MWNUFB6F",
+      "notes": "Funds held in segregated escrow reserve pending milestone completion and verification.",
+      "createdAt": "2026-11-19T17:47:49.719Z"
+    },
+    {
+      "id": "INV-2026-0003",
+      "invoiceNumber": "INV-2026-0003",
+      "type": "client_tax_invoice",
+      "status": "paid",
+      "issueDate": "2026-11-19T17:33:51.188Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "all",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Aetheria Labs",
+        "legalAddress": "Verified Enterprise Client",
+        "email": "client@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "item-1795109631191",
+          "description": "Escrow Fund Deposit: Autonomous Multi-Model LLM Orchestration Platform",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 5800,
+          "taxableAmount": 5800,
+          "taxRate": 0,
+          "taxAmount": 0,
+          "totalAmount": 5800
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 5800,
+      "taxTotal": 0,
+      "grandTotal": 5800,
+      "paymentReference": "PAY-GATEWAY-MWNTXC5V",
+      "notes": "Funds held in segregated escrow reserve pending milestone completion and verification.",
+      "createdAt": "2026-11-19T17:33:51.188Z"
+    },
+    {
+      "id": "INV-2026-0001",
+      "invoiceNumber": "INV-2026-0001",
+      "type": "client_tax_invoice",
+      "status": "paid",
+      "issueDate": "2026-02-13T09:00:00.000Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "all",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Aetheria Labs",
+        "legalAddress": "Cyber Hub Building 10, DLF Phase 2, Gurugram, Haryana, India",
+        "gstin": "06AAACA1122B1Z3",
+        "email": "client@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "itm-1",
+          "description": "Escrow Funding: Autonomous Multi-Model LLM Orchestration Platform (3 Milestones)",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 5800,
+          "taxableAmount": 5800,
+          "taxRate": 0,
+          "taxAmount": 0,
+          "totalAmount": 5800
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 5800,
+      "taxTotal": 0,
+      "grandTotal": 5800,
+      "paymentReference": "pay_sec_99410382",
+      "notes": "Escrow funds secured in segregated trustee account. Governed by GRAVITASS Milestone Rules.",
+      "createdAt": "2026-02-13T09:00:00.000Z"
+    },
+    {
+      "id": "INV-2026-0002",
+      "invoiceNumber": "INV-2026-0002",
+      "type": "platform_commission_invoice",
+      "status": "paid",
+      "issueDate": "2026-02-14T12:00:00.000Z",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "milestoneId": "ms-demo-1",
+      "supplier": {
+        "name": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "legalAddress": "Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301",
+        "gstin": "07AAACG9928K1Z5",
+        "pan": "AAACG9928K",
+        "email": "finance@gravitass.work"
+      },
+      "customer": {
+        "name": "Elena Vance",
+        "legalAddress": "Freelancer Cyber Tower, Bangalore, Karnataka, India",
+        "email": "freelancer@gravitass.com"
+      },
+      "items": [
+        {
+          "id": "itm-comm-1",
+          "description": "Platform Intermediation Service Fee (10% of Milestone 1 Gross $2,000)",
+          "sacHsnCode": "998311",
+          "quantity": 1,
+          "unitPrice": 200,
+          "taxableAmount": 200,
+          "taxRate": 18,
+          "taxAmount": 36,
+          "totalAmount": 236
+        }
+      ],
+      "currency": "USD",
+      "subtotal": 200,
+      "taxTotal": 36,
+      "grandTotal": 236,
+      "paymentReference": "REF-GRAV-LLM941",
+      "notes": "GST collected under Reverse Charge / Market Intermediation rules.",
+      "createdAt": "2026-02-14T12:00:00.000Z"
+    }
+  ],
+  "payoutSettings": [
+    {
+      "freelancerId": "user-freelancer-1",
+      "preferredMethod": "bank_transfer",
+      "frequency": "daily",
+      "minimumThreshold": 50,
+      "autoPayoutEnabled": true,
+      "payoutDetails": {
+        "bankAccount": {
+          "accountNumber": "918273645012",
+          "ifscCode": "HDFC0001234",
+          "accountHolderName": "Elena Vance",
+          "bankName": "HDFC Bank Ltd"
+        },
+        "upi": {
+          "vpa": "elena@okhdfcbank"
+        }
+      },
+      "notificationEmail": "freelancer@gravitass.com",
+      "updatedAt": "2026-11-19T18:01:48.174Z"
+    }
+  ],
+  "disputeRecords": [
+    {
+      "id": "DSP-1795111308267",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "escrowId": "ESC-DEMO-001",
+      "disputedAmount": 3800,
+      "reason": "Deliverable does not meet specification",
+      "evidence": [
+        "Milestone 3 deliverables failed formal contract specification checklist."
+      ],
+      "status": "resolved",
+      "createdAt": "2026-11-19T18:01:48.267Z",
+      "resolution": "full_refund_client",
+      "resolutionNotes": "Evidence reviewed. Milestone refunded back to client with Credit Note issued.",
+      "releasedAmountToFreelancer": 0,
+      "refundedAmountToClient": 3800,
+      "resolvedBy": "user-admin-1",
+      "resolvedAt": "2026-11-19T18:01:48.300Z"
+    },
+    {
+      "id": "DSP-1795111289400",
+      "contractId": "contract-demo-1",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "escrowId": "ESC-DEMO-001",
+      "disputedAmount": 55400,
+      "reason": "Deliverable does not meet specification",
+      "evidence": [
+        "Milestone 3 deliverables failed formal contract specification checklist."
+      ],
+      "status": "resolved",
+      "createdAt": "2026-11-19T18:01:29.400Z",
+      "resolution": "full_refund_client",
+      "resolutionNotes": "Evidence reviewed. Milestone refunded back to client with Credit Note issued.",
+      "releasedAmountToFreelancer": 0,
+      "refundedAmountToClient": 55400,
+      "resolvedBy": "user-admin-1",
+      "resolvedAt": "2026-11-19T18:01:29.456Z"
+    }
+  ]
 }

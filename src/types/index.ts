@@ -384,6 +384,15 @@ export interface PlatformSettings {
   withdrawalFeePercentage: number;
   fixedWithdrawalFee: number;
   payoutGatewayMode: 'simulated_live' | 'razorpayx' | 'cashfree';
+  autoPayoutFrequency?: 'daily' | 'weekly' | 'monthly' | 'manual';
+  gstPercentage?: number;
+  tdsPercentage?: number;
+  sacCode?: string;
+  legalBusinessName?: string;
+  legalAddress?: string;
+  platformGstin?: string;
+  platformPan?: string;
+  escrowReviewPeriodDays?: number;
   updatedAt?: string;
 }
 
@@ -394,6 +403,9 @@ export interface FreelancerEarningsSummary {
   processingWithdrawals: number;
   totalWithdrawn: number;
   failedPayments: number;
+  escrowLockedEarnings?: number;
+  tdsWithheldTotal?: number;
+  nextScheduledPayoutDate?: string;
   currency: string;
 }
 
@@ -408,3 +420,267 @@ export interface Dispute {
   resolution?: string;
   createdAt: string;
 }
+
+// ==========================================
+// CENTRAL FINANCIAL ENGINE & JOURNAL TYPES
+// ==========================================
+
+export type FinancialAccountType = 
+  | 'asset:escrow_vault'
+  | 'asset:gateway_clearing'
+  | 'liability:freelancer_payable'
+  | 'liability:tax_payable_gst'
+  | 'liability:tax_payable_tds'
+  | 'revenue:platform_commission'
+  | 'expense:gateway_fee'
+  | 'equity:platform_reserve';
+
+export interface JournalEntryLine {
+  accountId: FinancialAccountType;
+  accountName: string;
+  type: 'debit' | 'credit';
+  amount: number; // Stored in major currency unit, calculated safely with minor unit accuracy
+  currency: string;
+}
+
+export interface FinancialJournalEntry {
+  id: string; // e.g. JRN-1708291200000
+  timestamp: string;
+  referenceType: 'project_funding' | 'milestone_release' | 'freelancer_payout' | 'dispute_resolution' | 'refund' | 'tax_settlement';
+  referenceId: string;
+  contractId?: string;
+  projectId?: string;
+  userId?: string;
+  lines: JournalEntryLine[];
+  description: string;
+  idempotencyKey?: string;
+  immutable: boolean;
+  createdAt: string;
+}
+
+// ==========================================
+// ESCROW & PAYMENT PROTECTION TYPES
+// ==========================================
+
+export type EscrowStatus = 
+  | 'payment_required'
+  | 'payment_initiated'
+  | 'payment_confirmed'
+  | 'funds_secured'
+  | 'work_in_progress'
+  | 'work_submitted'
+  | 'client_review'
+  | 'release_eligible'
+  | 'payment_released'
+  | 'disputed'
+  | 'refund_processing'
+  | 'refunded'
+  | 'cancelled';
+
+export interface MilestoneEscrow {
+  milestoneId: string;
+  title: string;
+  amount: number;
+  status: EscrowStatus;
+  fundedAt?: string;
+  submittedAt?: string;
+  approvedAt?: string;
+  releasedAt?: string;
+  autoReleaseDate?: string;
+  releaseTxId?: string;
+}
+
+export interface EscrowAccount {
+  id: string; // e.g. ESC-1708291200000
+  contractId: string;
+  projectId: string;
+  projectTitle: string;
+  clientId: string;
+  clientName: string;
+  freelancerId: string;
+  freelancerName: string;
+  totalGrossAmount: number;
+  fundedAmount: number;
+  releasedAmount: number;
+  refundedAmount: number;
+  currency: string;
+  status: EscrowStatus;
+  gatewayOrderId?: string;
+  gatewayPaymentId?: string;
+  milestones: MilestoneEscrow[];
+  isDisputed: boolean;
+  disputeId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ==========================================
+// COMMISSION ENGINE TYPES
+// ==========================================
+
+export interface CommissionRule {
+  id: string; // e.g. COMM-2026-v1
+  version: string;
+  defaultPercentage: number;
+  categoryRates: Record<string, number>;
+  freelancerRates: Record<string, number>;
+  minFee: number;
+  maxFee: number;
+  effectiveDate: string;
+  description: string;
+  isActive: boolean;
+  updatedAt: string;
+}
+
+// ==========================================
+// TAX MANAGEMENT & REPORTING TYPES (GST / TDS)
+// ==========================================
+
+export type TaxType = 'gst_on_commission' | 'tds_194o' | 'none';
+
+export interface TaxRule {
+  id: string;
+  name: string;
+  type: TaxType;
+  ratePercentage: number;
+  cgstPercentage?: number;
+  sgstPercentage?: number;
+  igstPercentage?: number;
+  appliesTo: 'platform_fee' | 'gross_project_amount';
+  panRequired: boolean;
+  thresholdAmount?: number;
+  sacCode?: string;
+  legalSection?: string; // e.g. "Section 194-O Income Tax Act 1961"
+  isEnabled: boolean;
+  effectiveDate: string;
+}
+
+export interface TaxTransactionRecord {
+  id: string; // e.g. TAX-1708291200000
+  transactionId: string;
+  referenceId: string;
+  contractId?: string;
+  freelancerId?: string;
+  freelancerName?: string;
+  clientId?: string;
+  taxRuleId: string;
+  taxType: TaxType;
+  taxableAmount: number;
+  ratePercentage: number;
+  taxAmount: number;
+  cgst?: number;
+  sgst?: number;
+  igst?: number;
+  tdsAmount?: number;
+  financialYear: string;
+  month: string;
+  createdAt: string;
+}
+
+// ==========================================
+// AUTOMATIC INVOICE GENERATION TYPES
+// ==========================================
+
+export type InvoiceType = 
+  | 'client_tax_invoice' 
+  | 'platform_commission_invoice' 
+  | 'freelancer_payout_statement' 
+  | 'refund_credit_note';
+
+export type InvoiceStatus = 'issued' | 'paid' | 'cancelled' | 'refunded';
+
+export interface InvoiceItem {
+  id: string;
+  description: string;
+  sacHsnCode?: string;
+  quantity: number;
+  unitPrice: number;
+  taxableAmount: number;
+  taxRate: number;
+  taxAmount: number;
+  totalAmount: number;
+}
+
+export interface LegalPartyDetails {
+  name: string;
+  legalAddress: string;
+  gstin?: string;
+  pan?: string;
+  email: string;
+  stateCode?: string;
+}
+
+export interface InvoiceRecord {
+  id: string; // e.g. INV-2026-0001 or CRN-2026-0001
+  invoiceNumber: string;
+  type: InvoiceType;
+  status: InvoiceStatus;
+  issueDate: string;
+  dueDate?: string;
+  contractId?: string;
+  projectId?: string;
+  projectTitle?: string;
+  milestoneId?: string;
+  supplier: LegalPartyDetails;
+  customer: LegalPartyDetails;
+  items: InvoiceItem[];
+  currency: string;
+  subtotal: number;
+  taxTotal: number;
+  grandTotal: number;
+  paymentReference?: string;
+  originalInvoiceId?: string; // If this is a credit note
+  notes?: string;
+  createdAt: string;
+}
+
+// ==========================================
+// FREELANCER PAYOUT SETTINGS & SCHEDULES
+// ==========================================
+
+export interface FreelancerPayoutSettings {
+  freelancerId: string;
+  preferredMethod: PayoutMethod;
+  frequency: 'daily' | 'weekly' | 'monthly' | 'manual';
+  minimumThreshold: number;
+  autoPayoutEnabled: boolean;
+  payoutDetails: PayoutDetails;
+  panNumber?: string;
+  gstin?: string;
+  notificationEmail?: string;
+  updatedAt: string;
+}
+
+// ==========================================
+// DISPUTE & REFUND TYPES
+// ==========================================
+
+export type DisputeResolutionAction = 
+  | 'full_release_freelancer' 
+  | 'full_refund_client' 
+  | 'partial_split' 
+  | 'dismissed';
+
+export interface DisputeRecord {
+  id: string; // e.g. DSP-1708291200000
+  contractId: string;
+  projectId: string;
+  projectTitle: string;
+  clientId: string;
+  clientName: string;
+  freelancerId: string;
+  freelancerName: string;
+  escrowId: string;
+  disputedAmount: number;
+  reason: string;
+  evidence: string[];
+  status: 'open' | 'under_review' | 'resolved' | 'closed';
+  resolution?: DisputeResolutionAction;
+  resolutionNotes?: string;
+  refundedAmountToClient?: number;
+  releasedAmountToFreelancer?: number;
+  resolvedBy?: string;
+  resolvedAt?: string;
+  createdAt: string;
+}
+

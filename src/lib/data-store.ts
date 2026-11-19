@@ -22,8 +22,34 @@ import {
   PayoutMethod,
   PayoutDetails,
   PlatformSettings,
-  FreelancerEarningsSummary
+  FreelancerEarningsSummary,
+  FinancialJournalEntry,
+  JournalEntryLine,
+  FinancialAccountType,
+  EscrowAccount,
+  MilestoneEscrow,
+  EscrowStatus,
+  CommissionRule,
+  TaxRule,
+  TaxTransactionRecord,
+  InvoiceRecord,
+  InvoiceItem,
+  FreelancerPayoutSettings,
+  DisputeRecord,
+  DisputeResolutionAction
 } from '@/types';
+import {
+  toMinorUnits,
+  fromMinorUnits,
+  safeAdd,
+  safeSubtract,
+  validateDoubleEntry,
+  calculateCommissionFee,
+  calculateApplicableTaxes,
+  generateNextInvoiceNumber,
+  generateInvoiceHtml
+} from './finance-engine';
+import { PayoutGatewayService } from './payout-gateway';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const DATA_FILE = path.join(DATA_DIR, 'gravitass-data.json');
@@ -45,6 +71,14 @@ export interface DatabaseState {
   disputes: Dispute[];
   ledgerTransactions: LedgerTransaction[];
   platformSettings: PlatformSettings;
+  journalEntries: FinancialJournalEntry[];
+  escrowAccounts: EscrowAccount[];
+  commissionRules: CommissionRule[];
+  taxRules: TaxRule[];
+  taxTransactions: TaxTransactionRecord[];
+  invoices: InvoiceRecord[];
+  payoutSettings: FreelancerPayoutSettings[];
+  disputeRecords: DisputeRecord[];
 }
 
 export const INITIAL_CATEGORIES: Category[] = [
@@ -708,8 +742,308 @@ export const DEFAULT_PLATFORM_SETTINGS: PlatformSettings = {
   withdrawalFeePercentage: 0,
   fixedWithdrawalFee: 0,
   payoutGatewayMode: 'simulated_live',
+  autoPayoutFrequency: 'weekly',
+  gstPercentage: 18,
+  tdsPercentage: 1,
+  sacCode: '998311',
+  legalBusinessName: 'GRAVITASS TECHNOLOGIES PRIVATE LIMITED',
+  legalAddress: 'Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301',
+  platformGstin: '07AAACG9928K1Z5',
+  platformPan: 'AAACG9928K',
+  escrowReviewPeriodDays: 14,
   updatedAt: new Date().toISOString()
 };
+
+export const INITIAL_COMMISSION_RULES: CommissionRule[] = [
+  {
+    id: 'COMM-2026-v1',
+    version: 'v2026.1',
+    defaultPercentage: 10,
+    categoryRates: {
+      development: 8,
+      design: 10,
+      ai: 7,
+      marketing: 12
+    },
+    freelancerRates: {},
+    minFee: 20,
+    maxFee: 50000,
+    effectiveDate: '2026-01-01T00:00:00.000Z',
+    description: 'Tiered production platform commission framework with category concessions',
+    isActive: true,
+    updatedAt: new Date().toISOString()
+  }
+];
+
+export const INITIAL_TAX_RULES: TaxRule[] = [
+  {
+    id: 'TAX-GST-COMM-18',
+    name: 'GST on Platform Service Commission (18%)',
+    type: 'gst_on_commission',
+    ratePercentage: 18,
+    cgstPercentage: 9,
+    sgstPercentage: 9,
+    igstPercentage: 18,
+    appliesTo: 'platform_fee',
+    panRequired: false,
+    sacCode: '998311',
+    legalSection: 'CGST Act 2017 - SAC 998311 Information Technology Software & Marketplace Intermediation Services',
+    isEnabled: true,
+    effectiveDate: '2026-01-01T00:00:00.000Z'
+  },
+  {
+    id: 'TAX-TDS-194O-1',
+    name: 'Section 194-O TDS on E-Commerce Marketplace Participant Payments',
+    type: 'tds_194o',
+    ratePercentage: 1,
+    appliesTo: 'gross_project_amount',
+    panRequired: true,
+    thresholdAmount: 0,
+    legalSection: 'Section 194-O of Income Tax Act 1961 (TDS on E-commerce operator payments)',
+    isEnabled: true,
+    effectiveDate: '2026-01-01T00:00:00.000Z'
+  }
+];
+
+export const INITIAL_ESCROW_ACCOUNTS: EscrowAccount[] = [
+  {
+    id: 'ESC-DEMO-001',
+    contractId: 'contract-demo-1',
+    projectId: 'proj-1',
+    projectTitle: 'Autonomous Multi-Model LLM Orchestration Platform',
+    clientId: 'user-client-1',
+    clientName: 'Aetheria Labs',
+    freelancerId: 'user-freelancer-1',
+    freelancerName: 'Elena Vance',
+    totalGrossAmount: 5800,
+    fundedAmount: 5800,
+    releasedAmount: 2000,
+    refundedAmount: 0,
+    currency: 'USD',
+    status: 'funds_secured',
+    gatewayOrderId: 'order_sec_88419024',
+    gatewayPaymentId: 'pay_sec_99410382',
+    isDisputed: false,
+    milestones: [
+      {
+        milestoneId: 'ms-demo-1',
+        title: 'Architecture Specification & Vector Pipeline',
+        amount: 2000,
+        status: 'payment_released',
+        fundedAt: '2026-02-13T09:00:00.000Z',
+        approvedAt: '2026-02-14T12:00:00.000Z',
+        releasedAt: '2026-02-14T12:00:00.000Z',
+        releaseTxId: 'LED-DEMO-001'
+      },
+      {
+        milestoneId: 'ms-demo-2',
+        title: 'Agent Workflow Runtime & Evaluators',
+        amount: 2000,
+        status: 'client_review',
+        fundedAt: '2026-02-13T09:00:00.000Z',
+        submittedAt: '2026-02-17T14:00:00.000Z',
+        autoReleaseDate: '2026-03-03T14:00:00.000Z'
+      },
+      {
+        milestoneId: 'ms-demo-3',
+        title: 'Production Deployment & Load Testing',
+        amount: 1800,
+        status: 'funds_secured',
+        fundedAt: '2026-02-13T09:00:00.000Z'
+      }
+    ],
+    createdAt: '2026-02-13T09:00:00.000Z',
+    updatedAt: '2026-02-17T14:00:00.000Z'
+  }
+];
+
+export const INITIAL_JOURNAL_ENTRIES: FinancialJournalEntry[] = [
+  {
+    id: 'JRN-DEMO-001',
+    timestamp: '2026-02-13T09:00:00.000Z',
+    referenceType: 'project_funding',
+    referenceId: 'ESC-DEMO-001',
+    contractId: 'contract-demo-1',
+    projectId: 'proj-1',
+    userId: 'user-client-1',
+    lines: [
+      { accountId: 'asset:gateway_clearing', accountName: 'Gateway Clearing Account', type: 'debit', amount: 5800, currency: 'USD' },
+      { accountId: 'asset:escrow_vault', accountName: 'Escrow Vault Trust Account', type: 'credit', amount: 5800, currency: 'USD' }
+    ],
+    description: 'Client full contract escrow deposit funded for Autonomous Multi-Model LLM Orchestration Platform',
+    immutable: true,
+    createdAt: '2026-02-13T09:00:00.000Z'
+  },
+  {
+    id: 'JRN-DEMO-002',
+    timestamp: '2026-02-14T12:00:00.000Z',
+    referenceType: 'milestone_release',
+    referenceId: 'ms-demo-1',
+    contractId: 'contract-demo-1',
+    projectId: 'proj-1',
+    userId: 'user-freelancer-1',
+    lines: [
+      { accountId: 'asset:escrow_vault', accountName: 'Escrow Vault Trust Account', type: 'debit', amount: 2000, currency: 'USD' },
+      { accountId: 'liability:freelancer_payable', accountName: 'Freelancer Payable Account', type: 'credit', amount: 1780, currency: 'USD' },
+      { accountId: 'revenue:platform_commission', accountName: 'Platform Commission Revenue', type: 'credit', amount: 200, currency: 'USD' },
+      { accountId: 'liability:tax_payable_tds', accountName: 'TDS Payable u/s 194-O', type: 'credit', amount: 20, currency: 'USD' }
+    ],
+    description: 'Milestone 1 approved and released: Architecture Specification & Vector Pipeline',
+    immutable: true,
+    createdAt: '2026-02-14T12:00:00.000Z'
+  }
+];
+
+export const INITIAL_INVOICES: InvoiceRecord[] = [
+  {
+    id: 'INV-2026-0001',
+    invoiceNumber: 'INV-2026-0001',
+    type: 'client_tax_invoice',
+    status: 'paid',
+    issueDate: '2026-02-13T09:00:00.000Z',
+    contractId: 'contract-demo-1',
+    projectId: 'proj-1',
+    projectTitle: 'Autonomous Multi-Model LLM Orchestration Platform',
+    milestoneId: 'all',
+    supplier: {
+      name: 'GRAVITASS TECHNOLOGIES PRIVATE LIMITED',
+      legalAddress: 'Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301',
+      gstin: '07AAACG9928K1Z5',
+      pan: 'AAACG9928K',
+      email: 'finance@gravitass.work'
+    },
+    customer: {
+      name: 'Aetheria Labs',
+      legalAddress: 'Cyber Hub Building 10, DLF Phase 2, Gurugram, Haryana, India',
+      gstin: '06AAACA1122B1Z3',
+      email: 'client@gravitass.com'
+    },
+    items: [
+      {
+        id: 'itm-1',
+        description: 'Escrow Funding: Autonomous Multi-Model LLM Orchestration Platform (3 Milestones)',
+        sacHsnCode: '998311',
+        quantity: 1,
+        unitPrice: 5800,
+        taxableAmount: 5800,
+        taxRate: 0,
+        taxAmount: 0,
+        totalAmount: 5800
+      }
+    ],
+    currency: 'USD',
+    subtotal: 5800,
+    taxTotal: 0,
+    grandTotal: 5800,
+    paymentReference: 'pay_sec_99410382',
+    notes: 'Escrow funds secured in segregated trustee account. Governed by GRAVITASS Milestone Rules.',
+    createdAt: '2026-02-13T09:00:00.000Z'
+  },
+  {
+    id: 'INV-2026-0002',
+    invoiceNumber: 'INV-2026-0002',
+    type: 'platform_commission_invoice',
+    status: 'paid',
+    issueDate: '2026-02-14T12:00:00.000Z',
+    contractId: 'contract-demo-1',
+    projectId: 'proj-1',
+    projectTitle: 'Autonomous Multi-Model LLM Orchestration Platform',
+    milestoneId: 'ms-demo-1',
+    supplier: {
+      name: 'GRAVITASS TECHNOLOGIES PRIVATE LIMITED',
+      legalAddress: 'Level 14, Astralis Cyber Park, Sector 62, Noida, Uttar Pradesh, India - 201301',
+      gstin: '07AAACG9928K1Z5',
+      pan: 'AAACG9928K',
+      email: 'finance@gravitass.work'
+    },
+    customer: {
+      name: 'Elena Vance',
+      legalAddress: 'Freelancer Cyber Tower, Bangalore, Karnataka, India',
+      email: 'freelancer@gravitass.com'
+    },
+    items: [
+      {
+        id: 'itm-comm-1',
+        description: 'Platform Intermediation Service Fee (10% of Milestone 1 Gross $2,000)',
+        sacHsnCode: '998311',
+        quantity: 1,
+        unitPrice: 200,
+        taxableAmount: 200,
+        taxRate: 18,
+        taxAmount: 36,
+        totalAmount: 236
+      }
+    ],
+    currency: 'USD',
+    subtotal: 200,
+    taxTotal: 36,
+    grandTotal: 236,
+    paymentReference: 'REF-GRAV-LLM941',
+    notes: 'GST collected under Reverse Charge / Market Intermediation rules.',
+    createdAt: '2026-02-14T12:00:00.000Z'
+  }
+];
+
+export const INITIAL_PAYOUT_SETTINGS: FreelancerPayoutSettings[] = [
+  {
+    freelancerId: 'user-freelancer-1',
+    preferredMethod: 'upi',
+    frequency: 'weekly',
+    minimumThreshold: 500,
+    autoPayoutEnabled: true,
+    payoutDetails: {
+      accountHolderName: 'Elena Vance',
+      upiId: 'elena.vance@oksbi',
+      maskedUpi: 'ele***@oksbi',
+      isVerified: true
+    },
+    panNumber: 'ABCDE1234F',
+    notificationEmail: 'freelancer@gravitass.com',
+    updatedAt: '2026-02-15T10:00:00.000Z'
+  }
+];
+
+export const INITIAL_TAX_TRANSACTIONS: TaxTransactionRecord[] = [
+  {
+    id: 'TAX-DEMO-001',
+    transactionId: 'LED-DEMO-001',
+    referenceId: 'ms-demo-1',
+    contractId: 'contract-demo-1',
+    freelancerId: 'user-freelancer-1',
+    freelancerName: 'Elena Vance',
+    clientId: 'user-client-1',
+    taxRuleId: 'TAX-TDS-194O-1',
+    taxType: 'tds_194o',
+    taxableAmount: 2000,
+    ratePercentage: 1,
+    taxAmount: 20,
+    tdsAmount: 20,
+    financialYear: '2025-2026',
+    month: '2026-02',
+    createdAt: '2026-02-14T12:00:00.000Z'
+  },
+  {
+    id: 'TAX-DEMO-002',
+    transactionId: 'INV-2026-0002',
+    referenceId: 'ms-demo-1',
+    contractId: 'contract-demo-1',
+    freelancerId: 'user-freelancer-1',
+    freelancerName: 'Elena Vance',
+    clientId: 'user-client-1',
+    taxRuleId: 'TAX-GST-COMM-18',
+    taxType: 'gst_on_commission',
+    taxableAmount: 200,
+    ratePercentage: 18,
+    taxAmount: 36,
+    cgst: 18,
+    sgst: 18,
+    financialYear: '2025-2026',
+    month: '2026-02',
+    createdAt: '2026-02-14T12:00:00.000Z'
+  }
+];
+
+export const INITIAL_DISPUTE_RECORDS: DisputeRecord[] = [];
 
 export const INITIAL_LEDGER_TRANSACTIONS: LedgerTransaction[] = [
   {
@@ -726,7 +1060,7 @@ export const INITIAL_LEDGER_TRANSACTIONS: LedgerTransaction[] = [
     grossAmount: 2000,
     commissionPercentage: 10,
     platformFee: 200,
-    netAmount: 1800,
+    netAmount: 1780, // Net after 10% fee ($200) and 1% TDS ($20)
     status: 'available',
     transactionReference: 'REF-GRAV-LLM941',
     createdAt: '2026-02-14T12:00:00.000Z',
@@ -746,7 +1080,7 @@ export const INITIAL_LEDGER_TRANSACTIONS: LedgerTransaction[] = [
     grossAmount: 3500,
     commissionPercentage: 10,
     platformFee: 350,
-    netAmount: 3150,
+    netAmount: 3115,
     status: 'available',
     transactionReference: 'REF-GRAV-VEC882',
     createdAt: '2026-02-15T16:00:00.000Z',
@@ -766,7 +1100,7 @@ export const INITIAL_LEDGER_TRANSACTIONS: LedgerTransaction[] = [
     grossAmount: 2500,
     commissionPercentage: 10,
     platformFee: 250,
-    netAmount: 2250,
+    netAmount: 2225,
     status: 'pending_approval',
     transactionReference: 'REF-GRAV-DEP319',
     createdAt: '2026-02-17T09:30:00.000Z',
@@ -820,6 +1154,30 @@ class DataStore {
             withdrawals: parsed.withdrawals && parsed.withdrawals.length > 0
               ? parsed.withdrawals
               : INITIAL_WITHDRAWALS,
+            journalEntries: parsed.journalEntries && parsed.journalEntries.length > 0
+              ? parsed.journalEntries
+              : INITIAL_JOURNAL_ENTRIES,
+            escrowAccounts: parsed.escrowAccounts && parsed.escrowAccounts.length > 0
+              ? parsed.escrowAccounts
+              : INITIAL_ESCROW_ACCOUNTS,
+            commissionRules: parsed.commissionRules && parsed.commissionRules.length > 0
+              ? parsed.commissionRules
+              : INITIAL_COMMISSION_RULES,
+            taxRules: parsed.taxRules && parsed.taxRules.length > 0
+              ? parsed.taxRules
+              : INITIAL_TAX_RULES,
+            taxTransactions: parsed.taxTransactions && parsed.taxTransactions.length > 0
+              ? parsed.taxTransactions
+              : INITIAL_TAX_TRANSACTIONS,
+            invoices: parsed.invoices && parsed.invoices.length > 0
+              ? parsed.invoices
+              : INITIAL_INVOICES,
+            payoutSettings: parsed.payoutSettings && parsed.payoutSettings.length > 0
+              ? parsed.payoutSettings
+              : INITIAL_PAYOUT_SETTINGS,
+            disputeRecords: parsed.disputeRecords && parsed.disputeRecords.length > 0
+              ? parsed.disputeRecords
+              : INITIAL_DISPUTE_RECORDS,
             platformSettings: {
               ...DEFAULT_PLATFORM_SETTINGS,
               ...(parsed.platformSettings || {})
@@ -850,7 +1208,15 @@ class DataStore {
       withdrawals: INITIAL_WITHDRAWALS,
       disputes: [],
       ledgerTransactions: INITIAL_LEDGER_TRANSACTIONS,
-      platformSettings: DEFAULT_PLATFORM_SETTINGS
+      platformSettings: DEFAULT_PLATFORM_SETTINGS,
+      journalEntries: INITIAL_JOURNAL_ENTRIES,
+      escrowAccounts: INITIAL_ESCROW_ACCOUNTS,
+      commissionRules: INITIAL_COMMISSION_RULES,
+      taxRules: INITIAL_TAX_RULES,
+      taxTransactions: INITIAL_TAX_TRANSACTIONS,
+      invoices: INITIAL_INVOICES,
+      payoutSettings: INITIAL_PAYOUT_SETTINGS,
+      disputeRecords: INITIAL_DISPUTE_RECORDS
     };
   }
 
@@ -1241,6 +1607,9 @@ class DataStore {
   public getFreelancerEarningsSummary(freelancerId: string): FreelancerEarningsSummary {
     const ledger = (this.state.ledgerTransactions || []).filter(l => l.freelancerId === freelancerId);
     const withdrawals = (this.state.withdrawals || []).filter(w => w.freelancerId === freelancerId);
+    const escrows = (this.state.escrowAccounts || []).filter(e => e.freelancerId === freelancerId && !e.isDisputed);
+    const taxes = (this.state.taxTransactions || []).filter(t => t.freelancerId === freelancerId && t.taxType === 'tds_194o');
+    const settings = this.getPayoutSettings(freelancerId);
 
     // 1. Lifetime Earnings: Sum of net earnings from all eligible projects (positive ledger amounts)
     const lifetimeEarnings = ledger
@@ -1267,8 +1636,37 @@ class DataStore {
       .filter(w => w.status === 'failed' || w.status === 'rejected')
       .reduce((sum, w) => sum + w.amount, 0);
 
-    // 6. Available Balance = Lifetime Net - Total Withdrawn - Processing Withdrawals
+    // 6. Escrow-Locked Project Funds (Secured by clients, pending work release)
+    const escrowLockedEarnings = escrows.reduce((sum, e) => {
+      const unreleased = Math.max(0, (e.fundedAmount || 0) - (e.releasedAmount || 0) - (e.refundedAmount || 0));
+      return sum + unreleased;
+    }, 0);
+
+    // 7. Cumulative TDS Withheld (Section 194-O)
+    const tdsWithheldTotal = taxes.reduce((sum, t) => sum + (t.tdsAmount || t.taxAmount || 0), 0);
+
+    // 8. Available Balance = Lifetime Net - Total Withdrawn - Processing Withdrawals
     const availableBalance = Math.max(0, Number((lifetimeEarnings - totalWithdrawn - processingWithdrawals).toFixed(2)));
+
+    // Next scheduled payout projection
+    let nextScheduledPayoutDate = 'Manual Dispatches Only';
+    if (settings.autoPayoutEnabled) {
+      const now = new Date();
+      if (settings.frequency === 'daily') {
+        const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+        nextScheduledPayoutDate = tomorrow.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      } else if (settings.frequency === 'weekly') {
+        // Next Friday
+        const day = now.getDay();
+        const diff = (5 - day + 7) % 7 || 7;
+        const nextFri = new Date(now.getTime() + diff * 24 * 60 * 60 * 1000);
+        nextScheduledPayoutDate = `Every Friday (${nextFri.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })})`;
+      } else if (settings.frequency === 'monthly') {
+        // 1st of next month
+        const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+        nextScheduledPayoutDate = `1st of Month (${nextMonth.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })})`;
+      }
+    }
 
     return {
       lifetimeEarnings: Number(lifetimeEarnings.toFixed(2)),
@@ -1277,6 +1675,9 @@ class DataStore {
       processingWithdrawals: Number(processingWithdrawals.toFixed(2)),
       totalWithdrawn: Number(totalWithdrawn.toFixed(2)),
       failedPayments: Number(failedPayments.toFixed(2)),
+      escrowLockedEarnings: Number(escrowLockedEarnings.toFixed(2)),
+      tdsWithheldTotal: Number(tdsWithheldTotal.toFixed(2)),
+      nextScheduledPayoutDate,
       currency: 'USD'
     };
   }
@@ -1426,15 +1827,18 @@ class DataStore {
 
     // Validate payout destination format
     if (params.method === 'bank_transfer') {
-      if (!params.payoutDetails.accountNumber || !params.payoutDetails.ifsc) {
+      const ifsc = params.payoutDetails.ifsc || (params.payoutDetails as any).ifscCode || (params.payoutDetails as any).bankAccount?.ifscCode;
+      const accountNumber = params.payoutDetails.accountNumber || (params.payoutDetails as any).bankAccount?.accountNumber;
+      if (!accountNumber || !ifsc) {
         return { success: false, error: 'Bank account number and IFSC code are required for bank payout.' };
       }
       const ifscRegex = /^[A-Z]{4}0[A-Z0-9]{6}$/i;
-      if (!ifscRegex.test(params.payoutDetails.ifsc.trim())) {
+      if (!ifscRegex.test(ifsc.trim())) {
         return { success: false, error: 'Invalid Indian Financial System Code (IFSC). Format: 4 letters, 0, 6 characters (e.g. HDFC0001234).' };
       }
     } else if (params.method === 'upi') {
-      if (!params.payoutDetails.upiId || !/^[\w.-]+@[\w.-]+$/.test(params.payoutDetails.upiId.trim())) {
+      const upi = params.payoutDetails.upiId || (params.payoutDetails as any).vpa || (params.payoutDetails as any).upi?.vpa;
+      if (!upi || !/^[\w.-]+@[\w.-]+$/.test(upi.trim())) {
         return { success: false, error: 'Invalid Virtual Payment Address (UPI ID). Example: freelancer@okhdfcbank or name@upi.' };
       }
     }
@@ -1564,6 +1968,87 @@ class DataStore {
       const tx = (this.state.transactions || []).find(t => t.referenceId === withdrawal.id);
       if (tx) tx.status = 'completed';
 
+      // Record Double-Entry Journal for Freelancer Payout:
+      // Debit: Freelancer Payable (liability settled)
+      // Credit: Gateway Clearing (asset disbursed) + Processing Fee (if any)
+      const pLines: JournalEntryLine[] = [
+        {
+          accountId: 'liability:freelancer_payable',
+          accountName: 'Freelancer Payable Account',
+          type: 'debit',
+          amount: withdrawal.amount,
+          currency: 'USD'
+        },
+        {
+          accountId: 'asset:gateway_clearing',
+          accountName: 'Payment Gateway Clearing Account',
+          type: 'credit',
+          amount: withdrawal.finalAmount,
+          currency: 'USD'
+        }
+      ];
+      if (withdrawal.fee > 0) {
+        pLines.push({
+          accountId: 'revenue:platform_commission',
+          accountName: 'Withdrawal Processing Fee',
+          type: 'credit',
+          amount: withdrawal.fee,
+          currency: 'USD'
+        });
+      }
+
+      this.recordJournalEntry({
+        referenceType: 'freelancer_payout',
+        referenceId: withdrawal.id,
+        userId: withdrawal.freelancerId,
+        description: `Freelancer Payout Disbursed to ${withdrawal.freelancerName} ($${withdrawal.finalAmount}) via ${withdrawal.method.toUpperCase()} (Ref: ${withdrawal.paymentReference || 'UTR-BANK-SETTLED'})`,
+        lines: pLines
+      });
+
+      // Generate Payout Statement Invoice
+      const settings = this.getPlatformSettings();
+      const pInvNumber = generateNextInvoiceNumber(this.state.invoices || [], 'PAY');
+      const pInvoice: InvoiceRecord = {
+        id: pInvNumber,
+        invoiceNumber: pInvNumber,
+        type: 'freelancer_payout_statement',
+        status: 'paid',
+        issueDate: new Date().toISOString(),
+        supplier: {
+          name: settings.legalBusinessName || 'GRAVITASS TECHNOLOGIES PRIVATE LIMITED',
+          legalAddress: settings.legalAddress || 'Level 14, Astralis Cyber Park, Sector 62, Noida, India',
+          gstin: settings.platformGstin,
+          pan: settings.platformPan,
+          email: 'finance@gravitass.work'
+        },
+        customer: {
+          name: withdrawal.freelancerName,
+          legalAddress: 'Verified Sovereign Specialist',
+          email: 'freelancer@gravitass.com'
+        },
+        items: [
+          {
+            id: `item-${Date.now()}`,
+            description: `Freelancer Earnings Payout via ${withdrawal.method.toUpperCase()} (${withdrawal.paymentReference || 'UTR-SETTLED'})`,
+            quantity: 1,
+            unitPrice: withdrawal.amount,
+            taxableAmount: withdrawal.amount,
+            taxRate: 0,
+            taxAmount: 0,
+            totalAmount: withdrawal.amount
+          }
+        ],
+        currency: 'USD',
+        subtotal: withdrawal.amount,
+        taxTotal: 0,
+        grandTotal: withdrawal.amount,
+        paymentReference: withdrawal.paymentReference,
+        notes: `Settled via Indian Banking/UPI network to ${withdrawal.payoutDetails.maskedAccount || withdrawal.payoutDetails.maskedUpi || 'verified destination'}.`,
+        createdAt: new Date().toISOString()
+      };
+      if (!this.state.invoices) this.state.invoices = [];
+      this.state.invoices.unshift(pInvoice);
+
       this.addNotification({
         id: `notif-${Date.now()}`,
         userId: withdrawal.freelancerId,
@@ -1613,19 +2098,969 @@ class DataStore {
     return { success: true, withdrawal };
   }
 
-  // --- DISPUTES ---
+  // ==========================================
+  // MODULE 1 — CENTRAL JOURNAL & DOUBLE ENTRY
+  // ==========================================
+
+  public recordJournalEntry(params: Omit<FinancialJournalEntry, 'id' | 'timestamp' | 'immutable' | 'createdAt'>): FinancialJournalEntry {
+    const validation = validateDoubleEntry(params.lines);
+    if (!validation.isValid) {
+      throw new Error(`Double-entry balance mismatch! Debits ($${validation.debitTotal}) do not equal Credits ($${validation.creditTotal}). Diff: $${validation.difference}`);
+    }
+
+    const entry: FinancialJournalEntry = {
+      id: `JRN-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`,
+      timestamp: new Date().toISOString(),
+      referenceType: params.referenceType,
+      referenceId: params.referenceId,
+      contractId: params.contractId,
+      projectId: params.projectId,
+      userId: params.userId,
+      lines: params.lines,
+      description: params.description,
+      idempotencyKey: params.idempotencyKey,
+      immutable: true,
+      createdAt: new Date().toISOString()
+    };
+
+    if (!this.state.journalEntries) this.state.journalEntries = [];
+    this.state.journalEntries.unshift(entry);
+    this.saveState();
+    return entry;
+  }
+
+  public getJournalEntries(filters?: { accountId?: FinancialAccountType; referenceType?: string; contractId?: string }): FinancialJournalEntry[] {
+    let entries = this.state.journalEntries || [];
+    if (filters?.accountId) {
+      entries = entries.filter(e => e.lines.some(l => l.accountId === filters.accountId));
+    }
+    if (filters?.referenceType) {
+      entries = entries.filter(e => e.referenceType === filters.referenceType);
+    }
+    if (filters?.contractId) {
+      entries = entries.filter(e => e.contractId === filters.contractId);
+    }
+    return entries;
+  }
+
+  // ==========================================
+  // MODULE 2 — ESCROW & PAYMENT PROTECTION
+  // ==========================================
+
+  public getEscrowAccounts(): EscrowAccount[] {
+    return this.state.escrowAccounts || [];
+  }
+
+  public getEscrowByContractId(contractId: string): EscrowAccount | undefined {
+    return (this.state.escrowAccounts || []).find(e => e.contractId === contractId);
+  }
+
+  public fundProjectEscrow(params: {
+    contractId: string;
+    amount: number;
+    paymentReference: string;
+    milestoneId?: string;
+  }): { success: boolean; escrow?: EscrowAccount; invoice?: InvoiceRecord; error?: string } {
+    const contract = this.getContractById(params.contractId);
+    if (!contract) return { success: false, error: 'Contract not found' };
+
+    let escrow = this.getEscrowByContractId(params.contractId);
+    const now = new Date().toISOString();
+
+    if (!escrow) {
+      escrow = {
+        id: `ESC-${Date.now()}`,
+        contractId: contract.id,
+        projectId: contract.projectId,
+        projectTitle: contract.projectTitle,
+        clientId: contract.clientId,
+        clientName: contract.clientName,
+        freelancerId: contract.freelancerId,
+        freelancerName: contract.freelancerName,
+        totalGrossAmount: contract.totalAmount,
+        fundedAmount: 0,
+        releasedAmount: 0,
+        refundedAmount: 0,
+        currency: 'USD',
+        status: 'payment_confirmed',
+        gatewayOrderId: `ord_${Date.now().toString(36)}`,
+        gatewayPaymentId: params.paymentReference,
+        isDisputed: false,
+        milestones: contract.milestones.map(m => ({
+          milestoneId: m.id,
+          title: m.title,
+          amount: m.amount,
+          status: 'funds_secured',
+          fundedAt: now
+        })),
+        createdAt: now,
+        updatedAt: now
+      };
+      if (!this.state.escrowAccounts) this.state.escrowAccounts = [];
+      this.state.escrowAccounts.unshift(escrow);
+    }
+
+    // Update escrow amounts
+    escrow.fundedAmount = safeAdd(escrow.fundedAmount, params.amount);
+    escrow.status = 'funds_secured';
+    escrow.updatedAt = now;
+
+    // Record Double-Entry Journal:
+    // Debit Gateway Clearing (asset), Credit Escrow Vault (asset trust)
+    this.recordJournalEntry({
+      referenceType: 'project_funding',
+      referenceId: escrow.id,
+      contractId: contract.id,
+      projectId: contract.projectId,
+      userId: contract.clientId,
+      description: `Client Escrow Deposit for "${contract.projectTitle}" (Ref: ${params.paymentReference})`,
+      lines: [
+        {
+          accountId: 'asset:gateway_clearing',
+          accountName: 'Payment Gateway Clearing Account',
+          type: 'debit',
+          amount: params.amount,
+          currency: 'USD'
+        },
+        {
+          accountId: 'asset:escrow_vault',
+          accountName: 'GRAVITASS Escrow Vault Trust',
+          type: 'credit',
+          amount: params.amount,
+          currency: 'USD'
+        }
+      ]
+    });
+
+    // Generate Client Tax Invoice
+    const settings = this.getPlatformSettings();
+    const invoiceNumber = generateNextInvoiceNumber(this.state.invoices || [], 'INV');
+    const invoice: InvoiceRecord = {
+      id: invoiceNumber,
+      invoiceNumber,
+      type: 'client_tax_invoice',
+      status: 'paid',
+      issueDate: now,
+      contractId: contract.id,
+      projectId: contract.projectId,
+      projectTitle: contract.projectTitle,
+      milestoneId: params.milestoneId || 'all',
+      supplier: {
+        name: settings.legalBusinessName || 'GRAVITASS TECHNOLOGIES PRIVATE LIMITED',
+        legalAddress: settings.legalAddress || 'Level 14, Astralis Cyber Park, Sector 62, Noida, India',
+        gstin: settings.platformGstin,
+        pan: settings.platformPan,
+        email: 'finance@gravitass.work'
+      },
+      customer: {
+        name: contract.clientName,
+        legalAddress: 'Verified Enterprise Client',
+        email: 'client@gravitass.com'
+      },
+      items: [
+        {
+          id: `item-${Date.now()}`,
+          description: `Escrow Fund Deposit: ${contract.projectTitle}`,
+          sacHsnCode: settings.sacCode || '998311',
+          quantity: 1,
+          unitPrice: params.amount,
+          taxableAmount: params.amount,
+          taxRate: 0,
+          taxAmount: 0,
+          totalAmount: params.amount
+        }
+      ],
+      currency: 'USD',
+      subtotal: params.amount,
+      taxTotal: 0,
+      grandTotal: params.amount,
+      paymentReference: params.paymentReference,
+      notes: 'Funds held in segregated escrow reserve pending milestone completion and verification.',
+      createdAt: now
+    };
+
+    if (!this.state.invoices) this.state.invoices = [];
+    this.state.invoices.unshift(invoice);
+
+    // Audit transaction
+    this.addTransaction({
+      id: `tx-fnd-${Date.now()}`,
+      userId: contract.clientId,
+      type: 'deposit',
+      amount: params.amount,
+      status: 'completed',
+      description: `Escrow Funded ($${params.amount}) for "${contract.projectTitle}"`,
+      referenceId: escrow.id,
+      createdAt: now
+    });
+
+    this.saveState();
+    return { success: true, escrow, invoice };
+  }
+
+  public releaseMilestoneEscrow(params: {
+    contractId: string;
+    milestoneId: string;
+    approvedBy: string;
+  }): { success: boolean; escrow?: EscrowAccount; ledger?: LedgerTransaction; invoice?: InvoiceRecord; error?: string } {
+    const contract = this.getContractById(params.contractId);
+    if (!contract) return { success: false, error: 'Contract not found' };
+
+    let escrow = this.getEscrowByContractId(params.contractId);
+    if (!escrow) {
+      // Auto-initialize if not existing
+      const autoFund = this.fundProjectEscrow({
+        contractId: contract.id,
+        amount: contract.totalAmount,
+        paymentReference: `AUTO-INIT-${Date.now().toString(36).toUpperCase()}`
+      });
+      escrow = autoFund.escrow!;
+    }
+
+    if (escrow.isDisputed) {
+      return { success: false, error: 'Escrow is currently locked due to an active legal/contract dispute.' };
+    }
+
+    const ms = contract.milestones.find(m => m.id === params.milestoneId);
+    const msAmount = ms ? ms.amount : (contract.totalAmount - (contract.paidAmount || 0));
+
+    if (msAmount <= 0) {
+      return { success: false, error: 'No payable amount for this milestone.' };
+    }
+
+    // 1. Commission Calculation from Active Rules
+    const project = this.getProjectById(contract.projectId);
+    const activeRule = (this.state.commissionRules || []).find(r => r.isActive) || INITIAL_COMMISSION_RULES[0];
+    const commissionCalc = calculateCommissionFee({
+      grossAmount: msAmount,
+      category: project?.category,
+      freelancerId: contract.freelancerId,
+      rule: activeRule
+    });
+
+    // 2. Tax Calculation (GST on Platform Commission + Section 194-O TDS on Participant Gross)
+    const freelancerProfile = this.getFreelancerById(contract.freelancerId);
+    const taxCalc = calculateApplicableTaxes({
+      grossAmount: msAmount,
+      platformFee: commissionCalc.commissionFee,
+      freelancerLifetimeEarnings: freelancerProfile?.totalEarnings || 0,
+      taxRules: this.state.taxRules || INITIAL_TAX_RULES
+    });
+
+    const netAmount = taxCalc.netFreelancerPayable;
+    const now = new Date().toISOString();
+
+    // 3. Double-Entry Journal Entry
+    // Debit Escrow Vault (gross) -> Credit Freelancer Payable (net) + Platform Commission + TDS + GST
+    const journalLines: JournalEntryLine[] = [
+      {
+        accountId: 'asset:escrow_vault',
+        accountName: 'Escrow Vault Trust',
+        type: 'debit',
+        amount: msAmount,
+        currency: 'USD'
+      },
+      {
+        accountId: 'liability:freelancer_payable',
+        accountName: 'Freelancer Payable Account',
+        type: 'credit',
+        amount: netAmount,
+        currency: 'USD'
+      },
+      {
+        accountId: 'revenue:platform_commission',
+        accountName: 'Platform Service Revenue',
+        type: 'credit',
+        amount: commissionCalc.commissionFee,
+        currency: 'USD'
+      }
+    ];
+
+    if (taxCalc.tdsAmount > 0) {
+      journalLines.push({
+        accountId: 'liability:tax_payable_tds',
+        accountName: 'TDS Payable u/s 194-O',
+        type: 'credit',
+        amount: taxCalc.tdsAmount,
+        currency: 'USD'
+      });
+    }
+
+    if (taxCalc.gstOnCommission > 0) {
+      journalLines.push({
+        accountId: 'liability:tax_payable_gst',
+        accountName: 'GST Output Tax Payable',
+        type: 'credit',
+        amount: taxCalc.gstOnCommission,
+        currency: 'USD'
+      });
+    }
+
+    // Verify balance
+    const validation = validateDoubleEntry(journalLines);
+    if (!validation.isValid) {
+      // Adjust minor cents rounding into platform commission to maintain absolute double-entry balance
+      const roundingAdj = validation.difference;
+      const commLine = journalLines.find(l => l.accountId === 'revenue:platform_commission');
+      if (commLine) {
+        commLine.amount = validation.debitTotal > validation.creditTotal 
+          ? safeAdd(commLine.amount, roundingAdj)
+          : safeSubtract(commLine.amount, roundingAdj);
+      }
+    }
+
+    this.recordJournalEntry({
+      referenceType: 'milestone_release',
+      referenceId: ms?.id || contract.id,
+      contractId: contract.id,
+      projectId: contract.projectId,
+      userId: contract.freelancerId,
+      description: `Milestone Release for "${ms?.title || contract.projectTitle}" (Gross: $${msAmount}, Net: $${netAmount})`,
+      lines: journalLines
+    });
+
+    // 4. Tax Transaction Record
+    if (taxCalc.tdsAmount > 0) {
+      const taxRecord: TaxTransactionRecord = {
+        id: `TAX-${Date.now()}-TDS`,
+        transactionId: `TX-REL-${Date.now()}`,
+        referenceId: ms?.id || contract.id,
+        contractId: contract.id,
+        freelancerId: contract.freelancerId,
+        freelancerName: contract.freelancerName,
+        clientId: contract.clientId,
+        taxRuleId: taxCalc.appliedTdsRule?.id || 'TAX-TDS-194O-1',
+        taxType: 'tds_194o',
+        taxableAmount: msAmount,
+        ratePercentage: taxCalc.appliedTdsRule?.ratePercentage || 1,
+        taxAmount: taxCalc.tdsAmount,
+        tdsAmount: taxCalc.tdsAmount,
+        financialYear: '2025-2026',
+        month: now.slice(0, 7),
+        createdAt: now
+      };
+      if (!this.state.taxTransactions) this.state.taxTransactions = [];
+      this.state.taxTransactions.unshift(taxRecord);
+    }
+
+    // 5. Generate Platform Service Fee Invoice
+    const settings = this.getPlatformSettings();
+    const invoiceNumber = generateNextInvoiceNumber(this.state.invoices || [], 'INV');
+    const invoice: InvoiceRecord = {
+      id: invoiceNumber,
+      invoiceNumber,
+      type: 'platform_commission_invoice',
+      status: 'paid',
+      issueDate: now,
+      contractId: contract.id,
+      projectId: contract.projectId,
+      projectTitle: contract.projectTitle,
+      milestoneId: ms?.id,
+      supplier: {
+        name: settings.legalBusinessName || 'GRAVITASS TECHNOLOGIES PRIVATE LIMITED',
+        legalAddress: settings.legalAddress || 'Level 14, Astralis Cyber Park, Sector 62, Noida, India',
+        gstin: settings.platformGstin,
+        pan: settings.platformPan,
+        email: 'finance@gravitass.work'
+      },
+      customer: {
+        name: contract.freelancerName,
+        legalAddress: 'Verified Sovereign Specialist',
+        email: 'freelancer@gravitass.com'
+      },
+      items: [
+        {
+          id: `item-comm-${Date.now()}`,
+          description: `Platform Commission Fee (${commissionCalc.effectivePercentage}% on Milestone Gross $${msAmount})`,
+          sacHsnCode: settings.sacCode || '998311',
+          quantity: 1,
+          unitPrice: commissionCalc.commissionFee,
+          taxableAmount: commissionCalc.commissionFee,
+          taxRate: taxCalc.appliedGstRule?.ratePercentage || 18,
+          taxAmount: taxCalc.gstOnCommission,
+          totalAmount: safeAdd(commissionCalc.commissionFee, taxCalc.gstOnCommission)
+        }
+      ],
+      currency: 'USD',
+      subtotal: commissionCalc.commissionFee,
+      taxTotal: taxCalc.gstOnCommission,
+      grandTotal: safeAdd(commissionCalc.commissionFee, taxCalc.gstOnCommission),
+      paymentReference: `REF-GRAV-${Date.now().toString(36).toUpperCase()}`,
+      notes: `Section 194-O TDS withheld: $${taxCalc.tdsAmount}. Tax compliance auto-filed.`,
+      createdAt: now
+    };
+    if (!this.state.invoices) this.state.invoices = [];
+    this.state.invoices.unshift(invoice);
+
+    // 6. Update Ledger & Freelancer Profile
+    const ledgerEntry: LedgerTransaction = {
+      id: `LED-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`,
+      freelancerId: contract.freelancerId,
+      freelancerName: contract.freelancerName,
+      projectId: contract.projectId,
+      projectTitle: contract.projectTitle,
+      clientId: contract.clientId,
+      clientName: contract.clientName,
+      contractId: contract.id,
+      milestoneId: ms?.id,
+      milestoneTitle: ms?.title || 'Contract Milestone',
+      grossAmount: msAmount,
+      commissionPercentage: commissionCalc.effectivePercentage,
+      platformFee: commissionCalc.commissionFee,
+      netAmount,
+      status: 'available',
+      transactionReference: invoice.paymentReference || `REF-GRAV-${Date.now().toString(36).toUpperCase()}`,
+      createdAt: now,
+      updatedAt: now
+    };
+    if (!this.state.ledgerTransactions) this.state.ledgerTransactions = [];
+    this.state.ledgerTransactions.unshift(ledgerEntry);
+
+    // Update Escrow allocation
+    escrow.releasedAmount = safeAdd(escrow.releasedAmount, msAmount);
+    if (ms) {
+      ms.status = 'approved';
+      const escMs = escrow.milestones.find(m => 
+        m.milestoneId === ms.id || 
+        m.milestoneId === params.milestoneId || 
+        m.milestoneId === `ms-demo-${ms.id.replace('ms-', '')}` ||
+        m.title.toLowerCase().includes(ms.title.slice(0, 10).toLowerCase())
+      );
+      if (escMs) {
+        escMs.status = 'payment_released';
+        escMs.releasedAt = now;
+        escMs.releaseTxId = ledgerEntry.id;
+      }
+    }
+    if (escrow.releasedAmount >= escrow.fundedAmount) {
+      escrow.status = 'payment_released';
+    }
+    escrow.updatedAt = now;
+
+    // Update Contract
+    contract.paidAmount = safeAdd(contract.paidAmount || 0, msAmount);
+    this.updateContract(contract.id, contract);
+
+    // Update profile
+    if (freelancerProfile) {
+      freelancerProfile.totalEarnings = safeAdd(freelancerProfile.totalEarnings || 0, netAmount);
+      this.saveFreelancerProfile(freelancerProfile);
+    }
+
+    // Notify
+    this.addNotification({
+      id: `notif-${Date.now()}`,
+      userId: contract.freelancerId,
+      title: 'Milestone Released to Available Balance!',
+      message: `$${netAmount.toLocaleString()} credited for "${ms?.title || contract.projectTitle}". (Gross: $${msAmount}, Platform Fee: $${commissionCalc.commissionFee}, TDS: $${taxCalc.tdsAmount}).`,
+      type: 'payment',
+      link: '/dashboard/freelancer',
+      isRead: false,
+      createdAt: now
+    });
+
+    this.saveState();
+    return { success: true, escrow, ledger: ledgerEntry, invoice };
+  }
+
+  public refundEscrow(params: {
+    contractId: string;
+    amount: number;
+    reason: string;
+    approvedBy: string;
+  }): { success: boolean; refundCreditNote?: InvoiceRecord; error?: string } {
+    const escrow = this.getEscrowByContractId(params.contractId);
+    if (!escrow) return { success: false, error: 'Escrow account not found' };
+
+    const unreleased = Math.max(0, escrow.fundedAmount - escrow.releasedAmount - escrow.refundedAmount);
+    if (params.amount > unreleased) {
+      return { success: false, error: `Refund amount ($${params.amount}) exceeds unreleased escrow funds ($${unreleased}).` };
+    }
+
+    const now = new Date().toISOString();
+    escrow.refundedAmount = safeAdd(escrow.refundedAmount, params.amount);
+    if (escrow.refundedAmount + escrow.releasedAmount >= escrow.fundedAmount) {
+      escrow.status = 'refunded';
+    } else {
+      escrow.status = 'refund_processing';
+    }
+    escrow.updatedAt = now;
+
+    // Double-Entry Journal:
+    // Debit Escrow Vault (reducing asset trust), Credit Gateway Clearing (dispatched to client)
+    this.recordJournalEntry({
+      referenceType: 'refund',
+      referenceId: escrow.id,
+      contractId: escrow.contractId,
+      projectId: escrow.projectId,
+      userId: escrow.clientId,
+      description: `Escrow Refund to Client: "${escrow.projectTitle}" (${params.reason})`,
+      lines: [
+        {
+          accountId: 'asset:escrow_vault',
+          accountName: 'Escrow Vault Trust',
+          type: 'debit',
+          amount: params.amount,
+          currency: 'USD'
+        },
+        {
+          accountId: 'asset:gateway_clearing',
+          accountName: 'Payment Gateway Clearing Account',
+          type: 'credit',
+          amount: params.amount,
+          currency: 'USD'
+        }
+      ]
+    });
+
+    // Generate Refund Credit Note
+    const settings = this.getPlatformSettings();
+    const creditNoteNum = generateNextInvoiceNumber(this.state.invoices || [], 'CRN');
+    const creditNote: InvoiceRecord = {
+      id: creditNoteNum,
+      invoiceNumber: creditNoteNum,
+      type: 'refund_credit_note',
+      status: 'refunded',
+      issueDate: now,
+      contractId: escrow.contractId,
+      projectId: escrow.projectId,
+      projectTitle: escrow.projectTitle,
+      supplier: {
+        name: settings.legalBusinessName || 'GRAVITASS TECHNOLOGIES PRIVATE LIMITED',
+        legalAddress: settings.legalAddress || 'Level 14, Astralis Cyber Park, Sector 62, Noida, India',
+        gstin: settings.platformGstin,
+        pan: settings.platformPan,
+        email: 'finance@gravitass.work'
+      },
+      customer: {
+        name: escrow.clientName,
+        email: 'client@gravitass.com',
+        legalAddress: 'Verified Enterprise Client'
+      },
+      items: [
+        {
+          id: `crn-item-${Date.now()}`,
+          description: `Escrow Refund Reversal: ${escrow.projectTitle} (${params.reason})`,
+          quantity: 1,
+          unitPrice: params.amount,
+          taxableAmount: params.amount,
+          taxRate: 0,
+          taxAmount: 0,
+          totalAmount: params.amount
+        }
+      ],
+      currency: 'USD',
+      subtotal: params.amount,
+      taxTotal: 0,
+      grandTotal: params.amount,
+      notes: `Refund memorandum executed under dispute/cancellation protocol. Reason: ${params.reason}`,
+      createdAt: now
+    };
+
+    if (!this.state.invoices) this.state.invoices = [];
+    this.state.invoices.unshift(creditNote);
+
+    this.saveState();
+    return { success: true, refundCreditNote: creditNote };
+  }
+
+  // ==========================================
+  // MODULE 3 — COMMISSION ENGINE CONFIGURATION
+  // ==========================================
+
+  public getCommissionRules(): CommissionRule[] {
+    return this.state.commissionRules || INITIAL_COMMISSION_RULES;
+  }
+
+  public updateCommissionRule(rule: Partial<CommissionRule>): CommissionRule {
+    if (!this.state.commissionRules) this.state.commissionRules = [...INITIAL_COMMISSION_RULES];
+    const active = this.state.commissionRules.find(r => r.isActive) || this.state.commissionRules[0];
+    
+    Object.assign(active, rule, { updatedAt: new Date().toISOString() });
+    this.saveState();
+    return active;
+  }
+
+  // ==========================================
+  // MODULE 6 — INVOICE RETRIEVAL & GENERATION
+  // ==========================================
+
+  public getInvoices(filters?: { userId?: string; contractId?: string; type?: string }): InvoiceRecord[] {
+    let list = this.state.invoices || INITIAL_INVOICES;
+    if (filters?.contractId) {
+      list = list.filter(inv => inv.contractId === filters.contractId);
+    }
+    if (filters?.type) {
+      list = list.filter(inv => inv.type === filters.type);
+    }
+    return list;
+  }
+
+  public getInvoiceById(id: string): InvoiceRecord | undefined {
+    return (this.state.invoices || INITIAL_INVOICES).find(inv => inv.id === id || inv.invoiceNumber === id);
+  }
+
+  public createInvoice(invoice: InvoiceRecord): InvoiceRecord {
+    if (!this.state.invoices) this.state.invoices = [];
+    this.state.invoices.unshift(invoice);
+    this.saveState();
+    return invoice;
+  }
+
+  // ==========================================
+  // MODULE 7 — TAX MANAGEMENT & REPORTS
+  // ==========================================
+
+  public getTaxRules(): TaxRule[] {
+    return this.state.taxRules || INITIAL_TAX_RULES;
+  }
+
+  public updateTaxRule(rule: Partial<TaxRule>): TaxRule {
+    if (!this.state.taxRules) this.state.taxRules = [...INITIAL_TAX_RULES];
+    const existing = this.state.taxRules.find(r => r.id === rule.id);
+    if (existing) {
+      Object.assign(existing, rule);
+      this.saveState();
+      return existing;
+    }
+    const newRule: TaxRule = {
+      id: rule.id || `TAX-RULE-${Date.now()}`,
+      name: rule.name || 'New Tax Rule',
+      type: rule.type || 'gst_on_commission',
+      ratePercentage: rule.ratePercentage || 18,
+      appliesTo: rule.appliesTo || 'platform_fee',
+      panRequired: rule.panRequired || false,
+      isEnabled: rule.isEnabled !== undefined ? rule.isEnabled : true,
+      effectiveDate: new Date().toISOString(),
+      ...rule
+    };
+    this.state.taxRules.push(newRule);
+    this.saveState();
+    return newRule;
+  }
+
+  public getTaxTransactions(filters?: { financialYear?: string; month?: string; freelancerId?: string }): TaxTransactionRecord[] {
+    let list = this.state.taxTransactions || INITIAL_TAX_TRANSACTIONS;
+    if (filters?.financialYear) {
+      list = list.filter(t => t.financialYear === filters.financialYear);
+    }
+    if (filters?.month) {
+      list = list.filter(t => t.month === filters.month);
+    }
+    if (filters?.freelancerId) {
+      list = list.filter(t => t.freelancerId === filters.freelancerId);
+    }
+    return list;
+  }
+
+  public getTaxReportSummary(financialYear: string = '2025-2026') {
+    const records = this.getTaxTransactions({ financialYear });
+    const gstRecords = records.filter(r => r.taxType === 'gst_on_commission');
+    const tdsRecords = records.filter(r => r.taxType === 'tds_194o');
+
+    const totalPlatformGstCollected = gstRecords.reduce((sum, r) => sum + (r.taxAmount || 0), 0);
+    const totalTdsWithheld = tdsRecords.reduce((sum, r) => sum + (r.tdsAmount || r.taxAmount || 0), 0);
+    const taxableCommissionTurnover = gstRecords.reduce((sum, r) => sum + (r.taxableAmount || 0), 0);
+    const grossMarketplaceTurnover = tdsRecords.reduce((sum, r) => sum + (r.taxableAmount || 0), 0);
+
+    return {
+      financialYear,
+      totalPlatformGstCollected: Number(totalPlatformGstCollected.toFixed(2)),
+      cgstTotal: Number((totalPlatformGstCollected / 2).toFixed(2)),
+      sgstTotal: Number((totalPlatformGstCollected / 2).toFixed(2)),
+      totalTdsWithheld: Number(totalTdsWithheld.toFixed(2)),
+      taxableCommissionTurnover: Number(taxableCommissionTurnover.toFixed(2)),
+      grossMarketplaceTurnover: Number(grossMarketplaceTurnover.toFixed(2)),
+      transactionCount: records.length,
+      statutoryFilingStatus: 'AUDIT_READY'
+    };
+  }
+
+  // ==========================================
+  // MODULE 4 & 5 — PAYOUT SETTINGS & AUTOMATED CRON
+  // ==========================================
+
+  public getPayoutSettings(freelancerId: string): FreelancerPayoutSettings {
+    const existing = (this.state.payoutSettings || []).find(p => p.freelancerId === freelancerId);
+    if (existing) return existing;
+
+    const defaultSetting: FreelancerPayoutSettings = {
+      freelancerId,
+      preferredMethod: 'upi',
+      frequency: 'weekly',
+      minimumThreshold: 500,
+      autoPayoutEnabled: true,
+      payoutDetails: {
+        accountHolderName: 'Elena Vance',
+        upiId: 'elena.vance@oksbi',
+        maskedUpi: 'ele***@oksbi',
+        isVerified: true
+      },
+      panNumber: 'ABCDE1234F',
+      updatedAt: new Date().toISOString()
+    };
+    if (!this.state.payoutSettings) this.state.payoutSettings = [];
+    this.state.payoutSettings.push(defaultSetting);
+    this.saveState();
+    return defaultSetting;
+  }
+
+  public updatePayoutSettings(freelancerId: string, settings: Partial<FreelancerPayoutSettings>): FreelancerPayoutSettings {
+    if (!this.state.payoutSettings) this.state.payoutSettings = [...INITIAL_PAYOUT_SETTINGS];
+    let record = this.state.payoutSettings.find(p => p.freelancerId === freelancerId);
+    if (record) {
+      Object.assign(record, settings, { updatedAt: new Date().toISOString() });
+    } else {
+      record = {
+        freelancerId,
+        preferredMethod: settings.preferredMethod || 'upi',
+        frequency: settings.frequency || 'weekly',
+        minimumThreshold: settings.minimumThreshold || 500,
+        autoPayoutEnabled: settings.autoPayoutEnabled !== undefined ? settings.autoPayoutEnabled : true,
+        payoutDetails: settings.payoutDetails || {},
+        panNumber: settings.panNumber,
+        updatedAt: new Date().toISOString(),
+        ...settings
+      };
+      this.state.payoutSettings.push(record);
+    }
+    this.saveState();
+    return record;
+  }
+
+  public async runAutomatedPayoutSchedule(frequency?: 'daily' | 'weekly' | 'monthly'): Promise<{
+    processed: number;
+    successCount: number;
+    errors: string[];
+    payouts: WithdrawalRequest[];
+  }> {
+    const settingsList = this.state.payoutSettings || [];
+    const targetSettings = settingsList.filter(s => s.autoPayoutEnabled && (!frequency || s.frequency === frequency));
+
+    let processed = 0;
+    let successCount = 0;
+    const errors: string[] = [];
+    const payouts: WithdrawalRequest[] = [];
+
+    for (const setting of targetSettings) {
+      const summary = this.getFreelancerEarningsSummary(setting.freelancerId);
+      if (summary.availableBalance >= setting.minimumThreshold && summary.availableBalance > 0) {
+        processed++;
+        const withdrawalResult = this.requestWithdrawal({
+          freelancerId: setting.freelancerId,
+          amount: summary.availableBalance,
+          method: setting.preferredMethod,
+          payoutDetails: setting.payoutDetails,
+          idempotencyKey: `AUTO-POUT-${setting.freelancerId}-${Date.now().toString().slice(0, 8)}`
+        });
+
+        if (withdrawalResult.success && withdrawalResult.withdrawal) {
+          // Execute gateway payout dispatch
+          const gwResult = await PayoutGatewayService.executePayout(withdrawalResult.withdrawal);
+          if (gwResult.success) {
+            this.processWithdrawalStatus({
+              withdrawalId: withdrawalResult.withdrawal.id,
+              status: 'paid',
+              paymentReference: gwResult.paymentReference
+            });
+            successCount++;
+            payouts.push(withdrawalResult.withdrawal);
+          } else {
+            this.processWithdrawalStatus({
+              withdrawalId: withdrawalResult.withdrawal.id,
+              status: 'failed',
+              failureReason: gwResult.failureReason
+            });
+            errors.push(`Gateway failed for ${setting.freelancerId}: ${gwResult.failureReason}`);
+          }
+        } else {
+          errors.push(`Withdrawal reserve failed for ${setting.freelancerId}: ${withdrawalResult.error}`);
+        }
+      }
+    }
+
+    return { processed, successCount, errors, payouts };
+  }
+
+  // ==========================================
+  // MODULE 10 — DISPUTES & LEGAL HOLDS
+  // ==========================================
+
+  public getDisputeRecords(): DisputeRecord[] {
+    return this.state.disputeRecords || [];
+  }
+
+  public openEscrowDispute(params: {
+    contractId: string;
+    initiatorId: string;
+    initiatorRole: 'client' | 'freelancer';
+    reason: string;
+    description: string;
+  }): { success: boolean; dispute?: DisputeRecord; error?: string } {
+    const contract = this.getContractById(params.contractId);
+    if (!contract) return { success: false, error: 'Contract not found' };
+
+    const escrow = this.getEscrowByContractId(params.contractId);
+    if (!escrow) return { success: false, error: 'Escrow account not found for this contract' };
+
+    const unreleased = Math.max(0, escrow.fundedAmount - escrow.releasedAmount - escrow.refundedAmount);
+    if (unreleased <= 0) {
+      return { success: false, error: 'No unreleased funds remain in escrow to dispute.' };
+    }
+
+    const now = new Date().toISOString();
+    const dispute: DisputeRecord = {
+      id: `DSP-${Date.now()}`,
+      contractId: contract.id,
+      projectId: contract.projectId,
+      projectTitle: contract.projectTitle,
+      clientId: contract.clientId,
+      clientName: contract.clientName,
+      freelancerId: contract.freelancerId,
+      freelancerName: contract.freelancerName,
+      escrowId: escrow.id,
+      disputedAmount: unreleased,
+      reason: params.reason,
+      evidence: [params.description],
+      status: 'open',
+      createdAt: now
+    };
+
+    if (!this.state.disputeRecords) this.state.disputeRecords = [];
+    this.state.disputeRecords.unshift(dispute);
+
+    // Freeze escrow
+    escrow.isDisputed = true;
+    escrow.disputeId = dispute.id;
+    escrow.status = 'disputed';
+    escrow.updatedAt = now;
+
+    // Freeze contract
+    contract.status = 'disputed';
+    this.updateContract(contract.id, contract);
+
+    // Notify parties
+    this.addNotification({
+      id: `notif-${Date.now()}-c`,
+      userId: contract.clientId,
+      title: 'Dispute Registered — Escrow Vault Locked',
+      message: `A dispute has been logged for "${contract.projectTitle}". Unreleased funds ($${unreleased.toLocaleString()}) are locked pending administrative arbitration.`,
+      type: 'payment',
+      link: '/dashboard/client',
+      isRead: false,
+      createdAt: now
+    });
+
+    this.addNotification({
+      id: `notif-${Date.now()}-f`,
+      userId: contract.freelancerId,
+      title: 'Dispute Registered on Contract',
+      message: `A formal dispute has been opened for "${contract.projectTitle}". Our arbitration team will review milestones and evidence.`,
+      type: 'payment',
+      link: '/dashboard/freelancer',
+      isRead: false,
+      createdAt: now
+    });
+
+    this.saveState();
+    return { success: true, dispute };
+  }
+
+  public resolveEscrowDispute(params: {
+    disputeId: string;
+    resolution: DisputeResolutionAction;
+    notes?: string;
+    splitPercentageFreelancer?: number;
+    adminId: string;
+  }): { success: boolean; dispute?: DisputeRecord; error?: string } {
+    const dispute = (this.state.disputeRecords || []).find(d => d.id === params.disputeId);
+    if (!dispute) return { success: false, error: 'Dispute record not found' };
+    if (dispute.status === 'resolved' || dispute.status === 'closed') {
+      return { success: false, error: 'Dispute has already been resolved.' };
+    }
+
+    const escrow = this.getEscrowByContractId(dispute.contractId);
+    if (!escrow) return { success: false, error: 'Associated escrow vault not found' };
+
+    const totalDisputed = dispute.disputedAmount;
+    const now = new Date().toISOString();
+
+    let releasedAmount = 0;
+    let refundedAmount = 0;
+
+    if (params.resolution === 'full_release_freelancer') {
+      releasedAmount = totalDisputed;
+      this.releaseMilestoneEscrow({
+        contractId: dispute.contractId,
+        milestoneId: escrow.milestones[0]?.milestoneId || 'arbitrated',
+        approvedBy: params.adminId
+      });
+    } else if (params.resolution === 'full_refund_client') {
+      refundedAmount = totalDisputed;
+      this.refundEscrow({
+        contractId: dispute.contractId,
+        amount: totalDisputed,
+        reason: `Dispute Arbitration Decision: Full Refund to Client (${params.notes || 'Default'})`,
+        approvedBy: params.adminId
+      });
+    } else if (params.resolution === 'partial_split') {
+      const freelancerShare = (params.splitPercentageFreelancer || 50) / 100;
+      releasedAmount = fromMinorUnits(Math.round(toMinorUnits(totalDisputed) * freelancerShare));
+      refundedAmount = safeSubtract(totalDisputed, releasedAmount);
+
+      if (releasedAmount > 0) {
+        this.releaseMilestoneEscrow({
+          contractId: dispute.contractId,
+          milestoneId: escrow.milestones[0]?.milestoneId || 'arbitrated-split',
+          approvedBy: params.adminId
+        });
+      }
+      if (refundedAmount > 0) {
+        this.refundEscrow({
+          contractId: dispute.contractId,
+          amount: refundedAmount,
+          reason: `Dispute Arbitration Split (${params.splitPercentageFreelancer || 50}% Freelancer / ${100 - (params.splitPercentageFreelancer || 50)}% Client)`,
+          approvedBy: params.adminId
+        });
+      }
+    }
+
+    dispute.status = 'resolved';
+    dispute.resolution = params.resolution;
+    dispute.resolutionNotes = params.notes;
+    dispute.releasedAmountToFreelancer = releasedAmount;
+    dispute.refundedAmountToClient = refundedAmount;
+    dispute.resolvedBy = params.adminId;
+    dispute.resolvedAt = now;
+
+    // Unlock escrow
+    escrow.isDisputed = false;
+    escrow.updatedAt = now;
+
+    const contract = this.getContractById(dispute.contractId);
+    if (contract) {
+      contract.status = 'completed';
+      this.updateContract(contract.id, contract);
+    }
+
+    this.saveState();
+    return { success: true, dispute };
+  }
+
+  // Backward-compatible Dispute aliases
   public getDisputes(): Dispute[] {
-    return this.state.disputes;
+    return this.state.disputes || [];
   }
 
   public addDispute(d: Dispute): Dispute {
+    if (!this.state.disputes) this.state.disputes = [];
     this.state.disputes.unshift(d);
     this.saveState();
     return d;
   }
 
   public updateDisputeStatus(id: string, status: Dispute['status'], resolution?: string): Dispute | undefined {
-    const d = this.state.disputes.find(item => item.id === id);
+    const d = (this.state.disputes || []).find(item => item.id === id);
     if (!d) return undefined;
     d.status = status;
     if (resolution) d.resolution = resolution;
