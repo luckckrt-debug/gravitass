@@ -7,6 +7,7 @@ import { ArrowUpRight } from 'lucide-react';
 interface CategoryItem {
   number: string;
   id: string;
+  slug: string;
   title: string;
   sub: string;
   description: string;
@@ -16,67 +17,75 @@ interface CategoryItem {
 const CATEGORIES_DATA: CategoryItem[] = [
   {
     number: '01',
-    id: 'development',
-    title: 'DEVELOPMENT & TECHNOLOGY',
-    sub: 'Full-stack engineering, distributed systems, AI & autonomous agents',
-    description: 'Web development, mobile ecosystems, software architecture, LLM pipelines, smart contracts, cybersecurity, databases, and low-latency APIs.',
-    skills: ['Next.js', 'Python', 'Rust', 'LangChain', 'Docker', 'iOS/Android']
+    id: 'programming-tech',
+    slug: 'programming-tech',
+    title: 'PROGRAMMING & TECH',
+    sub: 'Full-stack engineering, distributed systems, cloud & mobile apps',
+    description: 'Web development, Next.js applications, low-latency microservices, smart contracts, cybersecurity audits, databases, and enterprise cloud DevOps.',
+    skills: ['Next.js', 'Python', 'Rust', 'TypeScript', 'Docker', 'iOS/Android', 'Cybersecurity']
   },
   {
     number: '02',
-    id: 'design',
-    title: 'DESIGN & CREATIVE',
-    sub: 'Spatial UI, brand systems, interactive 3D, and visual design',
-    description: 'Graphic design, holistic branding identities, design tokens, responsive web interfaces, app interaction systems, and 3D product renders.',
-    skills: ['Figma', 'Spline 3D', 'Three.js', 'Design Systems', 'Prototyping']
+    id: 'ai-services',
+    slug: 'ai-services',
+    title: 'AI & AUTONOMOUS SYSTEMS',
+    sub: 'Autonomous agents, enterprise LLMs, RAG & generative vision',
+    description: 'Multi-agent swarms, custom model fine-tuning, retrieval-augmented generation (RAG), tool-use pipelines, computer vision, and cognitive workflow automation.',
+    skills: ['AI Agents', 'LangChain', 'PyTorch', 'Vector DBs', 'FastAPI', 'Generative AI']
   },
   {
     number: '03',
-    id: 'video',
-    title: 'VIDEO & MOTION',
-    sub: 'Cinematic storytelling, 3D motion graphics, VFX, and reels',
-    description: 'Video editing, narrative cutting, high-end YouTube production, motion typography, visual effects, and calibrated color grading.',
-    skills: ['After Effects', 'Premiere Pro', 'DaVinci Resolve', 'Cinema 4D', 'Blender']
+    id: 'graphics-design',
+    slug: 'graphics-design',
+    title: 'GRAPHICS & DESIGN',
+    sub: 'Spatial UI/UX, brand systems, 3D assets, and futuristic identities',
+    description: 'High-conversion design systems, Figma component architectures, luxury visual branding, 3D interactive assets, packaging, and digital interfaces.',
+    skills: ['UI/UX Design', 'Figma', 'Spline 3D', 'Three.js', 'Brand Identity', 'Design Systems']
   },
   {
     number: '04',
-    id: 'marketing',
-    title: 'DIGITAL & MARKETING',
-    sub: 'Performance marketing, search supremacy, and viral growth',
-    description: 'SEO strategy, paid customer acquisition across Meta and Google, lifecycle email sequences, viral content funnels, and marketing operations.',
-    skills: ['SEO Architecture', 'Paid Media', 'Growth Hacking', 'Lifecycle Ads']
+    id: 'digital-marketing',
+    slug: 'digital-marketing',
+    title: 'DIGITAL MARKETING',
+    sub: 'Performance marketing, search supremacy, and viral growth funnels',
+    description: 'Search engine optimization (SEO), omnichannel paid customer acquisition across Meta and Google, lifecycle funnels, and viral growth strategy.',
+    skills: ['SEO', 'Google Ads', 'Meta Ads', 'Performance Marketing', 'Growth Funnels']
   },
   {
     number: '05',
-    id: 'writing',
-    title: 'WRITING & CONTENT',
-    sub: 'Technical whitepapers, high-conversion copy, and narratives',
-    description: 'Engineering documentation, research papers, brand messaging, landing page copywriting, technical articles, and multilingual localization.',
-    skills: ['Technical Writing', 'Copywriting', 'Whitepapers', 'Speechwriting']
+    id: 'video-animation',
+    slug: 'video-animation',
+    title: 'VIDEO & ANIMATION',
+    sub: 'Cinematic storytelling, 3D motion graphics, VFX, and viral reels',
+    description: 'Cinematic commercial cutting, 3D motion design, broadcast-grade VFX, viral shorts editing, explainer animation, and calibrated color grading.',
+    skills: ['After Effects', 'Premiere Pro', 'DaVinci Resolve', '3D Animation', 'Motion Graphics']
   },
   {
     number: '06',
-    id: 'business',
-    title: 'BUSINESS & PROFESSIONAL',
-    sub: 'Fractional strategy, intelligence, and operations management',
-    description: 'Executive advisory, financial modeling, deep industry research, project management leadership, and operational automation.',
-    skills: ['Market Intelligence', 'Operations', 'Financial Models', 'Fractional Exec']
+    id: 'data-analytics',
+    slug: 'data-analytics',
+    title: 'DATA & ANALYTICS',
+    sub: 'Enterprise BI dashboards, predictive modeling, and data pipelines',
+    description: 'ETL pipelines, BigQuery analytics, Tableau/Power BI intelligence suites, predictive machine learning, and clean structured data architecture.',
+    skills: ['SQL', 'Python', 'Power BI', 'Tableau', 'Data Engineering', 'Predictive Modeling']
   },
   {
     number: '07',
-    id: 'audio',
-    title: 'AUDIO & PRODUCTION',
-    sub: 'Spatial sound design, original composition, and voiceover',
-    description: 'Commercial voice artistry, podcast production, cinematic sound design, foley, original scoring, mixing, and mastering.',
-    skills: ['Sound Design', 'Voice-Over', 'Ableton Live', 'Mastering']
+    id: 'business',
+    slug: 'business',
+    title: 'BUSINESS & STRATEGY',
+    sub: 'Fractional strategy, executive intelligence, and ops management',
+    description: 'Fractional leadership, investor financial models, market intelligence dossiers, project management, and operational systems engineering.',
+    skills: ['Business Plans', 'Financial Models', 'Market Research', 'Project Management']
   },
   {
     number: '08',
-    id: 'other',
-    title: 'ENGINEERING & SPECIALIZED',
-    sub: 'Parametric CAD, architectural visualization, and BIM',
-    description: 'Mechanical prototyping, architectural schematics, structural analysis, hardware firmware development, and bespoke technical consulting.',
-    skills: ['AutoCAD', 'SolidWorks', 'BIM Architecture', 'Parametric 3D']
+    id: 'engineering-architecture',
+    slug: 'engineering-architecture',
+    title: 'ENGINEERING & ARCHITECTURE',
+    sub: 'Parametric CAD, mechanical prototyping, and architectural BIM',
+    description: 'Mechanical industrial design, parametric 3D modeling, architectural blueprints, interior spatial layouts, and hardware prototyping.',
+    skills: ['CAD Design', 'SolidWorks', '3D Modeling', 'Architecture', 'Interior BIM']
   }
 ];
 
@@ -100,7 +109,7 @@ export default function InteractiveCategoryUniverse() {
                 className="py-7 group cursor-pointer transition-all duration-300 relative"
               >
                 <Link
-                  href={`/explore?category=${cat.id}`}
+                  href={`/freelancers/${cat.slug}`}
                   className="flex items-baseline justify-between gap-6"
                 >
                   <div className="flex items-baseline gap-6 sm:gap-8 flex-1">
@@ -187,7 +196,7 @@ export default function InteractiveCategoryUniverse() {
 
               <div className="pt-4 border-t border-white/[0.08]">
                 <Link
-                  href={`/explore?category=${activeCategory.id}`}
+                  href={`/freelancers/${activeCategory.slug}`}
                   className="w-full flex items-center justify-center gap-2 py-3 rounded-full border border-[#73D8C4]/40 bg-[#73D8C4]/10 hover:bg-[#73D8C4]/20 text-[#73D8C4] text-xs tracking-wider uppercase font-medium transition-all"
                 >
                   <span>Explore Department Talent</span>

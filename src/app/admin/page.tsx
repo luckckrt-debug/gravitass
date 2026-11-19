@@ -23,7 +23,11 @@ import {
   Scale,
   RefreshCw,
   ExternalLink,
-  Play
+  Play,
+  Plus,
+  Edit2,
+  Tag,
+  Zap
 } from 'lucide-react';
 import { 
   User, 
@@ -36,7 +40,8 @@ import {
   InvoiceRecord,
   FinancialJournalEntry,
   DisputeRecord,
-  DisputeResolutionAction
+  DisputeResolutionAction,
+  Category
 } from '@/types';
 import { formatDate } from '@/lib/utils';
 
@@ -67,25 +72,45 @@ export default function AdminDashboardPage() {
   const [processingPayoutId, setProcessingPayoutId] = useState<string | null>(null);
   const [runningSchedule, setRunningSchedule] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<'analytics' | 'payouts' | 'escrows' | 'journals' | 'taxes' | 'invoices' | 'disputes' | 'users' | 'projects'>('analytics');
+  // Categories Taxonomy State
+  const [categoriesList, setCategoriesList] = useState<Category[]>([]);
+  const [addCatModalOpen, setAddCatModalOpen] = useState(false);
+  const [editCatModalOpen, setEditCatModalOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [catNameInput, setCatNameInput] = useState('');
+  const [catSlugInput, setCatSlugInput] = useState('');
+  const [catDescInput, setCatDescInput] = useState('');
+  const [catIconInput, setCatIconInput] = useState('Sparkles');
+  const [catSubcategoriesInput, setCatSubcategoriesInput] = useState('');
+  const [catFeaturedInput, setCatFeaturedInput] = useState(false);
+  const [catTrendingInput, setCatTrendingInput] = useState(false);
+  const [savingCategory, setSavingCategory] = useState(false);
+
+  const [activeTab, setActiveTab] = useState<'analytics' | 'categories' | 'payouts' | 'escrows' | 'journals' | 'taxes' | 'invoices' | 'disputes' | 'users' | 'projects'>('analytics');
   const [loading, setLoading] = useState(true);
   const [actionMsg, setActionMsg] = useState('');
 
   const loadAdminData = async () => {
     try {
-      const [anRes, wthRes, setRes, escRes, invRes, taxRes, dspRes] = await Promise.all([
+      const [anRes, wthRes, setRes, escRes, invRes, taxRes, dspRes, catRes] = await Promise.all([
         fetch('/api/admin/analytics'),
         fetch('/api/admin/withdrawals'),
         fetch('/api/admin/settings'),
         fetch('/api/finance/escrow'),
         fetch('/api/finance/invoices'),
         fetch('/api/finance/tax'),
-        fetch('/api/finance/disputes')
+        fetch('/api/finance/disputes'),
+        fetch('/api/categories?includeInactive=true')
       ]);
 
       if (anRes.status === 403 || anRes.status === 401) {
         setLoading(false);
         return;
+      }
+
+      if (catRes.ok) {
+        const catData = await catRes.json();
+        setCategoriesList(catData.categories || []);
       }
 
       if (anRes.ok) {
@@ -302,6 +327,148 @@ export default function AdminDashboardPage() {
     }
   };
 
+  // Category Taxonomy Handlers
+  const handleOpenAddCategory = () => {
+    setCatNameInput('');
+    setCatSlugInput('');
+    setCatDescInput('');
+    setCatIconInput('Sparkles');
+    setCatSubcategoriesInput('');
+    setCatFeaturedInput(false);
+    setCatTrendingInput(false);
+    setAddCatModalOpen(true);
+  };
+
+  const handleCreateCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!catNameInput.trim()) return;
+    setSavingCategory(true);
+    try {
+      const subcats = catSubcategoriesInput
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      const res = await fetch('/api/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: catNameInput.trim(),
+          slug: catSlugInput.trim() || undefined,
+          description: catDescInput.trim(),
+          icon: catIconInput,
+          subcategories: subcats.length > 0 ? subcats : ['General Consulting'],
+          isFeatured: catFeaturedInput,
+          isTrending: catTrendingInput
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setActionMsg(`Category '${data.category.name}' created successfully!`);
+        setAddCatModalOpen(false);
+        loadAdminData();
+      } else {
+        alert(data.error || 'Failed to create category');
+      }
+    } catch (err: any) {
+      alert(err.message || 'Error creating category');
+    } finally {
+      setSavingCategory(false);
+    }
+  };
+
+  const handleOpenEditCategory = (cat: Category) => {
+    setEditingCategory(cat);
+    setCatNameInput(cat.name);
+    setCatSlugInput(cat.slug);
+    setCatDescInput(cat.description || '');
+    setCatIconInput(cat.icon || 'Sparkles');
+    setCatSubcategoriesInput((cat.subcategories || []).join(', '));
+    setCatFeaturedInput(cat.isFeatured || false);
+    setCatTrendingInput(cat.isTrending || false);
+    setEditCatModalOpen(true);
+  };
+
+  const handleUpdateCategory = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingCategory || !catNameInput.trim()) return;
+    setSavingCategory(true);
+    try {
+      const subcats = catSubcategoriesInput
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      const res = await fetch(`/api/categories/${editingCategory.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: catNameInput.trim(),
+          slug: catSlugInput.trim() || undefined,
+          description: catDescInput.trim(),
+          icon: catIconInput,
+          subcategories: subcats,
+          isFeatured: catFeaturedInput,
+          isTrending: catTrendingInput
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setActionMsg(`Category '${data.category.name}' updated successfully!`);
+        setEditCatModalOpen(false);
+        setEditingCategory(null);
+        loadAdminData();
+      } else {
+        alert(data.error || 'Failed to update category');
+      }
+    } catch (err: any) {
+      alert(err.message || 'Error updating category');
+    } finally {
+      setSavingCategory(false);
+    }
+  };
+
+  const handleDeleteCategory = async (cat: Category) => {
+    if (!confirm(`Are you sure you want to delete category "${cat.name}"? If active talent or projects exist, it will be safely deactivated.`)) {
+      return;
+    }
+    try {
+      const res = await fetch(`/api/categories/${cat.id}`, {
+        method: 'DELETE'
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setActionMsg(data.message || `Category updated.`);
+        loadAdminData();
+      } else {
+        alert(data.error || 'Failed to delete category');
+      }
+    } catch (err: any) {
+      alert(err.message || 'Error communicating with server');
+    }
+  };
+
+  const handleToggleCategoryField = async (cat: Category, field: 'isActive' | 'isTrending' | 'isFeatured') => {
+    try {
+      const currentVal = !!cat[field];
+      const res = await fetch(`/api/categories/${cat.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          [field]: !currentVal
+        })
+      });
+      if (res.ok) {
+        setActionMsg(`Category '${cat.name}' ${field} toggled to ${!currentVal}`);
+        loadAdminData();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleRoleChange = async (userId: string, role: string) => {
     try {
       const res = await fetch('/api/admin/users', {
@@ -379,6 +546,7 @@ export default function AdminDashboardPage() {
       <div className="flex flex-wrap items-center gap-2 mb-8 border-b border-white/[0.08] pb-3">
         {[
           { id: 'analytics', label: 'Ecosystem Telemetry', icon: TrendingUp },
+          { id: 'categories', label: `Taxonomy & Categories (${categoriesList.length})`, icon: Layers },
           { id: 'payouts', label: `Earnings & Payouts (${withdrawalsList.length})`, icon: DollarSign },
           { id: 'escrows', label: `Escrow Vaults (${escrowsList.length})`, icon: Lock },
           { id: 'taxes', label: 'Statutory Taxes & TDS', icon: Scale },
@@ -900,6 +1068,378 @@ export default function AdminDashboardPage() {
                 <span className="text-[9px] text-emerald-400">Form 26Q Reconciled</span>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================== TAB: CATEGORIES TAXONOMY ================== */}
+      {activeTab === 'categories' && (
+        <div className="space-y-6">
+          
+          {/* Header & Stats Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[#0B0B0F] border border-white/[0.08]">
+            <div>
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <Layers className="w-5 h-5 text-[#73D8C4]" />
+                Taxonomy & Service Categories
+              </h2>
+              <p className="text-xs text-gray-400 mt-1 max-w-xl">
+                Configure the multi-level discovery architecture. Manage all service categories, full subcategory sets, homepage mega-menu items, and trending status.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleOpenAddCategory}
+              className="px-4 py-2.5 rounded-xl bg-[#73D8C4] hover:bg-[#5fcbb6] text-[#071011] text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-[0_0_15px_rgba(115,216,196,0.3)] transition-all flex-shrink-0"
+            >
+              <Plus className="w-4 h-4 stroke-[3]" />
+              Add Category
+            </button>
+          </div>
+
+          {/* Quick Metrics */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="p-4 rounded-xl bg-[#0B0B0F] border border-white/[0.06]">
+              <span className="text-[10px] text-gray-500 uppercase tracking-wider block">Total Categories</span>
+              <p className="text-xl font-bold text-white mt-1">{categoriesList.length}</p>
+            </div>
+            <div className="p-4 rounded-xl bg-[#0B0B0F] border border-white/[0.06]">
+              <span className="text-[10px] text-gray-500 uppercase tracking-wider block">Active Categories</span>
+              <p className="text-xl font-bold text-emerald-400 mt-1">
+                {categoriesList.filter(c => c.isActive !== false).length}
+              </p>
+            </div>
+            <div className="p-4 rounded-xl bg-[#0B0B0F] border border-white/[0.06]">
+              <span className="text-[10px] text-gray-500 uppercase tracking-wider block">Trending Categories</span>
+              <p className="text-xl font-bold text-amber-400 mt-1">
+                {categoriesList.filter(c => c.isTrending).length}
+              </p>
+            </div>
+            <div className="p-4 rounded-xl bg-[#0B0B0F] border border-white/[0.06]">
+              <span className="text-[10px] text-gray-500 uppercase tracking-wider block">Featured on Header</span>
+              <p className="text-xl font-bold text-[#73D8C4] mt-1">
+                {categoriesList.filter(c => c.isFeatured).length}
+              </p>
+            </div>
+          </div>
+
+          {/* Categories Table */}
+          <div className="rounded-2xl bg-[#0B0B0F] border border-white/[0.08] overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-[#121218] text-[10px] uppercase font-mono tracking-wider text-gray-400">
+                  <tr>
+                    <th className="py-3 px-4 w-12 text-center">#</th>
+                    <th className="py-3 px-4">Category</th>
+                    <th className="py-3 px-4">Slug</th>
+                    <th className="py-3 px-4">Subcategories</th>
+                    <th className="py-3 px-4 text-center">Trending</th>
+                    <th className="py-3 px-4 text-center">Featured</th>
+                    <th className="py-3 px-4 text-center">Status</th>
+                    <th className="py-3 px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/[0.04]">
+                  {categoriesList.map((cat, idx) => (
+                    <tr key={cat.id} className="hover:bg-white/[0.02] transition-colors">
+                      <td className="py-3 px-4 text-center text-gray-500 font-mono">{cat.order || idx + 1}</td>
+                      <td className="py-3 px-4 font-semibold text-white">
+                        <div className="flex items-center gap-2">
+                          <span className="p-1.5 rounded-lg bg-white/[0.04] text-[#73D8C4] border border-white/[0.06]">
+                            <Layers className="w-3.5 h-3.5" />
+                          </span>
+                          <div>
+                            <span className="text-white block">{cat.name}</span>
+                            <span className="text-[10px] text-gray-500 line-clamp-1">{cat.description}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 font-mono text-[#73D8C4] text-[11px]">{cat.slug}</td>
+                      <td className="py-3 px-4">
+                        <div className="flex flex-wrap gap-1 max-w-xs">
+                          {(cat.subcategories || []).slice(0, 3).map((sub, i) => (
+                            <span key={i} className="px-1.5 py-0.5 rounded text-[10px] bg-white/[0.04] text-gray-300 border border-white/[0.05]">
+                              {sub}
+                            </span>
+                          ))}
+                          {(cat.subcategories || []).length > 3 && (
+                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-white/[0.02] text-gray-500">
+                              +{(cat.subcategories || []).length - 3} more
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleCategoryField(cat, 'isTrending')}
+                          className={`p-1.5 rounded-lg border transition-all ${
+                            cat.isTrending
+                              ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-[0_0_10px_rgba(245,158,11,0.3)]'
+                              : 'bg-white/[0.02] text-gray-600 border-white/[0.06] hover:text-gray-400'
+                          }`}
+                          title={cat.isTrending ? 'Trending is active' : 'Click to make trending'}
+                        >
+                          <Zap className="w-3.5 h-3.5" />
+                        </button>
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleCategoryField(cat, 'isFeatured')}
+                          className={`p-1.5 rounded-lg border transition-all ${
+                            cat.isFeatured
+                              ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40 shadow-[0_0_10px_rgba(6,182,212,0.3)]'
+                              : 'bg-white/[0.02] text-gray-600 border-white/[0.06] hover:text-gray-400'
+                          }`}
+                          title={cat.isFeatured ? 'Featured is active' : 'Click to make featured'}
+                        >
+                          <Sparkles className="w-3.5 h-3.5" />
+                        </button>
+                      </td>
+                      <td className="py-3 px-4 text-center">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleCategoryField(cat, 'isActive')}
+                          className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase transition-all ${
+                            cat.isActive !== false
+                              ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                              : 'bg-gray-800 text-gray-500 border border-gray-700'
+                          }`}
+                        >
+                          {cat.isActive !== false ? 'Active' : 'Inactive'}
+                        </button>
+                      </td>
+                      <td className="py-3 px-4 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => handleOpenEditCategory(cat)}
+                            className="p-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-white transition-colors"
+                            title="Edit Category & Subcategories"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteCategory(cat)}
+                            className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-colors"
+                            title="Safe Delete / Deactivate"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      )}
+
+      {/* ================== MODAL: ADD CATEGORY ================== */}
+      {addCatModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-150">
+          <div className="w-full max-w-lg bg-[#0B0B0F] border border-white/[0.12] rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <Plus className="w-4 h-4 text-[#73D8C4]" />
+                Add New Service Category
+              </h3>
+              <button onClick={() => setAddCatModalOpen(false)} className="p-1 text-gray-400 hover:text-white">
+                <XCircle className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateCategory} className="space-y-4 text-xs">
+              <div>
+                <label className="block text-gray-300 font-semibold mb-1">Category Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={catNameInput}
+                  onChange={e => setCatNameInput(e.target.value)}
+                  placeholder="e.g. Cybersecurity & Zero Trust"
+                  className="w-full px-3.5 py-2 bg-[#121218] border border-white/[0.1] rounded-xl text-white focus:border-[#73D8C4] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-300 font-semibold mb-1">Custom Slug (optional)</label>
+                <input
+                  type="text"
+                  value={catSlugInput}
+                  onChange={e => setCatSlugInput(e.target.value)}
+                  placeholder="e.g. cybersecurity-zero-trust"
+                  className="w-full px-3.5 py-2 bg-[#121218] border border-white/[0.1] rounded-xl text-white focus:border-[#73D8C4] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-300 font-semibold mb-1">Description</label>
+                <textarea
+                  rows={2}
+                  value={catDescInput}
+                  onChange={e => setCatDescInput(e.target.value)}
+                  placeholder="Summary of services provided in this category..."
+                  className="w-full px-3.5 py-2 bg-[#121218] border border-white/[0.1] rounded-xl text-white focus:border-[#73D8C4] focus:outline-none resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-300 font-semibold mb-1">
+                  Subcategories (comma-separated) *
+                </label>
+                <textarea
+                  rows={3}
+                  value={catSubcategoriesInput}
+                  onChange={e => setCatSubcategoriesInput(e.target.value)}
+                  placeholder="e.g. Smart Contract Audit, Penetration Testing, Cloud Security, Code Review"
+                  className="w-full px-3.5 py-2 bg-[#121218] border border-white/[0.1] rounded-xl text-white focus:border-[#73D8C4] focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 pt-2 border-t border-white/[0.06]">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={catTrendingInput}
+                    onChange={e => setCatTrendingInput(e.target.checked)}
+                    className="w-4 h-4 accent-[#73D8C4] rounded"
+                  />
+                  <span className="text-gray-300">Mark as Trending</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={catFeaturedInput}
+                    onChange={e => setCatFeaturedInput(e.target.checked)}
+                    className="w-4 h-4 accent-[#73D8C4] rounded"
+                  />
+                  <span className="text-gray-300">Feature on Header</span>
+                </label>
+              </div>
+
+              <div className="pt-3 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setAddCatModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-gray-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingCategory}
+                  className="px-5 py-2 rounded-xl bg-[#73D8C4] hover:bg-[#5fcbb6] text-[#071011] font-bold uppercase tracking-wider disabled:opacity-50"
+                >
+                  {savingCategory ? 'Creating...' : 'Create Category'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ================== MODAL: EDIT CATEGORY ================== */}
+      {editCatModalOpen && editingCategory && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-150">
+          <div className="w-full max-w-lg bg-[#0B0B0F] border border-white/[0.12] rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <Edit2 className="w-4 h-4 text-[#73D8C4]" />
+                Edit Category: {editingCategory.name}
+              </h3>
+              <button onClick={() => setEditCatModalOpen(false)} className="p-1 text-gray-400 hover:text-white">
+                <XCircle className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateCategory} className="space-y-4 text-xs">
+              <div>
+                <label className="block text-gray-300 font-semibold mb-1">Category Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={catNameInput}
+                  onChange={e => setCatNameInput(e.target.value)}
+                  className="w-full px-3.5 py-2 bg-[#121218] border border-white/[0.1] rounded-xl text-white focus:border-[#73D8C4] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-300 font-semibold mb-1">Slug</label>
+                <input
+                  type="text"
+                  value={catSlugInput}
+                  onChange={e => setCatSlugInput(e.target.value)}
+                  className="w-full px-3.5 py-2 bg-[#121218] border border-white/[0.1] rounded-xl text-white focus:border-[#73D8C4] focus:outline-none font-mono text-[#73D8C4]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-300 font-semibold mb-1">Description</label>
+                <textarea
+                  rows={2}
+                  value={catDescInput}
+                  onChange={e => setCatDescInput(e.target.value)}
+                  className="w-full px-3.5 py-2 bg-[#121218] border border-white/[0.1] rounded-xl text-white focus:border-[#73D8C4] focus:outline-none resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-300 font-semibold mb-1">
+                  Subcategories (comma-separated)
+                </label>
+                <textarea
+                  rows={4}
+                  value={catSubcategoriesInput}
+                  onChange={e => setCatSubcategoriesInput(e.target.value)}
+                  className="w-full px-3.5 py-2 bg-[#121218] border border-white/[0.1] rounded-xl text-white focus:border-[#73D8C4] focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 pt-2 border-t border-white/[0.06]">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={catTrendingInput}
+                    onChange={e => setCatTrendingInput(e.target.checked)}
+                    className="w-4 h-4 accent-[#73D8C4] rounded"
+                  />
+                  <span className="text-gray-300">Mark as Trending</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={catFeaturedInput}
+                    onChange={e => setCatFeaturedInput(e.target.checked)}
+                    className="w-4 h-4 accent-[#73D8C4] rounded"
+                  />
+                  <span className="text-gray-300">Feature on Header</span>
+                </label>
+              </div>
+
+              <div className="pt-3 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setEditCatModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-gray-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingCategory}
+                  className="px-5 py-2 rounded-xl bg-[#73D8C4] hover:bg-[#5fcbb6] text-[#071011] font-bold uppercase tracking-wider disabled:opacity-50"
+                >
+                  {savingCategory ? 'Saving Changes...' : 'Save Changes'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

@@ -36,8 +36,12 @@ import {
   InvoiceItem,
   FreelancerPayoutSettings,
   DisputeRecord,
-  DisputeResolutionAction
+  DisputeResolutionAction,
+  FreelancerSearchFilters,
+  FreelancerSearchResult,
+  SearchSuggestionsResult
 } from '@/types';
+import { slugify } from '@/lib/utils';
 import {
   toMinorUnits,
   fromMinorUnits,
@@ -81,138 +85,243 @@ export interface DatabaseState {
   disputeRecords: DisputeRecord[];
 }
 
+export const CATEGORY_SLUG_ALIASES: Record<string, string> = {
+  'development': 'programming-tech',
+  'programming': 'programming-tech',
+  'tech': 'programming-tech',
+  'design': 'graphics-design',
+  'graphics': 'graphics-design',
+  'marketing': 'digital-marketing',
+  'video': 'video-animation',
+  'animation': 'video-animation',
+  'writing': 'writing-translation',
+  'translation': 'writing-translation',
+  'audio': 'music-audio',
+  'music': 'music-audio',
+  'ai-automation': 'ai-services',
+  'ai': 'ai-services',
+  'data': 'data-analytics',
+  'analytics': 'data-analytics',
+  'engineering': 'engineering-architecture',
+  'architecture': 'engineering-architecture',
+  'lifestyle': 'lifestyle-consulting',
+  'consulting': 'lifestyle-consulting',
+  'other': 'lifestyle-consulting'
+};
+
 export const INITIAL_CATEGORIES: Category[] = [
   {
-    id: 'development',
-    name: 'Development & Tech',
-    slug: 'development',
-    description: 'Full-stack engineers, AI researchers, smart contract builders & mobile architects.',
-    icon: 'Code2',
+    id: 'trending',
+    name: 'Trending',
+    slug: 'trending',
+    description: 'Fastest-growing services and viral freelancer capabilities dominating the ecosystem.',
+    icon: 'Zap',
+    isTrending: true,
+    isFeatured: true,
+    order: 1,
     subcategories: [
-      'Web Development', 'Frontend Development', 'Backend Development', 'Full Stack Development',
-      'Mobile Apps', 'Android Development', 'iOS Development', 'Flutter', 'React Native',
-      'WordPress & Shopify', 'Software Engineering', 'AI & Machine Learning',
-      'Chatbot Development', 'API Development', 'Cybersecurity', 'Databases', 'Game Development'
+      'AI Agents', 'Next.js Development', 'Full Stack Development', 'UI/UX Design',
+      '3D Animation', 'Video Editing', 'Search Engine Optimization', 'Logo Design',
+      'Python Development', 'Cybersecurity', 'Generative AI', 'Performance Marketing'
+    ],
+    projectCount: 65,
+    freelancerCount: 210,
+    isActive: true
+  },
+  {
+    id: 'graphics-design',
+    name: 'Graphics & Design',
+    slug: 'graphics-design',
+    description: 'High-impact visual identity, spatial UI/UX, 3D assets and world-class branding.',
+    icon: 'Palette',
+    isFeatured: true,
+    order: 2,
+    subcategories: [
+      'Logo Design', 'Brand Identity', 'Business Cards', 'UI/UX Design',
+      'Website Design', 'App Design', 'Social Media Design', 'Banner Design',
+      'Packaging Design', 'Illustration', '3D Design', 'Presentation Design', 'Print Design'
+    ],
+    projectCount: 48,
+    freelancerCount: 164,
+    isActive: true
+  },
+  {
+    id: 'programming-tech',
+    name: 'Programming & Tech',
+    slug: 'programming-tech',
+    description: 'Custom software engineering, cloud infrastructures, full-stack web and mobile apps.',
+    icon: 'Code2',
+    isFeatured: true,
+    order: 3,
+    subcategories: [
+      'Website Development', 'Frontend Development', 'Backend Development', 'Full Stack Development',
+      'React Development', 'Next.js Development', 'WordPress Development', 'Shopify Development',
+      'E-commerce Development', 'Mobile App Development', 'Android Development', 'iOS Development',
+      'Python Development', 'Java Development', 'Software Development', 'API Integration',
+      'Database Development', 'Cybersecurity', 'Cloud & DevOps'
+    ],
+    projectCount: 82,
+    freelancerCount: 295,
+    isActive: true
+  },
+  {
+    id: 'digital-marketing',
+    name: 'Digital Marketing',
+    slug: 'digital-marketing',
+    description: 'Data-backed customer acquisition, omni-channel campaigns and viral growth funnels.',
+    icon: 'TrendingUp',
+    isFeatured: true,
+    order: 4,
+    subcategories: [
+      'Search Engine Optimization', 'Social Media Marketing', 'Google Ads', 'Meta Ads',
+      'YouTube Marketing', 'Email Marketing', 'Content Marketing', 'Influencer Marketing',
+      'Lead Generation', 'Performance Marketing', 'Marketing Strategy'
+    ],
+    projectCount: 36,
+    freelancerCount: 118,
+    isActive: true
+  },
+  {
+    id: 'video-animation',
+    name: 'Video & Animation',
+    slug: 'video-animation',
+    description: 'Cinematic visual storytelling, 3D motion graphics, viral short-form and product videos.',
+    icon: 'Video',
+    isFeatured: true,
+    order: 5,
+    subcategories: [
+      'Video Editing', 'YouTube Video Editing', 'Reels and Shorts Editing', '2D Animation',
+      '3D Animation', 'Motion Graphics', 'Explainer Videos', 'Logo Animation',
+      'Product Videos', 'Visual Effects'
     ],
     projectCount: 42,
-    freelancerCount: 156
+    freelancerCount: 135,
+    isActive: true
   },
   {
-    id: 'ai-automation',
-    name: 'AI & Automation',
-    slug: 'ai-automation',
-    description: 'Autonomous agents, LLM pipelines, workflow orchestrations and computer vision.',
-    icon: 'Cpu',
-    subcategories: [
-      'AI Agents', 'AI Workflow Automation', 'Chatbot Integrations', 'Image Generation',
-      'Video Generation', 'Data Automation', 'No-code Automation', 'Fine-tuning & RAG'
-    ],
-    projectCount: 38,
-    freelancerCount: 94
-  },
-  {
-    id: 'design',
-    name: 'Design & Creative',
-    slug: 'design',
-    description: 'Futuristic UI/UX, brand identities, 3D assets, design systems & motion.',
-    icon: 'Palette',
-    subcategories: [
-      'Graphic Design', 'Logos & Branding', 'UI/UX Design', 'Web Design',
-      'App Design', 'Thumbnails', 'Posters & Media', 'Presentations', '3D Design & Modeling'
-    ],
-    projectCount: 29,
-    freelancerCount: 120
-  },
-  {
-    id: 'video',
-    name: 'Video & Animation',
-    slug: 'video',
-    description: 'Cinematic video editors, 3D motion designers, VFX artists, and viral reel editors.',
-    icon: 'Video',
-    subcategories: [
-      'Video Editing', 'YouTube Editing', 'Shorts & Reels', 'Cinematic Editing',
-      'Motion Graphics', 'Animation', 'VFX', 'Color Grading'
-    ],
-    projectCount: 24,
-    freelancerCount: 88
-  },
-  {
-    id: 'writing',
+    id: 'writing-translation',
     name: 'Writing & Translation',
-    slug: 'writing',
-    description: 'High-conversion technical writing, brand storytelling, SEO copy & translation.',
+    slug: 'writing-translation',
+    description: 'Authoritative technical documentation, high-conversion copy and multi-lingual translation.',
     icon: 'FileText',
+    order: 6,
     subcategories: [
-      'Content Writing', 'Copywriting', 'SEO Articles', 'Technical Writing',
-      'Whitepapers & Research', 'Scripts & Storyboards', 'Translation'
+      'Content Writing', 'Blog Writing', 'Copywriting', 'Technical Writing',
+      'Website Content', 'Script Writing', 'Resume Writing', 'Translation',
+      'Proofreading', 'Academic Writing'
     ],
-    projectCount: 19,
-    freelancerCount: 75
+    projectCount: 28,
+    freelancerCount: 92,
+    isActive: true
   },
   {
-    id: 'marketing',
-    name: 'Marketing & Growth',
-    slug: 'marketing',
-    description: 'Growth hackers, paid media strategists, viral creators and performance marketing.',
-    icon: 'TrendingUp',
+    id: 'music-audio',
+    name: 'Music & Audio',
+    slug: 'music-audio',
+    description: 'Studio-grade voiceover production, custom sound design, jingles and audio mastering.',
+    icon: 'Headphones',
+    order: 7,
     subcategories: [
-      'Social Media Management', 'SEO & Organic Growth', 'Paid Ads (Meta/Google)',
-      'Email Marketing', 'Influencer Marketing', 'Marketing Strategy', 'Funnel Optimization'
+      'Voice Over', 'Podcast Editing', 'Audio Editing', 'Music Production',
+      'Sound Design', 'Mixing & Mastering', 'Jingles', 'Background Music'
     ],
-    projectCount: 21,
-    freelancerCount: 64
+    projectCount: 22,
+    freelancerCount: 68,
+    isActive: true
   },
   {
     id: 'business',
-    name: 'Business & Operations',
+    name: 'Business',
     slug: 'business',
-    description: 'Fractional executives, financial models, market intelligence & ops management.',
+    description: 'Strategic advisory, executive financial models, market intelligence and ops management.',
     icon: 'Briefcase',
+    order: 8,
     subcategories: [
-      'Virtual Assistants', 'Data Entry & Scraping', 'Business Consulting',
-      'Market Research', 'Project Management', 'Customer Support Operations'
+      'Virtual Assistant', 'Data Entry', 'Business Plans', 'Market Research',
+      'Project Management', 'Financial Analysis', 'Business Consulting',
+      'Customer Support', 'Administrative Support'
     ],
-    projectCount: 16,
-    freelancerCount: 52
+    projectCount: 31,
+    freelancerCount: 84,
+    isActive: true
   },
   {
-    id: 'audio',
-    name: 'Audio & Music',
-    slug: 'audio',
-    description: 'Voiceover talent, sound designers, composers and mastering engineers.',
-    icon: 'Headphones',
+    id: 'ai-services',
+    name: 'AI Services',
+    slug: 'ai-services',
+    description: 'Autonomous AI agents, enterprise LLM fine-tuning, computer vision and workflow automation.',
+    icon: 'Cpu',
+    isTrending: true,
+    isFeatured: true,
+    order: 9,
     subcategories: [
-      'Voice-Over', 'Podcast Audio Editing', 'Sound Design & SFX',
-      'Music Production', 'Audio Mixing & Mastering'
+      'AI Development', 'AI Agents', 'AI Automation', 'Machine Learning',
+      'Generative AI', 'ChatGPT Integration', 'LLM Integration', 'Computer Vision',
+      'Natural Language Processing', 'Data Science', 'AI Chatbots'
     ],
-    projectCount: 14,
-    freelancerCount: 45
+    projectCount: 74,
+    freelancerCount: 182,
+    isActive: true
+  },
+  {
+    id: 'data-analytics',
+    name: 'Data & Analytics',
+    slug: 'data-analytics',
+    description: 'Enterprise BI dashboards, predictive modeling, data pipelines and clean data engineering.',
+    icon: 'BarChart3',
+    order: 10,
+    subcategories: [
+      'Data Analysis', 'Data Visualization', 'Excel', 'Power BI',
+      'Tableau', 'SQL', 'Data Engineering', 'Data Cleaning'
+    ],
+    projectCount: 34,
+    freelancerCount: 96,
+    isActive: true
+  },
+  {
+    id: 'engineering-architecture',
+    name: 'Engineering & Architecture',
+    slug: 'engineering-architecture',
+    description: 'Precision CAD modeling, industrial prototyping, interior concepts and architectural blueprints.',
+    icon: 'Compass',
+    order: 11,
+    subcategories: [
+      'CAD Design', '3D Modeling', 'Product Design', 'Architecture',
+      'Interior Design', 'Mechanical Design', 'Electrical Design'
+    ],
+    projectCount: 26,
+    freelancerCount: 72,
+    isActive: true
   },
   {
     id: 'photography',
-    name: 'Photography & Editing',
+    name: 'Photography',
     slug: 'photography',
-    description: 'High-end product photography, AI retouching, and visual assets.',
+    description: 'Commercial product photography, luxury portraiture, photo retouching and color grade.',
     icon: 'Camera',
+    order: 12,
     subcategories: [
-      'Product Photography', 'Photo Retouching & AI Editing', 'Event Photography',
-      'Color Correction'
+      'Product Photography', 'Portrait Photography', 'Event Photography',
+      'Photo Editing', 'Image Retouching', 'Commercial Photography'
     ],
-    projectCount: 11,
-    freelancerCount: 38
+    projectCount: 18,
+    freelancerCount: 54,
+    isActive: true
   },
   {
-    id: 'other',
-    name: 'Specialized & Other',
-    slug: 'other',
-    description: 'CAD engineering, architecture, technical tutoring and bespoke solutions.',
-    icon: 'Layers',
+    id: 'lifestyle-consulting',
+    name: 'Lifestyle & Consulting',
+    slug: 'lifestyle-consulting',
+    description: 'Executive leadership coaching, personal branding, fitness strategy and expert tutoring.',
+    icon: 'Sparkles',
+    order: 13,
     subcategories: [
-      'CAD & Mechanical Design', 'Architecture & BIM', 'Interior Design',
-      'Technical Tutoring', 'Hardware Prototyping'
+      'Career Consulting', 'Business Coaching', 'Fitness Coaching',
+      'Personal Development', 'Education & Tutoring', 'Professional Consulting'
     ],
-    projectCount: 15,
-    freelancerCount: 32
+    projectCount: 20,
+    freelancerCount: 46,
+    isActive: true
   }
 ];
 
@@ -1145,9 +1254,32 @@ class DataStore {
         if (fs.existsSync(DATA_FILE)) {
           const raw = fs.readFileSync(DATA_FILE, 'utf-8');
           const parsed = JSON.parse(raw);
+
+          // Merge categories ensuring all 13 core categories exist with their full subcategory taxonomies
+          const mergedCategories: Category[] = INITIAL_CATEGORIES.map(c => ({ ...c }));
+          if (Array.isArray(parsed.categories)) {
+            for (const cat of parsed.categories) {
+              const idx = mergedCategories.findIndex(c => c.id === cat.id || c.slug === cat.slug);
+              if (idx >= 0) {
+                mergedCategories[idx] = {
+                  ...mergedCategories[idx],
+                  ...cat,
+                  // Keep the richest subcategory list
+                  subcategories: Array.from(new Set([
+                    ...(mergedCategories[idx].subcategories || []),
+                    ...(cat.subcategories || [])
+                  ]))
+                };
+              } else {
+                mergedCategories.push(cat);
+              }
+            }
+          }
+
           return {
             ...this.getDefaultState(),
             ...parsed,
+            categories: mergedCategories,
             ledgerTransactions: parsed.ledgerTransactions && parsed.ledgerTransactions.length > 0 
               ? parsed.ledgerTransactions 
               : INITIAL_LEDGER_TRANSACTIONS,
@@ -1296,15 +1428,355 @@ class DataStore {
     return profile;
   }
 
-  // --- CATEGORIES ---
-  public getCategories(): Category[] {
-    return this.state.categories;
+  // --- CATEGORIES & DISCOVERY ---
+  public getCategories(options?: { featured?: boolean; trending?: boolean; includeInactive?: boolean }): Category[] {
+    let cats = [...this.state.categories];
+    if (!options?.includeInactive) {
+      cats = cats.filter(c => c.isActive !== false);
+    }
+    if (options?.featured) {
+      cats = cats.filter(c => c.isFeatured === true);
+    }
+    if (options?.trending) {
+      cats = cats.filter(c => c.isTrending === true);
+    }
+    return cats.sort((a, b) => (a.order || 99) - (b.order || 99));
+  }
+
+  public getCategoryById(id: string): Category | undefined {
+    const direct = this.state.categories.find(c => c.id === id || c.slug === id);
+    if (direct) return direct;
+    const alias = CATEGORY_SLUG_ALIASES[id.toLowerCase()];
+    if (alias) {
+      return this.state.categories.find(c => c.slug === alias || c.id === alias);
+    }
+    return undefined;
+  }
+
+  public getCategoryBySlug(slug: string): Category | undefined {
+    const normalized = slug.toLowerCase().trim();
+    const direct = this.state.categories.find(c => c.slug.toLowerCase() === normalized);
+    if (direct) return direct;
+    const alias = CATEGORY_SLUG_ALIASES[normalized];
+    if (alias) {
+      return this.state.categories.find(c => c.slug.toLowerCase() === alias);
+    }
+    return undefined;
   }
 
   public addCategory(cat: Category): Category {
     this.state.categories.push(cat);
     this.saveState();
     return cat;
+  }
+
+  public createCategory(data: Partial<Category>): Category {
+    const name = data.name || 'New Category';
+    const slug = data.slug || slugify(name);
+    const newCategory: Category = {
+      id: data.id || slug,
+      name,
+      slug,
+      description: data.description || `Specialized ${name} services and verified industry experts on GRAVITASS.`,
+      icon: data.icon || 'Sparkles',
+      subcategories: data.subcategories && data.subcategories.length > 0 ? data.subcategories : ['General Consulting'],
+      projectCount: data.projectCount || 0,
+      freelancerCount: data.freelancerCount || 0,
+      isFeatured: data.isFeatured ?? false,
+      isTrending: data.isTrending ?? false,
+      order: data.order ?? (this.state.categories.length + 1),
+      isActive: data.isActive ?? true
+    };
+    this.state.categories.push(newCategory);
+    this.saveState();
+    return newCategory;
+  }
+
+  public updateCategory(id: string, updates: Partial<Category>): Category | null {
+    const idx = this.state.categories.findIndex(c => c.id === id || c.slug === id);
+    if (idx === -1) return null;
+    this.state.categories[idx] = {
+      ...this.state.categories[idx],
+      ...updates
+    };
+    this.saveState();
+    return this.state.categories[idx];
+  }
+
+  public deleteCategory(id: string): { success: boolean; message: string; deactivated?: boolean } {
+    const category = this.getCategoryById(id);
+    if (!category) {
+      return { success: false, message: 'Category not found' };
+    }
+
+    // Safety check: verify if category has active projects or freelancers
+    const activeProjects = (this.state.projects || []).filter(
+      p => p.category === category.id || p.category === category.slug
+    );
+    const activeFreelancers = (this.state.freelancerProfiles || []).filter(
+      f => f.mainCategory === category.id || f.mainCategory === category.slug
+    );
+
+    if (activeProjects.length > 0 || activeFreelancers.length > 0) {
+      // Safe deactivation instead of hard deletion to maintain relational integrity
+      category.isActive = false;
+      this.updateCategory(category.id, { isActive: false });
+      return {
+        success: true,
+        deactivated: true,
+        message: `Category deactivated rather than permanently deleted because ${activeFreelancers.length} talent profiles and ${activeProjects.length} projects depend on it.`
+      };
+    }
+
+    this.state.categories = this.state.categories.filter(c => c.id !== category.id && c.slug !== category.slug);
+    this.saveState();
+    return { success: true, message: `Category '${category.name}' removed successfully.` };
+  }
+
+  public searchFreelancers(filters: FreelancerSearchFilters = {}): FreelancerSearchResult {
+    const profiles = [...(this.state.freelancerProfiles || [])];
+    const categoryObj = filters.category ? this.getCategoryBySlug(filters.category) : undefined;
+    const categorySlug = categoryObj ? categoryObj.slug : filters.category ? (CATEGORY_SLUG_ALIASES[filters.category.toLowerCase()] || filters.category.toLowerCase()) : undefined;
+
+    let filtered = profiles.filter(profile => {
+      // 1. Category Filter
+      if (categorySlug) {
+        const profileCat = (profile.mainCategory || '').toLowerCase();
+        const mappedCat = CATEGORY_SLUG_ALIASES[profileCat] || profileCat;
+        if (mappedCat !== categorySlug && profileCat !== categorySlug) {
+          // Check if category is trending (all top freelancers qualify)
+          if (categorySlug !== 'trending') {
+            return false;
+          }
+        }
+      }
+
+      // 2. Subcategory Filter
+      if (filters.subcategory) {
+        const subFilter = filters.subcategory.toLowerCase().trim();
+        const subSlug = slugify(subFilter);
+        const matchesSubcategory = 
+          slugify(profile.subcategory || '').includes(subSlug) ||
+          (profile.subcategory || '').toLowerCase().includes(subFilter) ||
+          (profile.serviceTags || []).some(t => slugify(t).includes(subSlug) || t.toLowerCase().includes(subFilter)) ||
+          (profile.skills || []).some(s => slugify(s).includes(subSlug) || s.toLowerCase().includes(subFilter));
+        if (!matchesSubcategory) return false;
+      }
+
+      // 3. Query Text Search
+      if (filters.query) {
+        const q = filters.query.toLowerCase().trim();
+        const matchesQuery =
+          (profile.fullName || '').toLowerCase().includes(q) ||
+          (profile.headline || '').toLowerCase().includes(q) ||
+          (profile.bio || '').toLowerCase().includes(q) ||
+          (profile.subcategory || '').toLowerCase().includes(q) ||
+          (profile.skills || []).some(s => s.toLowerCase().includes(q)) ||
+          (profile.serviceTags || []).some(t => t.toLowerCase().includes(q)) ||
+          (profile.location || '').toLowerCase().includes(q);
+        if (!matchesQuery) return false;
+      }
+
+      // 4. Skills Filter
+      if (filters.skill) {
+        const sk = filters.skill.toLowerCase().trim();
+        if (!(profile.skills || []).some(s => s.toLowerCase().includes(sk))) {
+          return false;
+        }
+      }
+      if (filters.skills && filters.skills.length > 0) {
+        const hasSkill = filters.skills.some(reqSkill =>
+          (profile.skills || []).some(s => s.toLowerCase() === reqSkill.toLowerCase())
+        );
+        if (!hasSkill) return false;
+      }
+
+      // 5. Price in INR Filter
+      const startingPrice = profile.startingPriceINR || (profile.minBudget ? profile.minBudget * 83 : 1500);
+      if (filters.minPriceINR !== undefined && startingPrice < filters.minPriceINR) {
+        return false;
+      }
+      if (filters.maxPriceINR !== undefined && startingPrice > filters.maxPriceINR) {
+        return false;
+      }
+
+      // 6. Rating Filter
+      if (filters.minRating !== undefined && (profile.rating || 0) < filters.minRating) {
+        return false;
+      }
+
+      // 7. Delivery Days Filter
+      if (filters.deliveryDays !== undefined) {
+        const days = profile.deliveryDays || 3;
+        if (days > filters.deliveryDays) return false;
+      }
+
+      // 8. Availability Filter
+      if (filters.availability && filters.availability !== 'all') {
+        if (profile.availability !== filters.availability) return false;
+      }
+
+      // 9. Verified Only Filter
+      if (filters.verifiedOnly) {
+        if (!(profile.badges || []).includes('verified')) return false;
+      }
+
+      // 10. Experience Level Filter
+      if (filters.experienceLevel && filters.experienceLevel !== 'all') {
+        if (profile.experienceLevel !== filters.experienceLevel) return false;
+      }
+
+      return true;
+    });
+
+    // Sorting
+    const sortBy = filters.sortBy || 'recommended';
+    filtered.sort((a, b) => {
+      const priceA = a.startingPriceINR || (a.minBudget ? a.minBudget * 83 : 1500);
+      const priceB = b.startingPriceINR || (b.minBudget ? b.minBudget * 83 : 1500);
+
+      switch (sortBy) {
+        case 'top_rated':
+          if (b.rating !== a.rating) return b.rating - a.rating;
+          return b.reviewCount - a.reviewCount;
+        case 'price_asc':
+          return priceA - priceB;
+        case 'price_desc':
+          return priceB - priceA;
+        case 'experience':
+          return (b.yearsOfExperience || 0) - (a.yearsOfExperience || 0);
+        case 'recent':
+          return new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime();
+        case 'recommended':
+        default: {
+          const scoreA = a.performanceScore?.overallScore || a.rating * 20;
+          const scoreB = b.performanceScore?.overallScore || b.rating * 20;
+          return scoreB - scoreA;
+        }
+      }
+    });
+
+    // Pagination
+    const page = Math.max(1, Number(filters.page) || 1);
+    const limit = Math.max(1, Number(filters.limit) || 12);
+    const total = filtered.length;
+    const totalPages = Math.ceil(total / limit) || 1;
+    const paginated = filtered.slice((page - 1) * limit, page * limit);
+
+    return {
+      freelancers: paginated,
+      total,
+      page,
+      limit,
+      totalPages,
+      category: categoryObj,
+      matchedSubcategory: filters.subcategory
+    };
+  }
+
+  public getSearchSuggestions(query: string = ''): SearchSuggestionsResult {
+    const q = query.toLowerCase().trim();
+    const categories = this.getCategories();
+    const popularSearches = [
+      'AI Agents', 'Full Stack Development', 'Next.js Development', 'Logo Design',
+      'Video Editing', 'Search Engine Optimization', '3D Animation', 'Cybersecurity'
+    ];
+
+    if (!q) {
+      return {
+        query: '',
+        categories: categories.slice(0, 6).map(c => ({
+          id: c.id,
+          name: c.name,
+          slug: c.slug,
+          url: `/freelancers/${c.slug}`
+        })),
+        subcategories: [
+          { name: 'AI Agents', slug: 'ai-agents', categoryName: 'AI Services', categorySlug: 'ai-services', url: '/freelancers/ai-services/ai-agents' },
+          { name: 'Next.js Development', slug: 'next-js-development', categoryName: 'Programming & Tech', categorySlug: 'programming-tech', url: '/freelancers/programming-tech/next-js-development' },
+          { name: 'UI/UX Design', slug: 'ui-ux-design', categoryName: 'Graphics & Design', categorySlug: 'graphics-design', url: '/freelancers/graphics-design/ui-ux-design' },
+          { name: '3D Animation', slug: '3d-animation', categoryName: 'Video & Animation', categorySlug: 'video-animation', url: '/freelancers/video-animation/3d-animation' }
+        ],
+        freelancers: [],
+        skills: [
+          { skill: 'Next.js', url: '/freelancers/programming-tech?skill=Next.js' },
+          { skill: 'Python', url: '/freelancers/programming-tech?skill=Python' },
+          { skill: 'Figma', url: '/freelancers/graphics-design?skill=Figma' },
+          { skill: 'PyTorch', url: '/freelancers/ai-services?skill=PyTorch' }
+        ],
+        popularSearches
+      };
+    }
+
+    // Matching categories
+    const matchedCategories = categories
+      .filter(c => c.name.toLowerCase().includes(q) || c.slug.toLowerCase().includes(q) || c.description.toLowerCase().includes(q))
+      .slice(0, 4)
+      .map(c => ({
+        id: c.id,
+        name: c.name,
+        slug: c.slug,
+        url: `/freelancers/${c.slug}`
+      }));
+
+    // Matching subcategories across all categories
+    const matchedSubcategories: { name: string; slug: string; categoryName: string; categorySlug: string; url: string }[] = [];
+    for (const cat of categories) {
+      for (const sub of cat.subcategories || []) {
+        if (sub.toLowerCase().includes(q) || slugify(sub).includes(slugify(q))) {
+          matchedSubcategories.push({
+            name: sub,
+            slug: slugify(sub),
+            categoryName: cat.name,
+            categorySlug: cat.slug,
+            url: `/freelancers/${cat.slug}/${slugify(sub)}`
+          });
+        }
+        if (matchedSubcategories.length >= 8) break;
+      }
+      if (matchedSubcategories.length >= 8) break;
+    }
+
+    // Matching skills
+    const allSkills = new Set<string>();
+    for (const p of this.state.freelancerProfiles || []) {
+      for (const s of p.skills || []) {
+        if (s.toLowerCase().includes(q)) {
+          allSkills.add(s);
+        }
+      }
+    }
+    const matchedSkills = Array.from(allSkills).slice(0, 5).map(skill => ({
+      skill,
+      url: `/freelancers?query=${encodeURIComponent(skill)}`
+    }));
+
+    // Matching freelancers
+    const matchedFreelancers = (this.state.freelancerProfiles || [])
+      .filter(f =>
+        f.fullName.toLowerCase().includes(q) ||
+        f.headline.toLowerCase().includes(q) ||
+        (f.skills || []).some(s => s.toLowerCase().includes(q))
+      )
+      .slice(0, 4)
+      .map(f => ({
+        id: f.id,
+        name: f.fullName,
+        headline: f.headline,
+        avatarUrl: f.avatarUrl,
+        rating: f.rating,
+        startingPriceINR: f.startingPriceINR || (f.minBudget ? f.minBudget * 83 : 1500),
+        url: `/freelancers?id=${f.id}`
+      }));
+
+    return {
+      query: q,
+      categories: matchedCategories,
+      subcategories: matchedSubcategories,
+      freelancers: matchedFreelancers,
+      skills: matchedSkills,
+      popularSearches: popularSearches.filter(p => p.toLowerCase().includes(q)).slice(0, 3)
+    };
   }
 
   // --- PROJECTS ---

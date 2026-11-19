@@ -13,6 +13,44 @@ export function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
+/**
+ * Standard Indian Rupee (INR) Formatter for GRAVITASS Marketplace Services
+ * Formats: ₹500, ₹1,500, ₹25,000, ₹1,00,000
+ */
+export function formatINR(amount: number): string {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    maximumFractionDigits: 0
+  }).format(amount || 0);
+}
+
+/**
+ * Converts a string into a clean URL-friendly slug
+ * e.g. "Programming & Tech" -> "programming-tech", "UI/UX Design" -> "ui-ux-design"
+ */
+export function slugify(text: string): string {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, 'and')
+    .replace(/[\/\s_]+/g, '-')
+    .replace(/[^\w-]+/g, '')
+    .replace(/--+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+/**
+ * Converts a slug back into human-readable capitalized text
+ */
+export function unslugify(slug: string): string {
+  return slug
+    .replace(/-/g, ' ')
+    .replace(/\band\b/g, '&')
+    .replace(/\b\w/g, char => char.toUpperCase());
+}
+
 export function formatDate(dateString: string): string {
   try {
     const d = new Date(dateString);

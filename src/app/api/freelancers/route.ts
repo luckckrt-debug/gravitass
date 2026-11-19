@@ -1,63 +1,56 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/data-store';
-import { getCurrentUser } from '@/lib/auth';
+import { FreelancerSearchFilters } from '@/types';
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const search = searchParams.get('q')?.toLowerCase();
-    const category = searchParams.get('category');
-    const badge = searchParams.get('badge');
-    const minScore = searchParams.get('minScore');
-    const minRate = searchParams.get('minRate');
-    const maxRate = searchParams.get('maxRate');
-    const sortBy = searchParams.get('sortBy') || 'score';
+    const query = searchParams.get('q') || searchParams.get('query') || undefined;
+    const category = searchParams.get('category') || undefined;
+    const subcategory = searchParams.get('subcategory') || undefined;
+    const skill = searchParams.get('skill') || undefined;
+    const skillsParam = searchParams.get('skills');
+    const skills = skillsParam ? skillsParam.split(',').map(s => s.trim()).filter(Boolean) : undefined;
+    const minPriceINR = searchParams.get('minPriceINR') ? Number(searchParams.get('minPriceINR')) : undefined;
+    const maxPriceINR = searchParams.get('maxPriceINR') ? Number(searchParams.get('maxPriceINR')) : undefined;
+    const minRating = searchParams.get('minRating') ? Number(searchParams.get('minRating')) : undefined;
+    const deliveryDays = searchParams.get('deliveryDays') ? Number(searchParams.get('deliveryDays')) : undefined;
+    const availability = searchParams.get('availability') || undefined;
+    const verifiedOnly = searchParams.get('verifiedOnly') === 'true' || searchParams.get('verified') === 'true';
+    const experienceLevel = searchParams.get('experienceLevel') as any;
+    const sortBy = (searchParams.get('sortBy') as any) || 'recommended';
+    const page = Number(searchParams.get('page')) || 1;
+    const limit = Number(searchParams.get('limit')) || 24;
 
-    let freelancers = db.getFreelancers();
+    const filters: FreelancerSearchFilters = {
+      query,
+      category,
+      subcategory,
+      skill,
+      skills,
+      minPriceINR,
+      maxPriceINR,
+      minRating,
+      deliveryDays,
+      availability,
+      verifiedOnly,
+      experienceLevel,
+      sortBy,
+      page,
+      limit
+    };
 
-    if (category && category !== 'all') {
-      freelancers = freelancers.filter(f => f.mainCategory.toLowerCase() === category.toLowerCase());
-    }
+    const result = db.searchFreelancers(filters);
 
-    if (badge && badge !== 'all') {
-      freelancers = freelancers.filter(f => f.badges.includes(badge as any));
-    }
-
-    if (minScore) {
-      freelancers = freelancers.filter(f => f.performanceScore.overallScore >= Number(minScore));
-    }
-
-    if (minRate) {
-      freelancers = freelancers.filter(f => f.hourlyRate >= Number(minRate));
-    }
-
-    if (maxRate) {
-      freelancers = freelancers.filter(f => f.hourlyRate <= Number(maxRate));
-    }
-
-    if (search) {
-      freelancers = freelancers.filter(f =>
-        f.fullName.toLowerCase().includes(search) ||
-        f.headline.toLowerCase().includes(search) ||
-        f.bio.toLowerCase().includes(search) ||
-        f.skills.some(s => s.toLowerCase().includes(search))
-      );
-    }
-
-    // Sorting
-    if (sortBy === 'score') {
-      freelancers.sort((a, b) => b.performanceScore.overallScore - a.performanceScore.overallScore);
-    } else if (sortBy === 'rating') {
-      freelancers.sort((a, b) => b.rating - a.rating);
-    } else if (sortBy === 'completed') {
-      freelancers.sort((a, b) => b.completedProjectsCount - a.completedProjectsCount);
-    } else if (sortBy === 'rate_low') {
-      freelancers.sort((a, b) => a.hourlyRate - b.hourlyRate);
-    } else if (sortBy === 'rate_high') {
-      freelancers.sort((a, b) => b.hourlyRate - a.hourlyRate);
-    }
-
-    return NextResponse.json({ freelancers });
+    return NextResponse.json({
+      freelancers: result.freelancers,
+      total: result.total,
+      page: result.page,
+      limit: result.limit,
+      totalPages: result.totalPages,
+      category: result.category,
+      matchedSubcategory: result.matchedSubcategory
+    });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

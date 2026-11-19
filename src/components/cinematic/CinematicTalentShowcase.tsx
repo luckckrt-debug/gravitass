@@ -4,6 +4,7 @@ import React, { useRef } from 'react';
 import Link from 'next/link';
 import { Star, ArrowRight, ArrowLeft, ArrowUpRight, ShieldCheck, Sparkles } from 'lucide-react';
 import { FreelancerProfile } from '@/types';
+import { formatINR } from '@/lib/utils';
 
 interface Props {
   freelancers: FreelancerProfile[];
@@ -133,12 +134,12 @@ export default function CinematicTalentShowcase({ freelancers }: Props) {
             {/* Bottom Meta & View Link */}
             <div className="mt-6 pt-4 border-t border-white/[0.06] flex items-center justify-between">
               <div>
-                <span className="text-[9px] uppercase tracking-widest text-[#91A09E] block">Engagement Rate</span>
-                <span className="text-sm font-semibold text-[#F4F5F3]">${f.hourlyRate} <span className="text-[10px] text-[#91A09E]">/hr</span></span>
+                <span className="text-[9px] uppercase tracking-widest text-[#91A09E] block">Starting at</span>
+                <span className="text-sm font-extrabold text-[#73D8C4]">{formatINR(f.startingPriceINR || (f.minBudget ? f.minBudget * 83 : 1500))}</span>
               </div>
 
               <Link
-                href={`/freelancers/${f.userId}`}
+                href={`/freelancers/${f.id}`}
                 className="inline-flex items-center gap-1.5 text-xs text-[#73D8C4] hover:text-[#A5E8DE] font-medium"
               >
                 <span>View Dossier</span>

@@ -97,6 +97,11 @@ export interface FreelancerProfile {
   completedProjectsCount: number;
   totalEarnings: number;
   availableBalance?: number;
+  startingPriceINR?: number;
+  hourlyRateINR?: number;
+  deliveryDays?: number;
+  serviceTags?: string[];
+  isShortlisted?: boolean;
   payoutDetails?: PayoutDetails;
   performanceScore: PerformanceBreakdown;
   profileCompletionPercentage: number;
@@ -127,6 +132,48 @@ export interface Category {
   subcategories: string[];
   projectCount: number;
   freelancerCount: number;
+  isFeatured?: boolean;
+  isTrending?: boolean;
+  order?: number;
+  bannerImage?: string;
+  isActive?: boolean;
+}
+
+export interface SearchSuggestionsResult {
+  query: string;
+  categories: { id: string; name: string; slug: string; url: string }[];
+  subcategories: { name: string; slug: string; categoryName: string; categorySlug: string; url: string }[];
+  freelancers: { id: string; name: string; headline: string; avatarUrl: string; rating: number; startingPriceINR: number; url: string }[];
+  skills: { skill: string; url: string }[];
+  popularSearches: string[];
+}
+
+export interface FreelancerSearchFilters {
+  query?: string;
+  category?: string;
+  subcategory?: string;
+  skill?: string;
+  skills?: string[];
+  minPriceINR?: number;
+  maxPriceINR?: number;
+  minRating?: number;
+  deliveryDays?: number;
+  experienceLevel?: ExperienceLevel | 'all';
+  availability?: string;
+  verifiedOnly?: boolean;
+  sortBy?: 'recommended' | 'top_rated' | 'price_asc' | 'price_desc' | 'experience' | 'recent';
+  page?: number;
+  limit?: number;
+}
+
+export interface FreelancerSearchResult {
+  freelancers: FreelancerProfile[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+  category?: Category;
+  matchedSubcategory?: string;
 }
 
 export interface Project {
