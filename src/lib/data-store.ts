@@ -39,7 +39,18 @@ import {
   DisputeResolutionAction,
   FreelancerSearchFilters,
   FreelancerSearchResult,
-  SearchSuggestionsResult
+  SearchSuggestionsResult,
+  Order,
+  OrderStatus,
+  OrderMilestone,
+  WorkSubmissionFile,
+  WorkSubmission,
+  WorkRevision,
+  FreelancerBankAccount,
+  FreelancerUpiAccount,
+  AdminCommissionLedgerEntry,
+  AdminBankAccount,
+  AdminWithdrawalRecord
 } from '@/types';
 import { slugify } from '@/lib/utils';
 import {
@@ -83,6 +94,12 @@ export interface DatabaseState {
   invoices: InvoiceRecord[];
   payoutSettings: FreelancerPayoutSettings[];
   disputeRecords: DisputeRecord[];
+  orders: Order[];
+  bankAccounts: FreelancerBankAccount[];
+  upiAccounts: FreelancerUpiAccount[];
+  adminCommissionLedger: AdminCommissionLedgerEntry[];
+  adminBankAccounts: AdminBankAccount[];
+  adminWithdrawals: AdminWithdrawalRecord[];
 }
 
 export const CATEGORY_SLUG_ALIASES: Record<string, string> = {
@@ -1347,6 +1364,464 @@ export const INITIAL_WITHDRAWALS: WithdrawalRequest[] = [
   }
 ];
 
+export const INITIAL_ORDERS: Order[] = [
+  {
+    id: 'ORD-2026-001',
+    clientId: 'user-client-1',
+    clientName: 'Aetheria Labs',
+    clientAvatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400&auto=format&fit=crop&q=80',
+    clientCompany: 'Aetheria Labs Inc.',
+    freelancerId: 'user-freelancer-1',
+    freelancerName: 'Elena Vance',
+    freelancerAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+    projectId: 'proj-1',
+    projectTitle: 'Autonomous Multi-Model LLM Orchestration Platform',
+    projectDescription: 'Production-ready orchestration mesh for routing enterprise prompts between Claude 3.7, GPT-4o, and Gemini 2.0 with sub-100ms latency.',
+    contractId: 'contract-demo-1',
+    agreedPriceINR: 480000,
+    platformFeeINR: 48000,
+    netFreelancerEntitlementINR: 432000,
+    commissionRate: 10,
+    deadline: '2026-03-30T18:00:00.000Z',
+    orderDate: '2026-02-13T09:00:00.000Z',
+    acceptedAt: '2026-02-13T10:00:00.000Z',
+    milestones: [
+      {
+        id: 'ms-1',
+        title: 'Phase 1: Architecture Specification & Vector Pipeline',
+        description: 'Complete architecture blueprint, OpenAPI contracts, and Redis vector router.',
+        amountINR: 160000,
+        dueDate: '2026-02-28T00:00:00.000Z',
+        status: 'approved'
+      },
+      {
+        id: 'ms-2',
+        title: 'Phase 2: Agent Workflow Runtime & Evaluators',
+        description: 'Multi-agent orchestration state machine with dynamic retries and Langfuse instrumentation.',
+        amountINR: 160000,
+        dueDate: '2026-03-15T00:00:00.000Z',
+        status: 'in_progress'
+      },
+      {
+        id: 'ms-3',
+        title: 'Phase 3: Next.js Frontend Dashboard & Production Deployment',
+        description: 'Live monitoring UI, latency telemetry, and Kubernetes Helm chart manifests.',
+        amountINR: 160000,
+        dueDate: '2026-03-30T00:00:00.000Z',
+        status: 'pending'
+      }
+    ],
+    deliverables: [
+      'System Architecture Blueprint & OpenAPI 3.1 Spec',
+      'High-throughput Redis Vector Gateway',
+      'Next.js SSE Streaming Monitoring Dashboard',
+      'Kubernetes Helm Chart & Production CI/CD'
+    ],
+    requiredFiles: [
+      'Source Code Repository Archive (.zip)',
+      'API Documentation (.md / .json)',
+      'Benchmark Test Suite Performance Report'
+    ],
+    clientInstructions: 'Please make sure all environment secrets use secret manager references and test coverage is >90%.',
+    revisionTerms: 'Up to 3 engineering revisions within 14 days of final submission.',
+    paymentProtectionStatus: 'funds_secured',
+    status: 'in_progress',
+    progressPercentage: 65,
+    workNotes: 'Phase 1 delivered and verified. Currently connecting the streaming Next.js dashboard to the Redis pub/sub queue.',
+    submissions: [
+      {
+        id: 'SUB-2026-001',
+        orderId: 'ORD-2026-001',
+        contractId: 'contract-demo-1',
+        freelancerId: 'user-freelancer-1',
+        milestoneId: 'ms-1',
+        milestoneTitle: 'Phase 1: Architecture Specification & Vector Pipeline',
+        version: 1,
+        description: 'Phase 1 deliverables: Comprehensive architectural specification, Redis streaming router code, and initial load test suite.',
+        files: [
+          {
+            name: 'llm_orchestrator_spec_v1.pdf',
+            url: 'https://gravitass.work/docs/llm_orchestrator_spec_v1.pdf',
+            size: 2450000,
+            type: 'application/pdf'
+          },
+          {
+            name: 'vector_router_src.zip',
+            url: 'https://gravitass.work/deliverables/vector_router_src.zip',
+            size: 14200000,
+            type: 'application/zip'
+          }
+        ],
+        submittedAt: '2026-02-14T11:00:00.000Z',
+        status: 'approved'
+      }
+    ],
+    revisions: [],
+    createdAt: '2026-02-13T09:00:00.000Z',
+    updatedAt: '2026-02-17T12:00:00.000Z'
+  },
+  {
+    id: 'ORD-2026-002',
+    clientId: 'user-client-1',
+    clientName: 'Aetheria Labs',
+    clientAvatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400&auto=format&fit=crop&q=80',
+    clientCompany: 'Aetheria Labs Inc.',
+    freelancerId: 'user-freelancer-1',
+    freelancerName: 'Elena Vance',
+    freelancerAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+    projectId: 'proj-2',
+    projectTitle: 'Real-time Streaming Vector Ingestion Engine',
+    projectDescription: 'High-throughput Kafka-to-Qdrant streaming ingest worker written in Rust/Go with dynamic backpressure and deduplication.',
+    contractId: 'contract-demo-2',
+    agreedPriceINR: 285000,
+    platformFeeINR: 28500,
+    netFreelancerEntitlementINR: 256500,
+    commissionRate: 10,
+    deadline: '2026-04-10T18:00:00.000Z',
+    orderDate: '2026-02-19T14:30:00.000Z',
+    milestones: [
+      {
+        id: 'ms-v-1',
+        title: 'Kafka Consumer & Dedup Layer',
+        description: 'Zero-loss Kafka consumer with Redis Bloom filter deduplication.',
+        amountINR: 142500,
+        dueDate: '2026-03-20T00:00:00.000Z',
+        status: 'pending'
+      },
+      {
+        id: 'ms-v-2',
+        title: 'Qdrant Ingest Worker & Performance Tests',
+        description: 'Async vector batching and benchmark report with 50k vectors/sec.',
+        amountINR: 142500,
+        dueDate: '2026-04-10T00:00:00.000Z',
+        status: 'pending'
+      }
+    ],
+    deliverables: [
+      'Rust / Go Ingestion Daemon binary',
+      'Kafka consumer partition config',
+      'Prometheus telemetry endpoints & Grafana dashboard'
+    ],
+    requiredFiles: [
+      'Source Repository (.zip)',
+      'Docker Image Build instructions',
+      'Zero-loss benchmark test evidence'
+    ],
+    clientInstructions: 'Ensure minimal garbage collection latency under sustained 50,000 vectors/sec burst ingestion.',
+    revisionTerms: '2 technical revisions included.',
+    paymentProtectionStatus: 'funds_secured',
+    status: 'awaiting_acceptance',
+    progressPercentage: 0,
+    submissions: [],
+    revisions: [],
+    createdAt: '2026-02-19T14:30:00.000Z',
+    updatedAt: '2026-02-19T14:30:00.000Z'
+  },
+  {
+    id: 'ORD-2026-003',
+    clientId: 'user-client-2',
+    clientName: 'Nexus AI Ventures',
+    clientAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
+    clientCompany: 'Nexus AI Ventures LLC',
+    freelancerId: 'user-freelancer-1',
+    freelancerName: 'Elena Vance',
+    freelancerAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+    projectId: 'proj-3',
+    projectTitle: 'Enterprise Knowledge Graph Context Injector',
+    projectDescription: 'Neo4j Cypher query generator from natural language with multi-hop retrieval and schema validation.',
+    contractId: 'contract-demo-3',
+    agreedPriceINR: 195000,
+    platformFeeINR: 19500,
+    netFreelancerEntitlementINR: 175500,
+    commissionRate: 10,
+    deadline: '2026-02-25T18:00:00.000Z',
+    orderDate: '2026-02-05T10:00:00.000Z',
+    acceptedAt: '2026-02-05T11:00:00.000Z',
+    milestones: [
+      {
+        id: 'ms-kg-1',
+        title: 'Full Knowledge Graph Injector Delivery',
+        description: 'Complete Python package, Cypher generation engine, and automated unit tests.',
+        amountINR: 195000,
+        dueDate: '2026-02-25T00:00:00.000Z',
+        status: 'submitted'
+      }
+    ],
+    deliverables: [
+      'Knowledge Graph Context Injector Python SDK',
+      'Evaluation benchmarks on 500 domain questions',
+      'API reference documentation'
+    ],
+    requiredFiles: [
+      'Package Wheel & Source ZIP',
+      'Verification test results (.html / .json)'
+    ],
+    clientInstructions: 'Validate with our staging Neo4j instance before final handoff.',
+    revisionTerms: '1 revision included.',
+    paymentProtectionStatus: 'funds_secured',
+    status: 'submitted',
+    progressPercentage: 100,
+    workNotes: 'All deliverables uploaded and verified against staging Neo4j cluster. Submitting for client review.',
+    submissions: [
+      {
+        id: 'SUB-2026-003-V1',
+        orderId: 'ORD-2026-003',
+        contractId: 'contract-demo-3',
+        freelancerId: 'user-freelancer-1',
+        milestoneId: 'ms-kg-1',
+        milestoneTitle: 'Full Knowledge Graph Injector Delivery',
+        version: 1,
+        description: 'Complete deliverable package: Tested Cypher generation engine, LangChain integration hook, and test suite with 98% coverage.',
+        files: [
+          {
+            name: 'kg_context_injector_v1.0.zip',
+            url: 'https://gravitass.work/deliverables/kg_context_injector_v1.0.zip',
+            size: 18400000,
+            type: 'application/zip'
+          },
+          {
+            name: 'test_report_coverage.pdf',
+            url: 'https://gravitass.work/deliverables/test_report_coverage.pdf',
+            size: 1200000,
+            type: 'application/pdf'
+          }
+        ],
+        submittedAt: '2026-02-18T16:00:00.000Z',
+        status: 'submitted'
+      }
+    ],
+    revisions: [],
+    createdAt: '2026-02-05T10:00:00.000Z',
+    updatedAt: '2026-02-18T16:00:00.000Z'
+  },
+  {
+    id: 'ORD-2026-004',
+    clientId: 'user-client-1',
+    clientName: 'Aetheria Labs',
+    clientAvatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400&auto=format&fit=crop&q=80',
+    clientCompany: 'Aetheria Labs Inc.',
+    freelancerId: 'user-freelancer-1',
+    freelancerName: 'Elena Vance',
+    freelancerAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+    projectId: 'proj-4',
+    projectTitle: 'Multi-Tenant Auth0 & Enterprise RBAC Implementation',
+    projectDescription: 'Secure multi-tenant authentication engine with role-based access control, SSO, and audit trails.',
+    contractId: 'contract-prev-4',
+    agreedPriceINR: 160000,
+    platformFeeINR: 16000,
+    netFreelancerEntitlementINR: 144000,
+    commissionRate: 10,
+    deadline: '2026-01-20T18:00:00.000Z',
+    orderDate: '2026-01-05T10:00:00.000Z',
+    acceptedAt: '2026-01-05T11:00:00.000Z',
+    milestones: [
+      {
+        id: 'ms-auth-1',
+        title: 'Auth0 Tenant Federation & Middleware',
+        description: 'Complete token validation and user permissions middleware.',
+        amountINR: 160000,
+        dueDate: '2026-01-20T00:00:00.000Z',
+        status: 'approved'
+      }
+    ],
+    deliverables: [
+      'Next.js Auth0 SDK Integration',
+      'PostgreSQL RBAC Database Migrations',
+      'End-to-end Cypress Auth Tests'
+    ],
+    requiredFiles: ['Source Repository (.zip)'],
+    paymentProtectionStatus: 'funds_secured',
+    status: 'completed',
+    progressPercentage: 100,
+    submissions: [
+      {
+        id: 'SUB-2026-004-FINAL',
+        orderId: 'ORD-2026-004',
+        contractId: 'contract-prev-4',
+        freelancerId: 'user-freelancer-1',
+        milestoneId: 'ms-auth-1',
+        version: 1,
+        description: 'Delivered Auth0 middleware and PostgreSQL schema migrations.',
+        files: [
+          {
+            name: 'auth0_rbac_release.zip',
+            url: 'https://gravitass.work/deliverables/auth0_rbac_release.zip',
+            size: 9800000,
+            type: 'application/zip'
+          }
+        ],
+        submittedAt: '2026-01-19T14:00:00.000Z',
+        status: 'approved'
+      }
+    ],
+    revisions: [],
+    createdAt: '2026-01-05T10:00:00.000Z',
+    updatedAt: '2026-01-20T12:00:00.000Z'
+  },
+  {
+    id: 'ORD-2026-005',
+    clientId: 'user-client-3',
+    clientName: 'Veloce Digital',
+    clientAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop&q=80',
+    clientCompany: 'Veloce Digital',
+    freelancerId: 'user-freelancer-1',
+    freelancerName: 'Elena Vance',
+    freelancerAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+    projectId: 'proj-5',
+    projectTitle: 'Legacy Monolith Code Refactor',
+    projectDescription: 'Migrate monolithic codebase to microservices (Cancelled by mutual client agreement).',
+    contractId: 'contract-prev-5',
+    agreedPriceINR: 75000,
+    platformFeeINR: 7500,
+    netFreelancerEntitlementINR: 67500,
+    commissionRate: 10,
+    deadline: '2026-01-15T18:00:00.000Z',
+    orderDate: '2026-01-08T10:00:00.000Z',
+    milestones: [],
+    deliverables: ['Architecture assessment'],
+    paymentProtectionStatus: 'funds_secured',
+    status: 'cancelled',
+    progressPercentage: 10,
+    submissions: [],
+    revisions: [],
+    createdAt: '2026-01-08T10:00:00.000Z',
+    updatedAt: '2026-01-12T16:00:00.000Z'
+  }
+];
+
+export const INITIAL_BANK_ACCOUNTS: FreelancerBankAccount[] = [
+  {
+    id: 'bnk-1',
+    freelancerId: 'user-freelancer-1',
+    accountHolderName: 'Elena Vance',
+    accountNumber: '50100492818945',
+    maskedAccountNumber: '•••• •••• 8945',
+    ifsc: 'HDFC0001234',
+    bankName: 'HDFC Bank Ltd',
+    accountType: 'savings',
+    verificationStatus: 'verified',
+    verifiedAt: '2026-01-12T10:00:00.000Z',
+    isPrimary: true,
+    createdAt: '2026-01-12T09:30:00.000Z'
+  },
+  {
+    id: 'bnk-2',
+    freelancerId: 'user-freelancer-1',
+    accountHolderName: 'Elena Vance',
+    accountNumber: '000401583108',
+    maskedAccountNumber: '•••• •••• 3108',
+    ifsc: 'ICIC0000004',
+    bankName: 'ICICI Bank',
+    accountType: 'current',
+    verificationStatus: 'verified',
+    verifiedAt: '2026-01-20T14:00:00.000Z',
+    isPrimary: false,
+    createdAt: '2026-01-20T13:45:00.000Z'
+  }
+];
+
+export const INITIAL_UPI_ACCOUNTS: FreelancerUpiAccount[] = [
+  {
+    id: 'upi-1',
+    freelancerId: 'user-freelancer-1',
+    upiId: 'elena.vance@oksbi',
+    maskedUpi: 'ele***@oksbi',
+    verificationStatus: 'verified',
+    isPrimary: true,
+    createdAt: '2026-01-12T10:00:00.000Z'
+  }
+];
+
+export const INITIAL_ADMIN_COMMISSION_LEDGER: AdminCommissionLedgerEntry[] = [
+  {
+    id: 'COM-LED-001',
+    projectId: 'proj-4',
+    projectTitle: 'Multi-Tenant Auth0 & Enterprise RBAC Implementation',
+    orderId: 'ORD-2026-004',
+    contractId: 'contract-prev-4',
+    clientId: 'user-client-1',
+    clientName: 'Aetheria Labs',
+    freelancerId: 'user-freelancer-1',
+    freelancerName: 'Elena Vance',
+    grossProjectAmountINR: 160000,
+    commissionPercentage: 10,
+    commissionAmountINR: 16000,
+    applicableTaxINR: 2880,
+    recognitionDate: '2026-01-20T12:00:00.000Z',
+    status: 'recognized',
+    paymentReference: 'REF-COM-RBAC16K'
+  },
+  {
+    id: 'COM-LED-002',
+    projectId: 'proj-hist-2',
+    projectTitle: 'Decentralized Identity Smart Contract Audit',
+    orderId: 'ORD-HIST-002',
+    contractId: 'contract-hist-2',
+    clientId: 'user-client-2',
+    clientName: 'Nexus AI Ventures',
+    freelancerId: 'user-freelancer-2',
+    freelancerName: 'Marcus Thorne',
+    grossProjectAmountINR: 250000,
+    commissionPercentage: 10,
+    commissionAmountINR: 25000,
+    applicableTaxINR: 4500,
+    recognitionDate: '2026-01-25T16:00:00.000Z',
+    status: 'recognized',
+    paymentReference: 'REF-COM-AUDIT25K'
+  },
+  {
+    id: 'COM-LED-003',
+    projectId: 'proj-hist-3',
+    projectTitle: '3D WebGL Configurator Engine',
+    orderId: 'ORD-HIST-003',
+    contractId: 'contract-hist-3',
+    clientId: 'user-client-1',
+    clientName: 'Aetheria Labs',
+    freelancerId: 'user-freelancer-3',
+    freelancerName: 'Seraphina Lin',
+    grossProjectAmountINR: 180000,
+    commissionPercentage: 10,
+    commissionAmountINR: 18000,
+    applicableTaxINR: 3240,
+    recognitionDate: '2026-02-02T11:00:00.000Z',
+    status: 'recognized',
+    paymentReference: 'REF-COM-WEBGL18K'
+  }
+];
+
+export const INITIAL_ADMIN_BANK_ACCOUNTS: AdminBankAccount[] = [
+  {
+    id: 'adm-bnk-1',
+    accountHolderName: 'GRAVITASS TECHNOLOGIES PRIVATE LIMITED',
+    accountNumber: '000405012938',
+    maskedAccountNumber: '•••• •••• 2938',
+    ifsc: 'ICIC0000004',
+    bankName: 'ICICI Bank',
+    accountType: 'current',
+    verificationStatus: 'verified',
+    isPrimary: true,
+    createdAt: '2026-01-01T00:00:00.000Z'
+  }
+];
+
+export const INITIAL_ADMIN_WITHDRAWALS: AdminWithdrawalRecord[] = [
+  {
+    id: 'ADM-WTH-001',
+    adminUserId: 'user-admin-1',
+    amountINR: 25000,
+    status: 'paid',
+    bankAccount: {
+      accountHolderName: 'GRAVITASS TECHNOLOGIES PRIVATE LIMITED',
+      maskedAccountNumber: '•••• •••• 2938',
+      bankName: 'ICICI Bank',
+      ifsc: 'ICIC0000004'
+    },
+    paymentReference: 'CMS-ICICI-88192',
+    createdAt: '2026-02-01T10:00:00.000Z',
+    processedAt: '2026-02-01T10:05:00.000Z'
+  }
+];
+
 class DataStore {
   private state: DatabaseState;
 
@@ -1416,6 +1891,24 @@ class DataStore {
             disputeRecords: parsed.disputeRecords && parsed.disputeRecords.length > 0
               ? parsed.disputeRecords
               : INITIAL_DISPUTE_RECORDS,
+            orders: parsed.orders && parsed.orders.length > 0
+              ? parsed.orders
+              : INITIAL_ORDERS,
+            bankAccounts: parsed.bankAccounts && parsed.bankAccounts.length > 0
+              ? parsed.bankAccounts
+              : INITIAL_BANK_ACCOUNTS,
+            upiAccounts: parsed.upiAccounts && parsed.upiAccounts.length > 0
+              ? parsed.upiAccounts
+              : INITIAL_UPI_ACCOUNTS,
+            adminCommissionLedger: parsed.adminCommissionLedger && parsed.adminCommissionLedger.length > 0
+              ? parsed.adminCommissionLedger
+              : INITIAL_ADMIN_COMMISSION_LEDGER,
+            adminBankAccounts: parsed.adminBankAccounts && parsed.adminBankAccounts.length > 0
+              ? parsed.adminBankAccounts
+              : INITIAL_ADMIN_BANK_ACCOUNTS,
+            adminWithdrawals: parsed.adminWithdrawals && parsed.adminWithdrawals.length > 0
+              ? parsed.adminWithdrawals
+              : INITIAL_ADMIN_WITHDRAWALS,
             platformSettings: {
               ...DEFAULT_PLATFORM_SETTINGS,
               ...(parsed.platformSettings || {})
@@ -1454,7 +1947,13 @@ class DataStore {
       taxTransactions: INITIAL_TAX_TRANSACTIONS,
       invoices: INITIAL_INVOICES,
       payoutSettings: INITIAL_PAYOUT_SETTINGS,
-      disputeRecords: INITIAL_DISPUTE_RECORDS
+      disputeRecords: INITIAL_DISPUTE_RECORDS,
+      orders: INITIAL_ORDERS,
+      bankAccounts: INITIAL_BANK_ACCOUNTS,
+      upiAccounts: INITIAL_UPI_ACCOUNTS,
+      adminCommissionLedger: INITIAL_ADMIN_COMMISSION_LEDGER,
+      adminBankAccounts: INITIAL_ADMIN_BANK_ACCOUNTS,
+      adminWithdrawals: INITIAL_ADMIN_WITHDRAWALS
     };
   }
 
@@ -2118,10 +2617,16 @@ class DataStore {
     return w;
   }
 
-  public updateWithdrawalStatus(id: string, status: WithdrawalRequest['status']): WithdrawalRequest | undefined {
+  public updateWithdrawalStatus(id: string, status: WithdrawalRequest['status'], paymentReference?: string): WithdrawalRequest | undefined {
     const w = this.state.withdrawals.find(item => item.id === id);
     if (!w) return undefined;
     w.status = status;
+    if (paymentReference) {
+      w.paymentReference = paymentReference;
+    }
+    if (status === 'paid') {
+      w.processedAt = new Date().toISOString();
+    }
     this.saveState();
     return w;
   }
@@ -3972,6 +4477,773 @@ class DataStore {
 
     this.saveState();
     return { success: true, dispute };
+  }
+
+  // ==========================================
+  // MODULE: FREELANCER ORDERS & WORKSPACE ENGINE
+  // ==========================================
+
+  public getOrders(filters?: { freelancerId?: string; clientId?: string; status?: OrderStatus; tab?: string }): Order[] {
+    let list = this.state.orders || INITIAL_ORDERS;
+    if (filters?.freelancerId) {
+      list = list.filter(o => o.freelancerId === filters.freelancerId);
+    }
+    if (filters?.clientId) {
+      list = list.filter(o => o.clientId === filters.clientId);
+    }
+    if (filters?.status) {
+      list = list.filter(o => o.status === filters.status);
+    }
+    if (filters?.tab) {
+      switch (filters.tab.toLowerCase()) {
+        case 'new':
+        case 'new_orders':
+          list = list.filter(o => o.status === 'new_order' || o.status === 'awaiting_acceptance');
+          break;
+        case 'active':
+        case 'active_orders':
+          list = list.filter(o => o.status === 'accepted' || o.status === 'in_progress' || o.status === 'revision_requested');
+          break;
+        case 'submitted':
+        case 'submitted_orders':
+          list = list.filter(o => o.status === 'submitted');
+          break;
+        case 'completed':
+        case 'completed_orders':
+          list = list.filter(o => o.status === 'completed');
+          break;
+        case 'cancelled':
+        case 'cancelled_orders':
+          list = list.filter(o => o.status === 'cancelled' || o.status === 'disputed');
+          break;
+      }
+    }
+    return list;
+  }
+
+  public getOrderById(id: string): Order | undefined {
+    return (this.state.orders || INITIAL_ORDERS).find(o => o.id === id);
+  }
+
+  public createOrder(data: Partial<Order>): Order {
+    if (!this.state.orders) this.state.orders = [...INITIAL_ORDERS];
+    const now = new Date().toISOString();
+    const activeRule = this.getActiveCommissionRule();
+    const agreedPrice = data.agreedPriceINR || 50000;
+    const commCalc = calculateCommissionFee({
+      grossAmount: agreedPrice,
+      category: undefined,
+      freelancerId: data.freelancerId,
+      rule: activeRule
+    });
+
+    const platformFee = commCalc.commissionFee;
+    const netEntitlement = safeSubtract(agreedPrice, platformFee);
+
+    const newOrder: Order = {
+      id: data.id || `ORD-${Date.now().toString().slice(-6)}`,
+      clientId: data.clientId || 'user-client-1',
+      clientName: data.clientName || 'Enterprise Client',
+      clientAvatar: data.clientAvatar,
+      clientCompany: data.clientCompany,
+      freelancerId: data.freelancerId || 'user-freelancer-1',
+      freelancerName: data.freelancerName || 'Specialist Freelancer',
+      freelancerAvatar: data.freelancerAvatar,
+      projectId: data.projectId || `proj-${Date.now()}`,
+      projectTitle: data.projectTitle || 'Commissioned Project Brief',
+      projectDescription: data.projectDescription || 'Detailed project delivery requirements.',
+      contractId: data.contractId || `contract-${Date.now()}`,
+      agreedPriceINR: agreedPrice,
+      platformFeeINR: platformFee,
+      netFreelancerEntitlementINR: netEntitlement,
+      commissionRuleId: activeRule.id,
+      commissionRate: commCalc.effectivePercentage,
+      deadline: data.deadline || new Date(Date.now() + 14 * 86400000).toISOString(),
+      orderDate: now,
+      milestones: data.milestones || [],
+      deliverables: data.deliverables || ['Final Project Codebase & Documentation'],
+      requiredFiles: data.requiredFiles || ['Source Repository (.zip)'],
+      clientInstructions: data.clientInstructions || 'Follow industry standards and document API endpoints.',
+      revisionTerms: data.revisionTerms || 'Up to 2 standard revisions included within 14 days.',
+      paymentProtectionStatus: 'funds_secured',
+      status: data.status || 'awaiting_acceptance',
+      progressPercentage: data.progressPercentage || 0,
+      workNotes: data.workNotes,
+      submissions: data.submissions || [],
+      revisions: data.revisions || [],
+      createdAt: now,
+      updatedAt: now
+    };
+
+    this.state.orders.unshift(newOrder);
+
+    // Notify freelancer
+    this.addNotification({
+      id: `notif-ord-${Date.now()}`,
+      userId: newOrder.freelancerId,
+      title: 'New Hiring Order Received!',
+      message: `${newOrder.clientName} has placed order ${newOrder.id} for "${newOrder.projectTitle}" (₹${newOrder.agreedPriceINR.toLocaleString()}). Payment secured in Escrow.`,
+      type: 'project',
+      link: '/dashboard/freelancer',
+      isRead: false,
+      createdAt: now
+    });
+
+    this.saveState();
+    return newOrder;
+  }
+
+  public acceptOrder(orderId: string, freelancerId: string): { success: boolean; order?: Order; error?: string } {
+    if (!this.state.orders) this.state.orders = [...INITIAL_ORDERS];
+    const order = this.state.orders.find(o => o.id === orderId);
+    if (!order) return { success: false, error: 'Order not found' };
+    if (order.freelancerId !== freelancerId && freelancerId !== 'user-admin-1') {
+      return { success: false, error: 'Unauthorized to accept this order' };
+    }
+    if (order.status !== 'awaiting_acceptance' && order.status !== 'new_order') {
+      return { success: false, error: `Order is already ${order.status}` };
+    }
+
+    const now = new Date().toISOString();
+    order.status = 'in_progress';
+    order.acceptedAt = now;
+    order.updatedAt = now;
+
+    // Notify client
+    this.addNotification({
+      id: `notif-acc-${Date.now()}`,
+      userId: order.clientId,
+      title: 'Order Accepted & In Progress!',
+      message: `${order.freelancerName} has accepted Order ${order.id} for "${order.projectTitle}". Work has officially commenced.`,
+      type: 'project',
+      link: '/dashboard/client',
+      isRead: false,
+      createdAt: now
+    });
+
+    this.saveState();
+    return { success: true, order };
+  }
+
+  public declineOrder(orderId: string, freelancerId: string, reason?: string): { success: boolean; order?: Order; error?: string } {
+    if (!this.state.orders) this.state.orders = [...INITIAL_ORDERS];
+    const order = this.state.orders.find(o => o.id === orderId);
+    if (!order) return { success: false, error: 'Order not found' };
+    if (order.freelancerId !== freelancerId && freelancerId !== 'user-admin-1') {
+      return { success: false, error: 'Unauthorized to decline this order' };
+    }
+
+    const now = new Date().toISOString();
+    order.status = 'cancelled';
+    order.workNotes = `Declined by freelancer: ${reason || 'Schedule conflict'}`;
+    order.updatedAt = now;
+
+    // Notify client
+    this.addNotification({
+      id: `notif-dec-${Date.now()}`,
+      userId: order.clientId,
+      title: 'Order Declined by Freelancer',
+      message: `${order.freelancerName} was unable to accept Order ${order.id}. Funds in escrow have been unlocked for refund or reallocation.`,
+      type: 'project',
+      link: '/dashboard/client',
+      isRead: false,
+      createdAt: now
+    });
+
+    this.saveState();
+    return { success: true, order };
+  }
+
+  public updateOrderProgress(orderId: string, progressPercentage: number, workNotes?: string): { success: boolean; order?: Order; error?: string } {
+    if (!this.state.orders) this.state.orders = [...INITIAL_ORDERS];
+    const order = this.state.orders.find(o => o.id === orderId);
+    if (!order) return { success: false, error: 'Order not found' };
+
+    order.progressPercentage = Math.max(0, Math.min(100, progressPercentage));
+    if (workNotes !== undefined) {
+      order.workNotes = workNotes;
+    }
+    order.updatedAt = new Date().toISOString();
+    this.saveState();
+    return { success: true, order };
+  }
+
+  public submitWork(orderId: string, freelancerId: string, payload: {
+    milestoneId?: string;
+    description: string;
+    files: WorkSubmissionFile[];
+  }): { success: boolean; order?: Order; submission?: WorkSubmission; error?: string } {
+    if (!this.state.orders) this.state.orders = [...INITIAL_ORDERS];
+    const order = this.state.orders.find(o => o.id === orderId);
+    if (!order) return { success: false, error: 'Order not found' };
+    if (order.freelancerId !== freelancerId && freelancerId !== 'user-admin-1') {
+      return { success: false, error: 'Unauthorized to submit work for this order' };
+    }
+
+    const now = new Date().toISOString();
+    const nextVersion = (order.submissions?.length || 0) + 1;
+    const submissionId = `SUB-${order.id}-V${nextVersion}`;
+
+    let msTitle: string | undefined;
+    if (payload.milestoneId && order.milestones) {
+      const ms = order.milestones.find(m => m.id === payload.milestoneId);
+      if (ms) {
+        ms.status = 'submitted';
+        msTitle = ms.title;
+      }
+    }
+
+    const submission: WorkSubmission = {
+      id: submissionId,
+      orderId: order.id,
+      contractId: order.contractId,
+      freelancerId: order.freelancerId,
+      milestoneId: payload.milestoneId,
+      milestoneTitle: msTitle,
+      version: nextVersion,
+      description: payload.description,
+      files: payload.files || [],
+      submittedAt: now,
+      status: 'submitted'
+    };
+
+    if (!order.submissions) order.submissions = [];
+    order.submissions.push(submission);
+    order.status = 'submitted';
+    order.progressPercentage = 100;
+    order.updatedAt = now;
+
+    // Notify client
+    this.addNotification({
+      id: `notif-sub-${Date.now()}`,
+      userId: order.clientId,
+      title: 'Work Deliverable Submitted for Review',
+      message: `${order.freelancerName} has submitted version ${nextVersion} deliverables for Order ${order.id} ("${order.projectTitle}"). Please review and approve or request revision.`,
+      type: 'project',
+      link: '/dashboard/client',
+      isRead: false,
+      createdAt: now
+    });
+
+    this.saveState();
+    return { success: true, order, submission };
+  }
+
+  public clientApproveWork(orderId: string, approverUserId: string): {
+    success: boolean;
+    order?: Order;
+    commissionEntry?: AdminCommissionLedgerEntry;
+    error?: string;
+  } {
+    if (!this.state.orders) this.state.orders = [...INITIAL_ORDERS];
+    const order = this.state.orders.find(o => o.id === orderId);
+    if (!order) return { success: false, error: 'Order not found' };
+    if (order.clientId !== approverUserId && approverUserId !== 'user-admin-1') {
+      return { success: false, error: 'Only the commissioning client can approve order deliverables' };
+    }
+
+    const now = new Date().toISOString();
+
+    // Mark latest submission approved
+    if (order.submissions && order.submissions.length > 0) {
+      const latestSub = order.submissions[order.submissions.length - 1];
+      latestSub.status = 'approved';
+    }
+
+    // Mark all milestones approved
+    if (order.milestones) {
+      order.milestones.forEach(m => { m.status = 'approved'; });
+    }
+
+    order.status = 'completed';
+    order.progressPercentage = 100;
+    order.updatedAt = now;
+
+    // Credit freelancer ledger in INR
+    const netEarning = order.netFreelancerEntitlementINR || safeSubtract(order.agreedPriceINR, order.platformFeeINR);
+    const commFee = order.platformFeeINR || safeSubtract(order.agreedPriceINR, netEarning);
+
+    const ledgerEntry: LedgerTransaction = {
+      id: `LED-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`,
+      freelancerId: order.freelancerId,
+      freelancerName: order.freelancerName,
+      projectId: order.projectId,
+      projectTitle: order.projectTitle,
+      clientId: order.clientId,
+      clientName: order.clientName,
+      contractId: order.contractId,
+      grossAmount: order.agreedPriceINR,
+      commissionPercentage: order.commissionRate || 10,
+      platformFee: commFee,
+      netAmount: netEarning,
+      status: 'available',
+      transactionReference: `REF-ORD-${order.id}`,
+      createdAt: now,
+      updatedAt: now
+    };
+
+    if (!this.state.ledgerTransactions) this.state.ledgerTransactions = [];
+    this.state.ledgerTransactions.unshift(ledgerEntry);
+
+    // Update freelancer profile total earnings
+    const freelancer = this.getFreelancerById(order.freelancerId);
+    if (freelancer) {
+      freelancer.totalEarnings = safeAdd(freelancer.totalEarnings || 0, netEarning);
+      freelancer.completedProjectsCount = (freelancer.completedProjectsCount || 0) + 1;
+      this.saveFreelancerProfile(freelancer);
+    }
+
+    // Automatically record recognized admin commission in admin commission ledger
+    const taxCalc = calculateApplicableTaxes({
+      grossAmount: order.agreedPriceINR,
+      platformFee: commFee,
+      taxRules: this.getTaxRules()
+    });
+
+    const commissionEntry: AdminCommissionLedgerEntry = {
+      id: `COM-LED-${Date.now()}`,
+      projectId: order.projectId,
+      projectTitle: order.projectTitle,
+      orderId: order.id,
+      contractId: order.contractId,
+      clientId: order.clientId,
+      clientName: order.clientName,
+      freelancerId: order.freelancerId,
+      freelancerName: order.freelancerName,
+      grossProjectAmountINR: order.agreedPriceINR,
+      commissionPercentage: order.commissionRate || 10,
+      commissionAmountINR: commFee,
+      applicableTaxINR: taxCalc.gstOnCommission || 0,
+      recognitionDate: now,
+      status: 'recognized',
+      paymentReference: `REF-COM-${order.id}`
+    };
+
+    if (!this.state.adminCommissionLedger) this.state.adminCommissionLedger = [...INITIAL_ADMIN_COMMISSION_LEDGER];
+    this.state.adminCommissionLedger.unshift(commissionEntry);
+
+    // Double-entry journal: Debit Escrow Vault, Credit Freelancer Payable, Credit Commission Revenue
+    this.recordJournalEntry({
+      referenceType: 'milestone_release',
+      referenceId: order.id,
+      contractId: order.contractId,
+      projectId: order.projectId,
+      userId: order.freelancerId,
+      description: `Client Approved Deliverables for Order ${order.id} ("${order.projectTitle}")`,
+      lines: [
+        {
+          accountId: 'asset:escrow_vault',
+          accountName: 'GRAVITASS Escrow Vault Trust',
+          type: 'debit',
+          amount: order.agreedPriceINR,
+          currency: 'INR'
+        },
+        {
+          accountId: 'liability:freelancer_payable',
+          accountName: 'Freelancer Payable Account',
+          type: 'credit',
+          amount: netEarning,
+          currency: 'INR'
+        },
+        {
+          accountId: 'revenue:platform_commission',
+          accountName: 'Platform Commission Revenue',
+          type: 'credit',
+          amount: commFee,
+          currency: 'INR'
+        }
+      ]
+    });
+
+    // Notify freelancer
+    this.addNotification({
+      id: `notif-app-${Date.now()}`,
+      userId: order.freelancerId,
+      title: 'Work Deliverables Approved & Funds Credited!',
+      message: `Congratulations! ${order.clientName} has approved your work for Order ${order.id}. ₹${netEarning.toLocaleString()} has been credited to your available balance.`,
+      type: 'payment',
+      link: '/dashboard/freelancer',
+      isRead: false,
+      createdAt: now
+    });
+
+    this.saveState();
+    return { success: true, order, commissionEntry };
+  }
+
+  public clientRequestRevision(orderId: string, requesterUserId: string, reason: string): {
+    success: boolean;
+    order?: Order;
+    revision?: WorkRevision;
+    error?: string;
+  } {
+    if (!this.state.orders) this.state.orders = [...INITIAL_ORDERS];
+    const order = this.state.orders.find(o => o.id === orderId);
+    if (!order) return { success: false, error: 'Order not found' };
+    if (order.clientId !== requesterUserId && requesterUserId !== 'user-admin-1') {
+      return { success: false, error: 'Only the commissioning client can request revisions' };
+    }
+
+    const now = new Date().toISOString();
+    const latestSub = order.submissions && order.submissions.length > 0
+      ? order.submissions[order.submissions.length - 1]
+      : undefined;
+
+    if (latestSub) {
+      latestSub.status = 'revision_requested';
+    }
+
+    const revision: WorkRevision = {
+      id: `REV-${Date.now()}`,
+      orderId: order.id,
+      submissionId: latestSub?.id || 'SUB-INITIAL',
+      requestedByUserId: requesterUserId,
+      reason,
+      requestedAt: now
+    };
+
+    if (!order.revisions) order.revisions = [];
+    order.revisions.unshift(revision);
+    order.status = 'revision_requested';
+    order.updatedAt = now;
+
+    // Notify freelancer
+    this.addNotification({
+      id: `notif-rev-${Date.now()}`,
+      userId: order.freelancerId,
+      title: 'Revision Requested on Work Deliverables',
+      message: `${order.clientName} requested revisions for Order ${order.id}: "${reason}". Please review in your workspace.`,
+      type: 'project',
+      link: '/dashboard/freelancer',
+      isRead: false,
+      createdAt: now
+    });
+
+    this.saveState();
+    return { success: true, order, revision };
+  }
+
+  // ==========================================
+  // MODULE: FREELANCER BANK ACCOUNTS & UPI
+  // ==========================================
+
+  public getBankAccounts(freelancerId: string): FreelancerBankAccount[] {
+    return (this.state.bankAccounts || INITIAL_BANK_ACCOUNTS).filter(b => b.freelancerId === freelancerId);
+  }
+
+  public addBankAccount(freelancerId: string, data: {
+    accountHolderName: string;
+    accountNumber: string;
+    ifsc: string;
+    bankName: string;
+    accountType: 'savings' | 'current';
+  }): FreelancerBankAccount {
+    if (!this.state.bankAccounts) this.state.bankAccounts = [...INITIAL_BANK_ACCOUNTS];
+    const now = new Date().toISOString();
+    const cleanAcc = data.accountNumber.replace(/\s+/g, '');
+    const masked = `•••• •••• ${cleanAcc.slice(-4)}`;
+
+    const newBank: FreelancerBankAccount = {
+      id: `bnk-${Date.now()}`,
+      freelancerId,
+      accountHolderName: data.accountHolderName.trim(),
+      accountNumber: cleanAcc,
+      maskedAccountNumber: masked,
+      ifsc: data.ifsc.toUpperCase().trim(),
+      bankName: data.bankName.trim(),
+      accountType: data.accountType,
+      verificationStatus: 'verified',
+      verifiedAt: now,
+      isPrimary: this.getBankAccounts(freelancerId).length === 0,
+      createdAt: now
+    };
+
+    this.state.bankAccounts.push(newBank);
+    this.saveState();
+    return newBank;
+  }
+
+  public deleteBankAccount(freelancerId: string, id: string): boolean {
+    if (!this.state.bankAccounts) return false;
+    const initialLen = this.state.bankAccounts.length;
+    this.state.bankAccounts = this.state.bankAccounts.filter(b => !(b.freelancerId === freelancerId && b.id === id));
+    if (this.state.bankAccounts.length !== initialLen) {
+      this.saveState();
+      return true;
+    }
+    return false;
+  }
+
+  public setPrimaryBankAccount(freelancerId: string, id: string): boolean {
+    if (!this.state.bankAccounts) return false;
+    let found = false;
+    this.state.bankAccounts.forEach(b => {
+      if (b.freelancerId === freelancerId) {
+        b.isPrimary = (b.id === id);
+        if (b.id === id) found = true;
+      }
+    });
+    if (found) this.saveState();
+    return found;
+  }
+
+  public getUpiAccounts(freelancerId: string): FreelancerUpiAccount[] {
+    return (this.state.upiAccounts || INITIAL_UPI_ACCOUNTS).filter(u => u.freelancerId === freelancerId);
+  }
+
+  public addUpiAccount(freelancerId: string, upiId: string): FreelancerUpiAccount {
+    if (!this.state.upiAccounts) this.state.upiAccounts = [...INITIAL_UPI_ACCOUNTS];
+    const now = new Date().toISOString();
+    const cleanUpi = upiId.trim().toLowerCase();
+    const parts = cleanUpi.split('@');
+    const masked = `${parts[0].slice(0, 3)}***@${parts[1] || 'upi'}`;
+
+    const newUpi: FreelancerUpiAccount = {
+      id: `upi-${Date.now()}`,
+      freelancerId,
+      upiId: cleanUpi,
+      maskedUpi: masked,
+      verificationStatus: 'verified',
+      isPrimary: this.getUpiAccounts(freelancerId).length === 0,
+      createdAt: now
+    };
+
+    this.state.upiAccounts.push(newUpi);
+    this.saveState();
+    return newUpi;
+  }
+
+  public deleteUpiAccount(freelancerId: string, id: string): boolean {
+    if (!this.state.upiAccounts) return false;
+    const initialLen = this.state.upiAccounts.length;
+    this.state.upiAccounts = this.state.upiAccounts.filter(u => !(u.freelancerId === freelancerId && u.id === id));
+    if (this.state.upiAccounts.length !== initialLen) {
+      this.saveState();
+      return true;
+    }
+    return false;
+  }
+
+  public setPrimaryUpiAccount(freelancerId: string, id: string): boolean {
+    if (!this.state.upiAccounts) return false;
+    let found = false;
+    this.state.upiAccounts.forEach(u => {
+      if (u.freelancerId === freelancerId) {
+        u.isPrimary = (u.id === id);
+        if (u.id === id) found = true;
+      }
+    });
+    if (found) this.saveState();
+    return found;
+  }
+
+  // ==========================================
+  // MODULE: INSTANT WITHDRAWAL EXECUTION
+  // ==========================================
+
+  public async executeInstantWithdrawal(freelancerId: string, amountINR: number, destinationId: string, method: 'bank' | 'upi'): Promise<{
+    success: boolean;
+    withdrawal?: WithdrawalRequest;
+    payoutResult?: any;
+    error?: string;
+  }> {
+    const summary = this.getFreelancerEarningsSummary(freelancerId);
+    if (amountINR > summary.availableBalance) {
+      return {
+        success: false,
+        error: `Insufficient available balance. You requested ₹${amountINR.toLocaleString()}, but your verified available balance is ₹${summary.availableBalance.toLocaleString()}.`
+      };
+    }
+    if (amountINR < 500) {
+      return {
+        success: false,
+        error: 'Minimum instant withdrawal limit is ₹500.'
+      };
+    }
+
+    let payoutDetails: PayoutDetails;
+    if (method === 'bank') {
+      const bank = this.getBankAccounts(freelancerId).find(b => b.id === destinationId);
+      if (!bank) return { success: false, error: 'Selected bank account was not found or is unverified.' };
+      payoutDetails = {
+        accountHolderName: bank.accountHolderName,
+        accountNumber: bank.accountNumber,
+        ifsc: bank.ifsc,
+        bankName: bank.bankName,
+        maskedAccount: bank.maskedAccountNumber,
+        isVerified: true
+      };
+    } else {
+      const upi = this.getUpiAccounts(freelancerId).find(u => u.id === destinationId);
+      if (!upi) return { success: false, error: 'Selected UPI ID was not found or is unverified.' };
+      payoutDetails = {
+        accountHolderName: summary.nextScheduledPayoutDate,
+        upiId: upi.upiId,
+        maskedUpi: upi.maskedUpi,
+        isVerified: true
+      };
+    }
+
+    const wthRes = this.requestWithdrawal({
+      freelancerId,
+      amount: amountINR,
+      method: method === 'upi' ? 'upi' : 'bank_transfer',
+      payoutDetails
+    });
+
+    if (!wthRes.success || !wthRes.withdrawal) {
+      return { success: false, error: wthRes.error || 'Failed to initialize withdrawal request' };
+    }
+
+    // Direct payout dispatch via PayoutGatewayService
+    const gwRes = await PayoutGatewayService.executePayout(wthRes.withdrawal);
+
+    if (gwRes.status === 'paid' && gwRes.success) {
+      this.updateWithdrawalStatus(wthRes.withdrawal.id, 'paid', gwRes.paymentReference);
+    } else {
+      this.updateWithdrawalStatus(wthRes.withdrawal.id, 'processing', gwRes.paymentReference);
+    }
+
+    return {
+      success: true,
+      withdrawal: wthRes.withdrawal,
+      payoutResult: gwRes
+    };
+  }
+
+  // ==========================================
+  // MODULE: ADMIN COMMISSION LEDGER & WITHDRAWAL
+  // ==========================================
+
+  public getAdminCommissionLedger(): AdminCommissionLedgerEntry[] {
+    return this.state.adminCommissionLedger || INITIAL_ADMIN_COMMISSION_LEDGER;
+  }
+
+  public getAdminCommissionSummary() {
+    const ledger = this.getAdminCommissionLedger();
+    const withdrawals = this.getAdminWithdrawals();
+
+    const totalRecognizedRevenue = ledger
+      .filter(l => l.status === 'recognized' || l.status === 'withdrawn')
+      .reduce((sum, l) => sum + (l.commissionAmountINR || 0), 0);
+
+    const totalWithdrawn = withdrawals
+      .filter(w => w.status === 'paid')
+      .reduce((sum, w) => sum + (w.amountINR || 0), 0);
+
+    const processingWithdrawals = withdrawals
+      .filter(w => w.status === 'requested' || w.status === 'processing')
+      .reduce((sum, w) => sum + (w.amountINR || 0), 0);
+
+    const availableCommissionBalance = Math.max(0, safeSubtract(totalRecognizedRevenue, safeAdd(totalWithdrawn, processingWithdrawals)));
+
+    const pendingOrders = (this.state.orders || []).filter(o => o.status !== 'completed' && o.status !== 'cancelled');
+    const pendingCommissionInOrders = pendingOrders.reduce((sum, o) => sum + (o.platformFeeINR || 0), 0);
+
+    return {
+      totalRecognizedRevenue,
+      availableCommissionBalance,
+      totalWithdrawn,
+      processingWithdrawals,
+      pendingCommissionInOrders,
+      entriesCount: ledger.length
+    };
+  }
+
+  public getAdminBankAccounts(): AdminBankAccount[] {
+    return this.state.adminBankAccounts || INITIAL_ADMIN_BANK_ACCOUNTS;
+  }
+
+  public addAdminBankAccount(data: Partial<AdminBankAccount>): AdminBankAccount {
+    if (!this.state.adminBankAccounts) this.state.adminBankAccounts = [...INITIAL_ADMIN_BANK_ACCOUNTS];
+    const now = new Date().toISOString();
+    const cleanAcc = (data.accountNumber || '').replace(/\s+/g, '');
+    const newBank: AdminBankAccount = {
+      id: `adm-bnk-${Date.now()}`,
+      accountHolderName: data.accountHolderName || 'GRAVITASS TECHNOLOGIES PRIVATE LIMITED',
+      accountNumber: cleanAcc,
+      maskedAccountNumber: `•••• •••• ${cleanAcc.slice(-4)}`,
+      ifsc: (data.ifsc || 'ICIC0000004').toUpperCase().trim(),
+      bankName: data.bankName || 'ICICI Bank',
+      accountType: data.accountType || 'current',
+      verificationStatus: 'verified',
+      isPrimary: this.state.adminBankAccounts.length === 0,
+      createdAt: now
+    };
+    this.state.adminBankAccounts.push(newBank);
+    this.saveState();
+    return newBank;
+  }
+
+  public getAdminWithdrawals(): AdminWithdrawalRecord[] {
+    return this.state.adminWithdrawals || INITIAL_ADMIN_WITHDRAWALS;
+  }
+
+  public withdrawAdminCommission(adminUserId: string, amountINR: number, bankAccountId: string): {
+    success: boolean;
+    record?: AdminWithdrawalRecord;
+    error?: string;
+  } {
+    const summary = this.getAdminCommissionSummary();
+    if (amountINR > summary.availableCommissionBalance) {
+      return {
+        success: false,
+        error: `Insufficient recognized platform balance. Requested ₹${amountINR.toLocaleString()}, available ₹${summary.availableCommissionBalance.toLocaleString()}.`
+      };
+    }
+    if (amountINR <= 0) {
+      return { success: false, error: 'Withdrawal amount must be greater than zero.' };
+    }
+
+    const bank = this.getAdminBankAccounts().find(b => b.id === bankAccountId);
+    if (!bank) return { success: false, error: 'Verified corporate bank account not found.' };
+
+    const now = new Date().toISOString();
+    const record: AdminWithdrawalRecord = {
+      id: `ADM-WTH-${Date.now()}`,
+      adminUserId,
+      amountINR,
+      status: 'paid',
+      bankAccount: {
+        accountHolderName: bank.accountHolderName,
+        maskedAccountNumber: bank.maskedAccountNumber,
+        bankName: bank.bankName,
+        ifsc: bank.ifsc
+      },
+      paymentReference: `CMS-ICICI-${Date.now().toString().slice(-6)}`,
+      createdAt: now,
+      processedAt: now
+    };
+
+    if (!this.state.adminWithdrawals) this.state.adminWithdrawals = [...INITIAL_ADMIN_WITHDRAWALS];
+    this.state.adminWithdrawals.unshift(record);
+
+    // Record double entry: Debit Platform Commission Revenue / Retained Earnings, Credit Corporate Bank Asset
+    this.recordJournalEntry({
+      referenceType: 'admin_withdrawal',
+      referenceId: record.id,
+      userId: adminUserId,
+      description: `Corporate Commission Withdrawal of ₹${amountINR.toLocaleString()} to ${bank.bankName} (${bank.maskedAccountNumber})`,
+      lines: [
+        {
+          accountId: 'revenue:platform_commission',
+          accountName: 'Platform Commission Retained Earnings',
+          type: 'debit',
+          amount: amountINR,
+          currency: 'INR'
+        },
+        {
+          accountId: 'asset:corporate_bank',
+          accountName: 'Corporate Treasury Bank Account',
+          type: 'credit',
+          amount: amountINR,
+          currency: 'INR'
+        }
+      ]
+    });
+
+    this.saveState();
+    return { success: true, record };
   }
 
   // Backward-compatible Dispute aliases

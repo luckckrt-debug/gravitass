@@ -384,7 +384,9 @@ export default function Navbar() {
   // Mega menu hover management
   const handleCategoryMouseEnter = (cat: Category) => {
     if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    setActiveCategory(cat);
+    hoverTimeoutRef.current = setTimeout(() => {
+      setActiveCategory(cat);
+    }, 120);
   };
 
   const handleCategoryMouseLeave = () => {
@@ -880,7 +882,7 @@ export default function Navbar() {
         {activeCategory && (
           <div
             onClick={() => setActiveCategory(null)}
-            className="fixed inset-0 top-[108px] bg-black/80 backdrop-blur-sm z-30 transition-opacity duration-200"
+            className="fixed inset-0 top-[108px] bg-black/90 backdrop-blur-md z-40 transition-opacity duration-200"
             aria-hidden="true"
           />
         )}
@@ -894,7 +896,7 @@ export default function Navbar() {
             onMouseEnter={handleMegaMenuMouseEnter}
             onMouseLeave={handleMegaMenuMouseLeave}
             style={{ backgroundColor: '#071011' }}
-            className="absolute top-full left-0 right-0 bg-[#071011] border-t border-b border-white/[0.12] shadow-[0_30px_70px_rgba(0,0,0,0.98)] z-40 transition-all duration-150"
+            className="absolute top-full left-0 right-0 bg-[#071011] border-t border-b border-white/[0.14] shadow-[0_30px_70px_rgba(0,0,0,0.98)] z-50 transition-all duration-150"
           >
             <div className="max-w-7xl mx-auto px-6 py-6">
               
@@ -952,11 +954,11 @@ export default function Navbar() {
                       key={idx}
                       href={`/freelancers/${activeCategory.slug}/${subSlug}`}
                       onClick={() => setActiveCategory(null)}
-                      className="group flex items-center justify-between p-2.5 rounded-xl bg-[#0B1719] hover:bg-[#0E1F22] border border-white/[0.06] hover:border-[#73D8C4]/40 transition-all duration-150 shadow-sm hover:shadow-[0_4px_12px_rgba(0,0,0,0.5)]"
+                      className="group flex items-center justify-between p-3 rounded-xl bg-[#0B1719] hover:bg-[#102428] border border-white/[0.08] hover:border-[#73D8C4]/70 transition-all duration-150 shadow-sm hover:shadow-[0_4px_16px_rgba(0,0,0,0.6)]"
                     >
-                      <div className="flex items-center gap-2 min-w-0">
+                      <div className="flex items-center gap-2.5 min-w-0">
                         <span className="w-1.5 h-1.5 rounded-full bg-[#73D8C4]/40 group-hover:bg-[#73D8C4] group-hover:scale-125 transition-all flex-shrink-0" />
-                        <span className="text-xs text-[#C5CECB] group-hover:text-white font-medium truncate transition-colors">
+                        <span className="text-xs text-[#E0E7E5] group-hover:text-white font-semibold truncate transition-colors">
                           {sub}
                         </span>
                       </div>

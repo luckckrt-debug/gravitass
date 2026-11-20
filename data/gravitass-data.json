@@ -220,8 +220,8 @@
       ],
       "rating": 4.98,
       "reviewCount": 38,
-      "completedProjectsCount": 42,
-      "totalEarnings": 102050,
+      "completedProjectsCount": 43,
+      "totalEarnings": 237050,
       "profileCompletionPercentage": 100,
       "performanceScore": {
         "clientReviewQuality": 98,
@@ -275,7 +275,7 @@
         "website": "https://elenavance.dev"
       },
       "createdAt": "2026-01-10T10:00:00.000Z",
-      "updatedAt": "2026-11-19T18:01:48.146Z",
+      "updatedAt": "2026-11-20T17:39:35.461Z",
       "hourlyRateINR": 9130,
       "startingPriceINR": 124500,
       "deliveryDays": 3,
@@ -1787,6 +1787,76 @@
   ],
   "notifications": [
     {
+      "id": "notif-1795196375520",
+      "userId": "user-freelancer-1",
+      "title": "Withdrawal Request Submitted",
+      "message": "Your withdrawal of $10,000 has been queued for review and payout. Estimated time: 24–48 Business Hours.",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-20T17:39:35.521Z"
+    },
+    {
+      "id": "notif-app-1795196375465",
+      "userId": "user-freelancer-1",
+      "title": "Work Deliverables Approved & Funds Credited!",
+      "message": "Congratulations! Aetheria Labs has approved your work for Order ORD-375384. ₹1,35,000 has been credited to your available balance.",
+      "type": "payment",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-20T17:39:35.461Z"
+    },
+    {
+      "id": "notif-sub-1795196375452",
+      "userId": "user-client-1",
+      "title": "Work Deliverable Submitted for Review",
+      "message": "Elena Vance has submitted version 2 deliverables for Order ORD-375384 (\"Automated Micro-Settlement Payment Protocol Engine\"). Please review and approve or request revision.",
+      "type": "project",
+      "link": "/dashboard/client",
+      "isRead": false,
+      "createdAt": "2026-11-20T17:39:35.452Z"
+    },
+    {
+      "id": "notif-rev-1795196375443",
+      "userId": "user-freelancer-1",
+      "title": "Revision Requested on Work Deliverables",
+      "message": "Aetheria Labs requested revisions for Order ORD-375384: \"Please add Prometheus metrics for p99 latency evaluation under burst loads.\". Please review in your workspace.",
+      "type": "project",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-20T17:39:35.443Z"
+    },
+    {
+      "id": "notif-sub-1795196375431",
+      "userId": "user-client-1",
+      "title": "Work Deliverable Submitted for Review",
+      "message": "Elena Vance has submitted version 1 deliverables for Order ORD-375384 (\"Automated Micro-Settlement Payment Protocol Engine\"). Please review and approve or request revision.",
+      "type": "project",
+      "link": "/dashboard/client",
+      "isRead": false,
+      "createdAt": "2026-11-20T17:39:35.431Z"
+    },
+    {
+      "id": "notif-acc-1795196375413",
+      "userId": "user-client-1",
+      "title": "Order Accepted & In Progress!",
+      "message": "Elena Vance has accepted Order ORD-375384 for \"Automated Micro-Settlement Payment Protocol Engine\". Work has officially commenced.",
+      "type": "project",
+      "link": "/dashboard/client",
+      "isRead": false,
+      "createdAt": "2026-11-20T17:39:35.413Z"
+    },
+    {
+      "id": "notif-ord-1795196375384",
+      "userId": "user-freelancer-1",
+      "title": "New Hiring Order Received!",
+      "message": "Aetheria Labs has placed order ORD-375384 for \"Automated Micro-Settlement Payment Protocol Engine\" (₹1,50,000). Payment secured in Escrow.",
+      "type": "project",
+      "link": "/dashboard/freelancer",
+      "isRead": false,
+      "createdAt": "2026-11-20T17:39:35.384Z"
+    },
+    {
       "id": "notif-1795111308269-f",
       "userId": "user-freelancer-1",
       "title": "Dispute Registered on Contract",
@@ -2019,6 +2089,16 @@
   ],
   "transactions": [
     {
+      "id": "tx-w-1795196375517",
+      "userId": "user-freelancer-1",
+      "type": "withdrawal",
+      "amount": -10000,
+      "status": "pending",
+      "description": "Withdrawal request of $10000 to •••• •••• 8945",
+      "referenceId": "WTH-1795196375517-H8QT",
+      "createdAt": "2026-11-20T17:39:35.517Z"
+    },
+    {
       "id": "tx-w-1795111308189",
       "userId": "user-freelancer-1",
       "type": "withdrawal",
@@ -2201,6 +2281,30 @@
   ],
   "withdrawals": [
     {
+      "id": "WTH-1795196375517-H8QT",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "amount": 10000,
+      "fee": 0,
+      "finalAmount": 10000,
+      "method": "bank_transfer",
+      "payoutDetails": {
+        "accountHolderName": "Elena Vance",
+        "accountNumber": "50100492818945",
+        "ifsc": "HDFC0001234",
+        "bankName": "HDFC Bank Ltd",
+        "maskedAccount": "•••• •••• 8945",
+        "isVerified": true
+      },
+      "status": "paid",
+      "estimatedProcessingTime": "24–48 Business Hours",
+      "idempotencyKey": "idem-1795196375517",
+      "createdAt": "2026-11-20T17:39:35.517Z",
+      "updatedAt": "2026-11-20T17:39:35.517Z",
+      "paymentReference": "UTR-HDFC-96375526992955DA",
+      "processedAt": "2026-11-20T17:39:35.526Z"
+    },
+    {
       "id": "WTH-1795111308189-1QZI",
       "freelancerId": "user-freelancer-1",
       "freelancerName": "Elena Vance",
@@ -2308,6 +2412,43 @@
   ],
   "disputes": [],
   "ledgerTransactions": [
+    {
+      "id": "LED-1795196375517-WTH",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "projectId": "PAYOUT",
+      "projectTitle": "Withdrawal via Bank Transfer (•••• •••• 8945)",
+      "clientId": "GRAVITASS-TREASURY",
+      "clientName": "GRAVITASS Escrow & Payout",
+      "contractId": "WTH-1795196375517-H8QT",
+      "grossAmount": -10000,
+      "commissionPercentage": 0,
+      "platformFee": 0,
+      "netAmount": -10000,
+      "status": "withdrawal_processing",
+      "transactionReference": "WTH-REF-MWP9KKIL",
+      "withdrawalId": "WTH-1795196375517-H8QT",
+      "createdAt": "2026-11-20T17:39:35.517Z",
+      "updatedAt": "2026-11-20T17:39:35.517Z"
+    },
+    {
+      "id": "LED-1795196375461-223W",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "projectId": "proj-1795196375384",
+      "projectTitle": "Automated Micro-Settlement Payment Protocol Engine",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "contractId": "contract-1795196375384",
+      "grossAmount": 150000,
+      "commissionPercentage": 10,
+      "platformFee": 15000,
+      "netAmount": 135000,
+      "status": "available",
+      "transactionReference": "REF-ORD-ORD-375384",
+      "createdAt": "2026-11-20T17:39:35.461Z",
+      "updatedAt": "2026-11-20T17:39:35.461Z"
+    },
     {
       "id": "LED-1795111308189-WTH",
       "freelancerId": "user-freelancer-1",
@@ -2647,6 +2788,67 @@
     "updatedAt": "2026-11-19T17:29:17.578Z"
   },
   "journalEntries": [
+    {
+      "id": "JRN-1795196375559-O0YZ",
+      "timestamp": "2026-11-20T17:39:35.559Z",
+      "referenceType": "admin_withdrawal",
+      "referenceId": "ADM-WTH-1795196375559",
+      "userId": "user-admin-1",
+      "lines": [
+        {
+          "accountId": "revenue:platform_commission",
+          "accountName": "Platform Commission Retained Earnings",
+          "type": "debit",
+          "amount": 10000,
+          "currency": "INR"
+        },
+        {
+          "accountId": "asset:corporate_bank",
+          "accountName": "Corporate Treasury Bank Account",
+          "type": "credit",
+          "amount": 10000,
+          "currency": "INR"
+        }
+      ],
+      "description": "Corporate Commission Withdrawal of ₹10,000 to ICICI Bank (•••• •••• 2938)",
+      "immutable": true,
+      "createdAt": "2026-11-20T17:39:35.559Z"
+    },
+    {
+      "id": "JRN-1795196375464-FWB8",
+      "timestamp": "2026-11-20T17:39:35.464Z",
+      "referenceType": "milestone_release",
+      "referenceId": "ORD-375384",
+      "contractId": "contract-1795196375384",
+      "projectId": "proj-1795196375384",
+      "userId": "user-freelancer-1",
+      "lines": [
+        {
+          "accountId": "asset:escrow_vault",
+          "accountName": "GRAVITASS Escrow Vault Trust",
+          "type": "debit",
+          "amount": 150000,
+          "currency": "INR"
+        },
+        {
+          "accountId": "liability:freelancer_payable",
+          "accountName": "Freelancer Payable Account",
+          "type": "credit",
+          "amount": 135000,
+          "currency": "INR"
+        },
+        {
+          "accountId": "revenue:platform_commission",
+          "accountName": "Platform Commission Revenue",
+          "type": "credit",
+          "amount": 15000,
+          "currency": "INR"
+        }
+      ],
+      "description": "Client Approved Deliverables for Order ORD-375384 (\"Automated Micro-Settlement Payment Protocol Engine\")",
+      "immutable": true,
+      "createdAt": "2026-11-20T17:39:35.464Z"
+    },
     {
       "id": "JRN-1795111308300-E4TV",
       "timestamp": "2026-11-19T18:01:48.300Z",
@@ -5385,6 +5587,609 @@
       "refundedAmountToClient": 55400,
       "resolvedBy": "user-admin-1",
       "resolvedAt": "2026-11-19T18:01:29.456Z"
+    }
+  ],
+  "orders": [
+    {
+      "id": "ORD-375384",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "clientCompany": "Aetheria Labs Inc.",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "projectId": "proj-1795196375384",
+      "projectTitle": "Automated Micro-Settlement Payment Protocol Engine",
+      "projectDescription": "High-speed event-driven micro-settlement service with zero floating point drift and double-entry auditing.",
+      "contractId": "contract-1795196375384",
+      "agreedPriceINR": 150000,
+      "platformFeeINR": 15000,
+      "netFreelancerEntitlementINR": 135000,
+      "commissionRuleId": "COMM-2026-v1",
+      "commissionRate": 10,
+      "deadline": "2026-11-30T17:39:35.375Z",
+      "orderDate": "2026-11-20T17:39:35.384Z",
+      "milestones": [],
+      "deliverables": [
+        "Go microservice binary",
+        "Kubernetes Helm Chart",
+        "Load test benchmark report"
+      ],
+      "requiredFiles": [
+        "Source Repository (.zip)"
+      ],
+      "clientInstructions": "Follow industry standards and document API endpoints.",
+      "revisionTerms": "Up to 2 standard revisions included within 14 days.",
+      "paymentProtectionStatus": "funds_secured",
+      "status": "completed",
+      "progressPercentage": 100,
+      "workNotes": "Core Kafka subscriber and settlement state machine implemented. Running load tests.",
+      "submissions": [
+        {
+          "id": "SUB-ORD-375384-V1",
+          "orderId": "ORD-375384",
+          "contractId": "contract-1795196375384",
+          "freelancerId": "user-freelancer-1",
+          "version": 1,
+          "description": "Initial implementation of micro-settlement service with unit test suite.",
+          "files": [
+            {
+              "name": "settlement_engine_v1.zip",
+              "url": "https://gravitass.work/deliverables/settlement_engine_v1.zip",
+              "size": 12500000,
+              "type": "application/zip"
+            }
+          ],
+          "submittedAt": "2026-11-20T17:39:35.431Z",
+          "status": "revision_requested"
+        },
+        {
+          "id": "SUB-ORD-375384-V2",
+          "orderId": "ORD-375384",
+          "contractId": "contract-1795196375384",
+          "freelancerId": "user-freelancer-1",
+          "version": 2,
+          "description": "Added Prometheus /metrics exporter with p50, p90, p99 histogram buckets and Grafana dashboard config.",
+          "files": [
+            {
+              "name": "settlement_engine_v2_metrics.zip",
+              "url": "https://gravitass.work/deliverables/settlement_engine_v2_metrics.zip",
+              "size": 13200000,
+              "type": "application/zip"
+            },
+            {
+              "name": "p99_latency_benchmark.pdf",
+              "url": "https://gravitass.work/deliverables/p99_latency_benchmark.pdf",
+              "size": 850000,
+              "type": "application/pdf"
+            }
+          ],
+          "submittedAt": "2026-11-20T17:39:35.452Z",
+          "status": "approved"
+        }
+      ],
+      "revisions": [
+        {
+          "id": "REV-1795196375443",
+          "orderId": "ORD-375384",
+          "submissionId": "SUB-ORD-375384-V1",
+          "requestedByUserId": "user-client-1",
+          "reason": "Please add Prometheus metrics for p99 latency evaluation under burst loads.",
+          "requestedAt": "2026-11-20T17:39:35.443Z"
+        }
+      ],
+      "createdAt": "2026-11-20T17:39:35.384Z",
+      "updatedAt": "2026-11-20T17:39:35.461Z",
+      "acceptedAt": "2026-11-20T17:39:35.413Z"
+    },
+    {
+      "id": "ORD-2026-001",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "clientAvatar": "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400&auto=format&fit=crop&q=80",
+      "clientCompany": "Aetheria Labs Inc.",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "freelancerAvatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
+      "projectId": "proj-1",
+      "projectTitle": "Autonomous Multi-Model LLM Orchestration Platform",
+      "projectDescription": "Production-ready orchestration mesh for routing enterprise prompts between Claude 3.7, GPT-4o, and Gemini 2.0 with sub-100ms latency.",
+      "contractId": "contract-demo-1",
+      "agreedPriceINR": 480000,
+      "platformFeeINR": 48000,
+      "netFreelancerEntitlementINR": 432000,
+      "commissionRate": 10,
+      "deadline": "2026-03-30T18:00:00.000Z",
+      "orderDate": "2026-02-13T09:00:00.000Z",
+      "acceptedAt": "2026-02-13T10:00:00.000Z",
+      "milestones": [
+        {
+          "id": "ms-1",
+          "title": "Phase 1: Architecture Specification & Vector Pipeline",
+          "description": "Complete architecture blueprint, OpenAPI contracts, and Redis vector router.",
+          "amountINR": 160000,
+          "dueDate": "2026-02-28T00:00:00.000Z",
+          "status": "approved"
+        },
+        {
+          "id": "ms-2",
+          "title": "Phase 2: Agent Workflow Runtime & Evaluators",
+          "description": "Multi-agent orchestration state machine with dynamic retries and Langfuse instrumentation.",
+          "amountINR": 160000,
+          "dueDate": "2026-03-15T00:00:00.000Z",
+          "status": "in_progress"
+        },
+        {
+          "id": "ms-3",
+          "title": "Phase 3: Next.js Frontend Dashboard & Production Deployment",
+          "description": "Live monitoring UI, latency telemetry, and Kubernetes Helm chart manifests.",
+          "amountINR": 160000,
+          "dueDate": "2026-03-30T00:00:00.000Z",
+          "status": "pending"
+        }
+      ],
+      "deliverables": [
+        "System Architecture Blueprint & OpenAPI 3.1 Spec",
+        "High-throughput Redis Vector Gateway",
+        "Next.js SSE Streaming Monitoring Dashboard",
+        "Kubernetes Helm Chart & Production CI/CD"
+      ],
+      "requiredFiles": [
+        "Source Code Repository Archive (.zip)",
+        "API Documentation (.md / .json)",
+        "Benchmark Test Suite Performance Report"
+      ],
+      "clientInstructions": "Please make sure all environment secrets use secret manager references and test coverage is >90%.",
+      "revisionTerms": "Up to 3 engineering revisions within 14 days of final submission.",
+      "paymentProtectionStatus": "funds_secured",
+      "status": "in_progress",
+      "progressPercentage": 65,
+      "workNotes": "Phase 1 delivered and verified. Currently connecting the streaming Next.js dashboard to the Redis pub/sub queue.",
+      "submissions": [
+        {
+          "id": "SUB-2026-001",
+          "orderId": "ORD-2026-001",
+          "contractId": "contract-demo-1",
+          "freelancerId": "user-freelancer-1",
+          "milestoneId": "ms-1",
+          "milestoneTitle": "Phase 1: Architecture Specification & Vector Pipeline",
+          "version": 1,
+          "description": "Phase 1 deliverables: Comprehensive architectural specification, Redis streaming router code, and initial load test suite.",
+          "files": [
+            {
+              "name": "llm_orchestrator_spec_v1.pdf",
+              "url": "https://gravitass.work/docs/llm_orchestrator_spec_v1.pdf",
+              "size": 2450000,
+              "type": "application/pdf"
+            },
+            {
+              "name": "vector_router_src.zip",
+              "url": "https://gravitass.work/deliverables/vector_router_src.zip",
+              "size": 14200000,
+              "type": "application/zip"
+            }
+          ],
+          "submittedAt": "2026-02-14T11:00:00.000Z",
+          "status": "approved"
+        }
+      ],
+      "revisions": [],
+      "createdAt": "2026-02-13T09:00:00.000Z",
+      "updatedAt": "2026-02-17T12:00:00.000Z"
+    },
+    {
+      "id": "ORD-2026-002",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "clientAvatar": "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400&auto=format&fit=crop&q=80",
+      "clientCompany": "Aetheria Labs Inc.",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "freelancerAvatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
+      "projectId": "proj-2",
+      "projectTitle": "Real-time Streaming Vector Ingestion Engine",
+      "projectDescription": "High-throughput Kafka-to-Qdrant streaming ingest worker written in Rust/Go with dynamic backpressure and deduplication.",
+      "contractId": "contract-demo-2",
+      "agreedPriceINR": 285000,
+      "platformFeeINR": 28500,
+      "netFreelancerEntitlementINR": 256500,
+      "commissionRate": 10,
+      "deadline": "2026-04-10T18:00:00.000Z",
+      "orderDate": "2026-02-19T14:30:00.000Z",
+      "milestones": [
+        {
+          "id": "ms-v-1",
+          "title": "Kafka Consumer & Dedup Layer",
+          "description": "Zero-loss Kafka consumer with Redis Bloom filter deduplication.",
+          "amountINR": 142500,
+          "dueDate": "2026-03-20T00:00:00.000Z",
+          "status": "pending"
+        },
+        {
+          "id": "ms-v-2",
+          "title": "Qdrant Ingest Worker & Performance Tests",
+          "description": "Async vector batching and benchmark report with 50k vectors/sec.",
+          "amountINR": 142500,
+          "dueDate": "2026-04-10T00:00:00.000Z",
+          "status": "pending"
+        }
+      ],
+      "deliverables": [
+        "Rust / Go Ingestion Daemon binary",
+        "Kafka consumer partition config",
+        "Prometheus telemetry endpoints & Grafana dashboard"
+      ],
+      "requiredFiles": [
+        "Source Repository (.zip)",
+        "Docker Image Build instructions",
+        "Zero-loss benchmark test evidence"
+      ],
+      "clientInstructions": "Ensure minimal garbage collection latency under sustained 50,000 vectors/sec burst ingestion.",
+      "revisionTerms": "2 technical revisions included.",
+      "paymentProtectionStatus": "funds_secured",
+      "status": "awaiting_acceptance",
+      "progressPercentage": 0,
+      "submissions": [],
+      "revisions": [],
+      "createdAt": "2026-02-19T14:30:00.000Z",
+      "updatedAt": "2026-02-19T14:30:00.000Z"
+    },
+    {
+      "id": "ORD-2026-003",
+      "clientId": "user-client-2",
+      "clientName": "Nexus AI Ventures",
+      "clientAvatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80",
+      "clientCompany": "Nexus AI Ventures LLC",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "freelancerAvatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
+      "projectId": "proj-3",
+      "projectTitle": "Enterprise Knowledge Graph Context Injector",
+      "projectDescription": "Neo4j Cypher query generator from natural language with multi-hop retrieval and schema validation.",
+      "contractId": "contract-demo-3",
+      "agreedPriceINR": 195000,
+      "platformFeeINR": 19500,
+      "netFreelancerEntitlementINR": 175500,
+      "commissionRate": 10,
+      "deadline": "2026-02-25T18:00:00.000Z",
+      "orderDate": "2026-02-05T10:00:00.000Z",
+      "acceptedAt": "2026-02-05T11:00:00.000Z",
+      "milestones": [
+        {
+          "id": "ms-kg-1",
+          "title": "Full Knowledge Graph Injector Delivery",
+          "description": "Complete Python package, Cypher generation engine, and automated unit tests.",
+          "amountINR": 195000,
+          "dueDate": "2026-02-25T00:00:00.000Z",
+          "status": "submitted"
+        }
+      ],
+      "deliverables": [
+        "Knowledge Graph Context Injector Python SDK",
+        "Evaluation benchmarks on 500 domain questions",
+        "API reference documentation"
+      ],
+      "requiredFiles": [
+        "Package Wheel & Source ZIP",
+        "Verification test results (.html / .json)"
+      ],
+      "clientInstructions": "Validate with our staging Neo4j instance before final handoff.",
+      "revisionTerms": "1 revision included.",
+      "paymentProtectionStatus": "funds_secured",
+      "status": "submitted",
+      "progressPercentage": 100,
+      "workNotes": "All deliverables uploaded and verified against staging Neo4j cluster. Submitting for client review.",
+      "submissions": [
+        {
+          "id": "SUB-2026-003-V1",
+          "orderId": "ORD-2026-003",
+          "contractId": "contract-demo-3",
+          "freelancerId": "user-freelancer-1",
+          "milestoneId": "ms-kg-1",
+          "milestoneTitle": "Full Knowledge Graph Injector Delivery",
+          "version": 1,
+          "description": "Complete deliverable package: Tested Cypher generation engine, LangChain integration hook, and test suite with 98% coverage.",
+          "files": [
+            {
+              "name": "kg_context_injector_v1.0.zip",
+              "url": "https://gravitass.work/deliverables/kg_context_injector_v1.0.zip",
+              "size": 18400000,
+              "type": "application/zip"
+            },
+            {
+              "name": "test_report_coverage.pdf",
+              "url": "https://gravitass.work/deliverables/test_report_coverage.pdf",
+              "size": 1200000,
+              "type": "application/pdf"
+            }
+          ],
+          "submittedAt": "2026-02-18T16:00:00.000Z",
+          "status": "submitted"
+        }
+      ],
+      "revisions": [],
+      "createdAt": "2026-02-05T10:00:00.000Z",
+      "updatedAt": "2026-02-18T16:00:00.000Z"
+    },
+    {
+      "id": "ORD-2026-004",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "clientAvatar": "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=400&auto=format&fit=crop&q=80",
+      "clientCompany": "Aetheria Labs Inc.",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "freelancerAvatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
+      "projectId": "proj-4",
+      "projectTitle": "Multi-Tenant Auth0 & Enterprise RBAC Implementation",
+      "projectDescription": "Secure multi-tenant authentication engine with role-based access control, SSO, and audit trails.",
+      "contractId": "contract-prev-4",
+      "agreedPriceINR": 160000,
+      "platformFeeINR": 16000,
+      "netFreelancerEntitlementINR": 144000,
+      "commissionRate": 10,
+      "deadline": "2026-01-20T18:00:00.000Z",
+      "orderDate": "2026-01-05T10:00:00.000Z",
+      "acceptedAt": "2026-01-05T11:00:00.000Z",
+      "milestones": [
+        {
+          "id": "ms-auth-1",
+          "title": "Auth0 Tenant Federation & Middleware",
+          "description": "Complete token validation and user permissions middleware.",
+          "amountINR": 160000,
+          "dueDate": "2026-01-20T00:00:00.000Z",
+          "status": "approved"
+        }
+      ],
+      "deliverables": [
+        "Next.js Auth0 SDK Integration",
+        "PostgreSQL RBAC Database Migrations",
+        "End-to-end Cypress Auth Tests"
+      ],
+      "requiredFiles": [
+        "Source Repository (.zip)"
+      ],
+      "paymentProtectionStatus": "funds_secured",
+      "status": "completed",
+      "progressPercentage": 100,
+      "submissions": [
+        {
+          "id": "SUB-2026-004-FINAL",
+          "orderId": "ORD-2026-004",
+          "contractId": "contract-prev-4",
+          "freelancerId": "user-freelancer-1",
+          "milestoneId": "ms-auth-1",
+          "version": 1,
+          "description": "Delivered Auth0 middleware and PostgreSQL schema migrations.",
+          "files": [
+            {
+              "name": "auth0_rbac_release.zip",
+              "url": "https://gravitass.work/deliverables/auth0_rbac_release.zip",
+              "size": 9800000,
+              "type": "application/zip"
+            }
+          ],
+          "submittedAt": "2026-01-19T14:00:00.000Z",
+          "status": "approved"
+        }
+      ],
+      "revisions": [],
+      "createdAt": "2026-01-05T10:00:00.000Z",
+      "updatedAt": "2026-01-20T12:00:00.000Z"
+    },
+    {
+      "id": "ORD-2026-005",
+      "clientId": "user-client-3",
+      "clientName": "Veloce Digital",
+      "clientAvatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop&q=80",
+      "clientCompany": "Veloce Digital",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "freelancerAvatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80",
+      "projectId": "proj-5",
+      "projectTitle": "Legacy Monolith Code Refactor",
+      "projectDescription": "Migrate monolithic codebase to microservices (Cancelled by mutual client agreement).",
+      "contractId": "contract-prev-5",
+      "agreedPriceINR": 75000,
+      "platformFeeINR": 7500,
+      "netFreelancerEntitlementINR": 67500,
+      "commissionRate": 10,
+      "deadline": "2026-01-15T18:00:00.000Z",
+      "orderDate": "2026-01-08T10:00:00.000Z",
+      "milestones": [],
+      "deliverables": [
+        "Architecture assessment"
+      ],
+      "paymentProtectionStatus": "funds_secured",
+      "status": "cancelled",
+      "progressPercentage": 10,
+      "submissions": [],
+      "revisions": [],
+      "createdAt": "2026-01-08T10:00:00.000Z",
+      "updatedAt": "2026-01-12T16:00:00.000Z"
+    }
+  ],
+  "bankAccounts": [
+    {
+      "id": "bnk-1",
+      "freelancerId": "user-freelancer-1",
+      "accountHolderName": "Elena Vance",
+      "accountNumber": "50100492818945",
+      "maskedAccountNumber": "•••• •••• 8945",
+      "ifsc": "HDFC0001234",
+      "bankName": "HDFC Bank Ltd",
+      "accountType": "savings",
+      "verificationStatus": "verified",
+      "verifiedAt": "2026-01-12T10:00:00.000Z",
+      "isPrimary": true,
+      "createdAt": "2026-01-12T09:30:00.000Z"
+    },
+    {
+      "id": "bnk-2",
+      "freelancerId": "user-freelancer-1",
+      "accountHolderName": "Elena Vance",
+      "accountNumber": "000401583108",
+      "maskedAccountNumber": "•••• •••• 3108",
+      "ifsc": "ICIC0000004",
+      "bankName": "ICICI Bank",
+      "accountType": "current",
+      "verificationStatus": "verified",
+      "verifiedAt": "2026-01-20T14:00:00.000Z",
+      "isPrimary": false,
+      "createdAt": "2026-01-20T13:45:00.000Z"
+    },
+    {
+      "id": "bnk-1795196375486",
+      "freelancerId": "user-freelancer-1",
+      "accountHolderName": "Elena Vance",
+      "accountNumber": "918284719284",
+      "maskedAccountNumber": "•••• •••• 9284",
+      "ifsc": "SBIN0001234",
+      "bankName": "State Bank of India",
+      "accountType": "savings",
+      "verificationStatus": "verified",
+      "verifiedAt": "2026-11-20T17:39:35.486Z",
+      "isPrimary": false,
+      "createdAt": "2026-11-20T17:39:35.486Z"
+    }
+  ],
+  "upiAccounts": [
+    {
+      "id": "upi-1",
+      "freelancerId": "user-freelancer-1",
+      "upiId": "elena.vance@oksbi",
+      "maskedUpi": "ele***@oksbi",
+      "verificationStatus": "verified",
+      "isPrimary": true,
+      "createdAt": "2026-01-12T10:00:00.000Z"
+    },
+    {
+      "id": "upi-1795196375492",
+      "freelancerId": "user-freelancer-1",
+      "upiId": "elena.vance@icici",
+      "maskedUpi": "ele***@icici",
+      "verificationStatus": "verified",
+      "isPrimary": false,
+      "createdAt": "2026-11-20T17:39:35.492Z"
+    }
+  ],
+  "adminCommissionLedger": [
+    {
+      "id": "COM-LED-1795196375463",
+      "projectId": "proj-1795196375384",
+      "projectTitle": "Automated Micro-Settlement Payment Protocol Engine",
+      "orderId": "ORD-375384",
+      "contractId": "contract-1795196375384",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "grossProjectAmountINR": 150000,
+      "commissionPercentage": 10,
+      "commissionAmountINR": 15000,
+      "applicableTaxINR": 2700,
+      "recognitionDate": "2026-11-20T17:39:35.461Z",
+      "status": "recognized",
+      "paymentReference": "REF-COM-ORD-375384"
+    },
+    {
+      "id": "COM-LED-001",
+      "projectId": "proj-4",
+      "projectTitle": "Multi-Tenant Auth0 & Enterprise RBAC Implementation",
+      "orderId": "ORD-2026-004",
+      "contractId": "contract-prev-4",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "freelancerId": "user-freelancer-1",
+      "freelancerName": "Elena Vance",
+      "grossProjectAmountINR": 160000,
+      "commissionPercentage": 10,
+      "commissionAmountINR": 16000,
+      "applicableTaxINR": 2880,
+      "recognitionDate": "2026-01-20T12:00:00.000Z",
+      "status": "recognized",
+      "paymentReference": "REF-COM-RBAC16K"
+    },
+    {
+      "id": "COM-LED-002",
+      "projectId": "proj-hist-2",
+      "projectTitle": "Decentralized Identity Smart Contract Audit",
+      "orderId": "ORD-HIST-002",
+      "contractId": "contract-hist-2",
+      "clientId": "user-client-2",
+      "clientName": "Nexus AI Ventures",
+      "freelancerId": "user-freelancer-2",
+      "freelancerName": "Marcus Thorne",
+      "grossProjectAmountINR": 250000,
+      "commissionPercentage": 10,
+      "commissionAmountINR": 25000,
+      "applicableTaxINR": 4500,
+      "recognitionDate": "2026-01-25T16:00:00.000Z",
+      "status": "recognized",
+      "paymentReference": "REF-COM-AUDIT25K"
+    },
+    {
+      "id": "COM-LED-003",
+      "projectId": "proj-hist-3",
+      "projectTitle": "3D WebGL Configurator Engine",
+      "orderId": "ORD-HIST-003",
+      "contractId": "contract-hist-3",
+      "clientId": "user-client-1",
+      "clientName": "Aetheria Labs",
+      "freelancerId": "user-freelancer-3",
+      "freelancerName": "Seraphina Lin",
+      "grossProjectAmountINR": 180000,
+      "commissionPercentage": 10,
+      "commissionAmountINR": 18000,
+      "applicableTaxINR": 3240,
+      "recognitionDate": "2026-02-02T11:00:00.000Z",
+      "status": "recognized",
+      "paymentReference": "REF-COM-WEBGL18K"
+    }
+  ],
+  "adminBankAccounts": [
+    {
+      "id": "adm-bnk-1",
+      "accountHolderName": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+      "accountNumber": "000405012938",
+      "maskedAccountNumber": "•••• •••• 2938",
+      "ifsc": "ICIC0000004",
+      "bankName": "ICICI Bank",
+      "accountType": "current",
+      "verificationStatus": "verified",
+      "isPrimary": true,
+      "createdAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "adminWithdrawals": [
+    {
+      "id": "ADM-WTH-1795196375559",
+      "adminUserId": "user-admin-1",
+      "amountINR": 10000,
+      "status": "paid",
+      "bankAccount": {
+        "accountHolderName": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "maskedAccountNumber": "•••• •••• 2938",
+        "bankName": "ICICI Bank",
+        "ifsc": "ICIC0000004"
+      },
+      "paymentReference": "CMS-ICICI-375559",
+      "createdAt": "2026-11-20T17:39:35.559Z",
+      "processedAt": "2026-11-20T17:39:35.559Z"
+    },
+    {
+      "id": "ADM-WTH-001",
+      "adminUserId": "user-admin-1",
+      "amountINR": 25000,
+      "status": "paid",
+      "bankAccount": {
+        "accountHolderName": "GRAVITASS TECHNOLOGIES PRIVATE LIMITED",
+        "maskedAccountNumber": "•••• •••• 2938",
+        "bankName": "ICICI Bank",
+        "ifsc": "ICIC0000004"
+      },
+      "paymentReference": "CMS-ICICI-88192",
+      "createdAt": "2026-02-01T10:00:00.000Z",
+      "processedAt": "2026-02-01T10:05:00.000Z"
     }
   ]
 }

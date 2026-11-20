@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { 
   ChevronRight, 
+  ChevronLeft,
   Filter, 
   Star, 
   ShieldCheck, 
@@ -17,7 +18,8 @@ import {
   Zap,
   MapPin,
   CheckCircle,
-  X
+  X,
+  Layers
 } from 'lucide-react';
 import { FreelancerProfile, Category, Review } from '@/types';
 import { formatINR, slugify, unslugify } from '@/lib/utils';
@@ -83,6 +85,36 @@ function FreelancerDiscoveryView({ slug }: { slug: string[] }) {
   const [availability, setAvailability] = useState<string>(searchParams.get('availability') || 'all');
   const [verifiedOnly, setVerifiedOnly] = useState<boolean>(searchParams.get('verifiedOnly') === 'true');
   const [sortBy, setSortBy] = useState<string>(searchParams.get('sortBy') || 'recommended');
+
+  // Subcategory carousel ref & scroll state
+  const subcategoryScrollRef = React.useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [isGridExpanded, setIsGridExpanded] = useState(false);
+  const [subSearchQuery, setSubSearchQuery] = useState('');
+
+  const checkSubcategoryScroll = () => {
+    if (subcategoryScrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = subcategoryScrollRef.current;
+      setCanScrollLeft(scrollLeft > 4);
+      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 6);
+    }
+  };
+
+  useEffect(() => {
+    checkSubcategoryScroll();
+    const handleResize = () => checkSubcategoryScroll();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [activeCategory, subcategorySlug]);
+
+  const scrollSubcategories = (direction: 'left' | 'right') => {
+    if (subcategoryScrollRef.current) {
+      const scrollAmount = direction === 'left' ? -320 : 320;
+      subcategoryScrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      setTimeout(checkSubcategoryScroll, 350);
+    }
+  };
 
   // Load categories
   useEffect(() => {
@@ -196,36 +228,253 @@ function FreelancerDiscoveryView({ slug }: { slug: string[] }) {
             </p>
           </div>
 
-          {/* Subcategory Pill Carousel for active category */}
+          {/* ========================================================
+              HIGH-VISIBILITY SUBCATEGORY NAVIGATION SUITE
+              ======================================================== */}
           {activeCategory && (activeCategory.subcategories || []).length > 0 && (
-            <div className="mt-6 pt-5 border-t border-white/[0.08] flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
-              <Link
-                href={`/freelancers/${activeCategory.slug}`}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-                  !subcategorySlug
-                    ? 'bg-[#73D8C4] text-[#071011] shadow-[0_0_15px_rgba(115,216,196,0.4)]'
-                    : 'bg-white/[0.04] text-[#D0DCD9] hover:bg-white/[0.08] hover:text-[#73D8C4]'
-                }`}
-              >
-                All {activeCategory.name}
-              </Link>
-              {activeCategory.subcategories.map((sub, i) => {
-                const subSlug = slugify(sub);
-                const isSelected = subcategorySlug.toLowerCase() === subSlug.toLowerCase();
-                return (
+            <div className="mt-8 pt-6 border-t border-white/[0.1] relative">
+              
+              {/* Tab Header Row: Label, Stats & Grid Toggle */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 gap-2">
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#73D8C4] flex items-center gap-1.5">
+                    <Layers className="w-3.5 h-3.5 text-[#73D8C4]" />
+                    <span>Specializations & Services</span>
+                  </span>
+                  <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-white/[0.06] text-[#D0DCD9] border border-white/[0.08] font-semibold">
+                    {activeCategory.subcategories.length} Disciplines
+                  </span>
+                  {activeSubcategoryName && (
+                    <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#73D8C4]/20 border border-[#73D8C4]/50 text-[#73D8C4] text-xs font-bold shadow-sm">
+                      <span>Active: {activeSubcategoryName}</span>
+                      <Link
+                        href={`/freelancers/${activeCategory.slug}`}
+                        title="Clear specialization filter"
+                        className="hover:text-white transition-colors ml-0.5"
+                      >
+                        <X className="w-3 h-3" />
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsGridExpanded(!isGridExpanded)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.15] hover:border-[#73D8C4] text-xs font-semibold text-[#F4F5F3] hover:text-[#73D8C4] transition-all shadow-sm"
+                  >
+                    {isGridExpanded ? (
+                      <>
+                        <X className="w-3.5 h-3.5 text-[#73D8C4]" />
+                        <span>Hide Grid View</span>
+                      </>
+                    ) : (
+                      <>
+                        <Layers className="w-3.5 h-3.5 text-[#73D8C4]" />
+                        <span>View All {activeCategory.subcategories.length} Grid</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Horizontal Pill Track with Left & Right Arrows */}
+              <div className="relative group/carousel">
+                {/* Left Scroll Arrow */}
+                {canScrollLeft && (
+                  <div className="absolute left-0 top-0 bottom-0 z-20 flex items-center pr-3 bg-gradient-to-r from-[#0B1719] via-[#0B1719]/90 to-transparent">
+                    <button
+                      type="button"
+                      onClick={() => scrollSubcategories('left')}
+                      className="w-8 h-8 rounded-full bg-[#071011] hover:bg-[#73D8C4] border border-white/[0.2] hover:border-[#73D8C4] text-[#F4F5F3] hover:text-[#071011] flex items-center justify-center transition-all shadow-2xl"
+                      title="Scroll left"
+                      aria-label="Scroll specializations left"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
+                {/* The Scrollable Pill List */}
+                <div
+                  ref={subcategoryScrollRef}
+                  onScroll={checkSubcategoryScroll}
+                  className="flex items-center gap-2.5 overflow-x-auto scrollbar-none scroll-smooth py-1.5 px-1"
+                >
+                  {/* "All [Category]" Pill */}
                   <Link
-                    key={i}
-                    href={`/freelancers/${activeCategory.slug}/${subSlug}`}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border ${
-                      isSelected
-                        ? 'bg-[#73D8C4] text-[#071011] border-[#73D8C4] font-bold shadow-[0_0_15px_rgba(115,216,196,0.3)]'
-                        : 'bg-[#071011]/60 text-[#91A09E] hover:text-[#F4F5F3] border-white/[0.06] hover:border-[#73D8C4]/40'
+                    href={`/freelancers/${activeCategory.slug}`}
+                    className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 border shadow-sm ${
+                      !subcategorySlug
+                        ? 'bg-[#73D8C4] text-[#071011] border-[#73D8C4] shadow-[0_0_18px_rgba(115,216,196,0.4)]'
+                        : 'bg-[#0E1E22] hover:bg-[#152E34] text-[#D8E5E2] hover:text-[#73D8C4] border-white/[0.12] hover:border-[#73D8C4]/60'
                     }`}
                   >
-                    {sub}
+                    <Sparkles className={`w-3.5 h-3.5 ${!subcategorySlug ? 'text-[#071011]' : 'text-[#73D8C4]'}`} />
+                    <span>All {activeCategory.name}</span>
                   </Link>
-                );
-              })}
+
+                  {/* Individual Subcategory Pills */}
+                  {activeCategory.subcategories.map((sub, i) => {
+                    const subSlug = slugify(sub);
+                    const isSelected = subcategorySlug.toLowerCase() === subSlug.toLowerCase();
+                    return (
+                      <Link
+                        key={i}
+                        href={`/freelancers/${activeCategory.slug}/${subSlug}`}
+                        className={`px-4 py-2 rounded-full text-xs whitespace-nowrap transition-all border flex items-center gap-1.5 shadow-sm ${
+                          isSelected
+                            ? 'bg-[#73D8C4] text-[#071011] border-[#73D8C4] font-extrabold shadow-[0_0_20px_rgba(115,216,196,0.45)]'
+                            : 'bg-[#0E1E22] hover:bg-[#152E34] text-[#E0ECEA] hover:text-white border-white/[0.12] hover:border-[#73D8C4]/60 font-semibold'
+                        }`}
+                      >
+                        <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isSelected ? 'bg-[#071011]' : 'bg-[#73D8C4]/50'}`} />
+                        <span>{sub}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+
+                {/* Right Scroll Arrow */}
+                {canScrollRight && (
+                  <div className="absolute right-0 top-0 bottom-0 z-20 flex items-center pl-3 bg-gradient-to-l from-[#0B1719] via-[#0B1719]/90 to-transparent">
+                    <button
+                      type="button"
+                      onClick={() => scrollSubcategories('right')}
+                      className="w-8 h-8 rounded-full bg-[#071011] hover:bg-[#73D8C4] border border-white/[0.2] hover:border-[#73D8C4] text-[#F4F5F3] hover:text-[#071011] flex items-center justify-center transition-all shadow-2xl"
+                      title="Scroll right"
+                      aria-label="Scroll specializations right"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Expandable Full Subcategory Grid Drawer */}
+              {isGridExpanded && (
+                <div className="mt-5 p-5 rounded-2xl bg-[#071011] border border-white/[0.12] shadow-2xl animate-in fade-in duration-200">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-white/[0.08] gap-3">
+                    <div>
+                      <h3 className="text-sm font-bold text-[#F4F5F3] tracking-wide">
+                        All {activeCategory.name} Disciplines ({activeCategory.subcategories.length})
+                      </h3>
+                      <p className="text-xs text-[#91A09E] mt-0.5">
+                        Select a specialized skill track to inspect verified specialists, portfolios, and rates.
+                      </p>
+                    </div>
+
+                    {/* Quick Search inside subcategories */}
+                    <div className="relative min-w-[220px]">
+                      <Search className="w-3.5 h-3.5 text-[#91A09E] absolute left-3 top-2.5" />
+                      <input
+                        type="text"
+                        value={subSearchQuery}
+                        onChange={(e) => setSubSearchQuery(e.target.value)}
+                        placeholder="Filter specializations..."
+                        className="w-full pl-9 pr-3 py-1.5 rounded-lg bg-[#0B1719] border border-white/[0.1] text-xs text-[#F4F5F3] placeholder-[#91A09E] focus:outline-none focus:border-[#73D8C4]"
+                      />
+                    </div>
+                  </div>
+
+                  {/* High-Contrast Interactive Grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 max-h-[380px] overflow-y-auto pr-1">
+                    {activeCategory.subcategories
+                      .filter(s => s.toLowerCase().includes(subSearchQuery.toLowerCase()))
+                      .map((sub, idx) => {
+                        const subSlug = slugify(sub);
+                        const isSelected = subcategorySlug.toLowerCase() === subSlug.toLowerCase();
+                        return (
+                          <Link
+                            key={idx}
+                            href={`/freelancers/${activeCategory.slug}/${subSlug}`}
+                            onClick={() => setIsGridExpanded(false)}
+                            className={`group flex items-center justify-between p-3 rounded-xl border transition-all duration-150 ${
+                              isSelected
+                                ? 'bg-[#73D8C4]/20 border-[#73D8C4] text-[#73D8C4] shadow-[0_0_15px_rgba(115,216,196,0.2)]'
+                                : 'bg-[#0B1719] hover:bg-[#0E2226] border-white/[0.08] hover:border-[#73D8C4]/60 text-[#D0DCD9] hover:text-[#F4F5F3]'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <span className={`w-2 h-2 rounded-full flex-shrink-0 ${isSelected ? 'bg-[#73D8C4]' : 'bg-[#73D8C4]/30 group-hover:bg-[#73D8C4]'}`} />
+                              <span className="text-xs font-semibold truncate">{sub}</span>
+                            </div>
+                            <ChevronRight className={`w-3.5 h-3.5 flex-shrink-0 transition-transform ${isSelected ? 'text-[#73D8C4]' : 'text-[#91A09E] group-hover:text-[#73D8C4] group-hover:translate-x-0.5'}`} />
+                          </Link>
+                        );
+                      })}
+                  </div>
+                </div>
+              )}
+
+            </div>
+          )}
+
+          {/* If on all categories root view, show interactive Department Tabs */}
+          {!activeCategory && (
+            <div className="mt-8 pt-6 border-t border-white/[0.1] relative">
+              <div className="flex items-center justify-between pb-3">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#73D8C4] flex items-center gap-1.5">
+                  <Layers className="w-3.5 h-3.5 text-[#73D8C4]" />
+                  <span>Explore Marketplace Departments</span>
+                </span>
+                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-white/[0.06] text-[#D0DCD9] border border-white/[0.08] font-semibold">
+                  {categories.length} Departments
+                </span>
+              </div>
+
+              <div className="relative group/carousel">
+                {canScrollLeft && (
+                  <div className="absolute left-0 top-0 bottom-0 z-20 flex items-center pr-3 bg-gradient-to-r from-[#0B1719] via-[#0B1719]/90 to-transparent">
+                    <button
+                      type="button"
+                      onClick={() => scrollSubcategories('left')}
+                      className="w-8 h-8 rounded-full bg-[#071011] hover:bg-[#73D8C4] border border-white/[0.2] hover:border-[#73D8C4] text-[#F4F5F3] hover:text-[#071011] flex items-center justify-center transition-all shadow-2xl"
+                      title="Scroll left"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
+                <div
+                  ref={subcategoryScrollRef}
+                  onScroll={checkSubcategoryScroll}
+                  className="flex items-center gap-2.5 overflow-x-auto scrollbar-none scroll-smooth py-1.5 px-1"
+                >
+                  <Link
+                    href="/freelancers"
+                    className="px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap bg-[#73D8C4] text-[#071011] border border-[#73D8C4] shadow-[0_0_18px_rgba(115,216,196,0.4)] flex items-center gap-1.5"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-[#071011]" />
+                    <span>All Talent</span>
+                  </Link>
+                  {categories.map((c) => (
+                    <Link
+                      key={c.id}
+                      href={`/freelancers/${c.slug}`}
+                      className="px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap bg-[#0E1E22] hover:bg-[#152E34] text-[#E0ECEA] hover:text-white border border-white/[0.12] hover:border-[#73D8C4]/60 transition-all flex items-center gap-1.5 shadow-sm"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#73D8C4]/50" />
+                      <span>{c.name}</span>
+                    </Link>
+                  ))}
+                </div>
+
+                {canScrollRight && (
+                  <div className="absolute right-0 top-0 bottom-0 z-20 flex items-center pl-3 bg-gradient-to-l from-[#0B1719] via-[#0B1719]/90 to-transparent">
+                    <button
+                      type="button"
+                      onClick={() => scrollSubcategories('right')}
+                      className="w-8 h-8 rounded-full bg-[#071011] hover:bg-[#73D8C4] border border-white/[0.2] hover:border-[#73D8C4] text-[#F4F5F3] hover:text-[#071011] flex items-center justify-center transition-all shadow-2xl"
+                      title="Scroll right"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

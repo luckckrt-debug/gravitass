@@ -495,6 +495,7 @@ export interface Dispute {
 export type FinancialAccountType = 
   | 'asset:escrow_vault'
   | 'asset:gateway_clearing'
+  | 'asset:corporate_bank'
   | 'liability:freelancer_payable'
   | 'liability:tax_payable_gst'
   | 'liability:tax_payable_tds'
@@ -513,7 +514,7 @@ export interface JournalEntryLine {
 export interface FinancialJournalEntry {
   id: string; // e.g. JRN-1708291200000
   timestamp: string;
-  referenceType: 'project_funding' | 'milestone_release' | 'freelancer_payout' | 'dispute_resolution' | 'refund' | 'tax_settlement';
+  referenceType: 'project_funding' | 'milestone_release' | 'freelancer_payout' | 'dispute_resolution' | 'refund' | 'tax_settlement' | 'admin_withdrawal';
   referenceId: string;
   contractId?: string;
   projectId?: string;
@@ -754,5 +755,180 @@ export interface DisputeRecord {
   resolvedBy?: string;
   resolvedAt?: string;
   createdAt: string;
+}
+
+// ==========================================
+// FREELANCER ORDER MANAGEMENT & WORKSPACE TYPES
+// ==========================================
+
+export type OrderStatus =
+  | 'new_order'
+  | 'awaiting_acceptance'
+  | 'accepted'
+  | 'in_progress'
+  | 'submitted'
+  | 'revision_requested'
+  | 'completed'
+  | 'cancelled'
+  | 'disputed';
+
+export interface OrderMilestone {
+  id: string;
+  title: string;
+  description: string;
+  amountINR: number;
+  dueDate: string;
+  status: 'pending' | 'in_progress' | 'submitted' | 'approved';
+}
+
+export interface WorkSubmissionFile {
+  name: string;
+  url: string;
+  size: number;
+  type: string;
+}
+
+export interface WorkSubmission {
+  id: string; // SUB-1708291200000
+  orderId: string;
+  contractId: string;
+  freelancerId: string;
+  milestoneId?: string;
+  milestoneTitle?: string;
+  version: number;
+  description: string;
+  files: WorkSubmissionFile[];
+  submittedAt: string;
+  status: 'submitted' | 'approved' | 'revision_requested';
+}
+
+export interface WorkRevision {
+  id: string; // REV-1708291200000
+  orderId: string;
+  submissionId: string;
+  requestedByUserId: string;
+  reason: string;
+  requestedAt: string;
+  resolvedAt?: string;
+}
+
+export interface Order {
+  id: string; // ORD-2026-001
+  clientId: string;
+  clientName: string;
+  clientAvatar?: string;
+  clientCompany?: string;
+  freelancerId: string;
+  freelancerName: string;
+  freelancerAvatar?: string;
+  projectId: string;
+  projectTitle: string;
+  projectDescription: string;
+  contractId: string;
+  paymentRecordId?: string;
+  agreedPriceINR: number;
+  platformFeeINR: number;
+  netFreelancerEntitlementINR: number;
+  commissionRuleId?: string;
+  commissionRate?: number;
+  deadline: string;
+  orderDate: string;
+  acceptedAt?: string;
+  milestones: OrderMilestone[];
+  deliverables: string[];
+  requiredFiles?: string[];
+  clientInstructions?: string;
+  revisionTerms?: string;
+  paymentProtectionStatus: 'funds_secured' | 'payment_required' | 'in_escrow';
+  status: OrderStatus;
+  progressPercentage: number;
+  workNotes?: string;
+  submissions: WorkSubmission[];
+  revisions: WorkRevision[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ==========================================
+// FREELANCER BANK & UPI PAYOUT DESTINATIONS
+// ==========================================
+
+export interface FreelancerBankAccount {
+  id: string;
+  freelancerId: string;
+  accountHolderName: string;
+  accountNumber: string;
+  maskedAccountNumber: string;
+  ifsc: string;
+  bankName: string;
+  accountType: 'savings' | 'current';
+  verificationStatus: 'verified' | 'pending' | 'failed';
+  verifiedAt?: string;
+  isPrimary: boolean;
+  createdAt: string;
+}
+
+export interface FreelancerUpiAccount {
+  id: string;
+  freelancerId: string;
+  upiId: string;
+  maskedUpi: string;
+  verificationStatus: 'verified' | 'pending' | 'failed';
+  isPrimary: boolean;
+  createdAt: string;
+}
+
+// ==========================================
+// ADMIN COMMISSION LEDGER & WITHDRAWALS
+// ==========================================
+
+export interface AdminCommissionLedgerEntry {
+  id: string; // COM-LED-1708291200000
+  projectId: string;
+  projectTitle: string;
+  orderId: string;
+  contractId: string;
+  clientId: string;
+  clientName: string;
+  freelancerId: string;
+  freelancerName: string;
+  grossProjectAmountINR: number;
+  commissionPercentage: number;
+  commissionAmountINR: number;
+  applicableTaxINR: number;
+  recognitionDate: string;
+  status: 'recognized' | 'pending_release' | 'reversed' | 'withdrawn';
+  paymentReference: string;
+  withdrawalId?: string;
+}
+
+export interface AdminBankAccount {
+  id: string;
+  accountHolderName: string;
+  accountNumber: string;
+  maskedAccountNumber: string;
+  ifsc: string;
+  bankName: string;
+  accountType: 'current' | 'escrow';
+  verificationStatus: 'verified' | 'pending';
+  isPrimary: boolean;
+  createdAt: string;
+}
+
+export interface AdminWithdrawalRecord {
+  id: string; // ADM-WTH-1708291200000
+  adminUserId: string;
+  amountINR: number;
+  status: 'requested' | 'processing' | 'paid' | 'failed';
+  bankAccount: {
+    accountHolderName: string;
+    maskedAccountNumber: string;
+    bankName: string;
+    ifsc: string;
+  };
+  paymentReference?: string;
+  failureReason?: string;
+  createdAt: string;
+  processedAt?: string;
 }
 

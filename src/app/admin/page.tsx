@@ -157,10 +157,19 @@ export default function AdminDashboardPage() {
   const [catTrendingInput, setCatTrendingInput] = useState(false);
   const [savingCategory, setSavingCategory] = useState(false);
 
+  // Admin Commission Finance & Corporate Withdrawal State
+  const [adminFinanceSummary, setAdminFinanceSummary] = useState<any>(null);
+  const [adminCommissionLedger, setAdminCommissionLedger] = useState<any[]>([]);
+  const [adminBankAccounts, setAdminBankAccounts] = useState<any[]>([]);
+  const [adminWithdrawals, setAdminWithdrawals] = useState<any[]>([]);
+  const [adminWithdrawAmount, setAdminWithdrawAmount] = useState<number>(25000);
+  const [adminWithdrawBankId, setAdminWithdrawBankId] = useState<string>('');
+  const [withdrawingAdminComm, setWithdrawingAdminComm] = useState<boolean>(false);
+
   // Load Main Dashboard Data
   const loadAdminData = async () => {
     try {
-      const [anRes, wthRes, setRes, escRes, invRes, taxRes, dspRes, catRes, commRes, userRes] = await Promise.all([
+      const [anRes, wthRes, setRes, escRes, invRes, taxRes, dspRes, catRes, commRes, userRes, admFinRes] = await Promise.all([
         fetch('/api/admin/analytics'),
         fetch('/api/admin/withdrawals'),
         fetch('/api/admin/settings'),
@@ -170,7 +179,8 @@ export default function AdminDashboardPage() {
         fetch('/api/finance/disputes'),
         fetch('/api/categories?includeInactive=true'),
         fetch('/api/admin/commission'),
-        fetch(`/api/admin/users?tab=${userTab}&search=${encodeURIComponent(userSearch)}`)
+        fetch(`/api/admin/users?tab=${userTab}&search=${encodeURIComponent(userSearch)}`),
+        fetch('/api/admin/commission/withdraw')
       ]);
 
       if (anRes.status === 403 || anRes.status === 401) {
@@ -256,6 +266,17 @@ export default function AdminDashboardPage() {
           setTdsInput(setData.settings.tdsPercentage || 1);
           if (setData.settings.legalBusinessName) setLegalNameInput(setData.settings.legalBusinessName);
           if (setData.settings.platformGstin) setGstinInput(setData.settings.platformGstin);
+        }
+      }
+
+      if (admFinRes.ok) {
+        const afData = await admFinRes.json();
+        setAdminFinanceSummary(afData.summary);
+        setAdminCommissionLedger(afData.ledger || []);
+        setAdminBankAccounts(afData.bankAccounts || []);
+        setAdminWithdrawals(afData.withdrawals || []);
+        if (afData.bankAccounts && afData.bankAccounts.length > 0) {
+          setAdminWithdrawBankId(afData.bankAccounts[0].id);
         }
       }
 
@@ -584,6 +605,37 @@ export default function AdminDashboardPage() {
       }
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  const handleWithdrawAdminCommission = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!adminWithdrawBankId) {
+      alert('Please select a corporate bank account');
+      return;
+    }
+    setWithdrawingAdminComm(true);
+    try {
+      const res = await fetch('/api/admin/commission/withdraw', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          adminUserId: user?.id || 'user-admin-1',
+          amountINR: Number(adminWithdrawAmount),
+          bankAccountId: adminWithdrawBankId
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setActionMsg(data.message || 'Corporate commission withdrawal processed successfully!');
+        loadAdminData();
+      } else {
+        alert(data.error || 'Withdrawal failed');
+      }
+    } catch (err: any) {
+      alert(err.message || 'Error processing withdrawal');
+    } finally {
+      setWithdrawingAdminComm(false);
     }
   };
 
@@ -1492,6 +1544,172 @@ export default function AdminDashboardPage() {
                   </tbody>
                 </table>
               </div>
+            </div>
+
+            {/* ========================================================
+                MODULE 8 & 9: RECOGNIZED COMMISSION LEDGER & CORPORATE TREASURY WITHDRAWAL
+                ======================================================== */}
+            <div className="space-y-6 pt-6 border-t border-white/[0.08]">
+              
+              {/* Corporate Treasury Telemetry Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="p-5 rounded-2xl bg-[#0B1719] border border-white/[0.08]">
+                  <span className="text-[10px] text-[#91A09E] uppercase tracking-wider block font-mono">Recognized Commission</span>
+                  <p className="text-xl font-bold text-[#73D8C4] font-mono mt-1">
+                    {formatINR(adminFinanceSummary?.totalRecognizedRevenue || 59000)}
+                  </p>
+                  <span className="text-[10px] text-gray-500 block mt-1">From approved order deliveries</span>
+                </div>
+
+                <div className="p-5 rounded-2xl bg-[#0B1719] border border-[#73D8C4]/40 shadow-[0_0_15px_rgba(115,216,196,0.1)]">
+                  <span className="text-[10px] text-[#73D8C4] uppercase tracking-wider block font-mono font-bold">Available Corporate Balance</span>
+                  <p className="text-xl font-black text-white font-mono mt-1">
+                    {formatINR(adminFinanceSummary?.availableCommissionBalance || 34000)}
+                  </p>
+                  <span className="text-[10px] text-emerald-400 block mt-1">Ready for corporate withdrawal</span>
+                </div>
+
+                <div className="p-5 rounded-2xl bg-[#0B1719] border border-white/[0.08]">
+                  <span className="text-[10px] text-[#91A09E] uppercase tracking-wider block font-mono">Total Withdrawn</span>
+                  <p className="text-xl font-bold text-gray-200 font-mono mt-1">
+                    {formatINR(adminFinanceSummary?.totalWithdrawn || 25000)}
+                  </p>
+                  <span className="text-[10px] text-gray-500 block mt-1">Disbursed to corporate bank</span>
+                </div>
+
+                <div className="p-5 rounded-2xl bg-[#0B1719] border border-white/[0.08]">
+                  <span className="text-[10px] text-[#91A09E] uppercase tracking-wider block font-mono">Pending in Escrow</span>
+                  <p className="text-xl font-bold text-amber-300 font-mono mt-1">
+                    {formatINR(adminFinanceSummary?.pendingCommissionInOrders || 96000)}
+                  </p>
+                  <span className="text-[10px] text-gray-500 block mt-1">Locked until client signoff</span>
+                </div>
+              </div>
+
+              {/* Corporate Treasury Bank Withdrawal Box */}
+              <div className="p-6 sm:p-8 rounded-3xl bg-[#0B1719] border border-white/[0.08] space-y-6">
+                <div>
+                  <h3 className="text-base font-bold text-white flex items-center gap-2">
+                    <Building className="w-4 h-4 text-[#73D8C4]" />
+                    <span>Corporate Treasury Commission Withdrawal</span>
+                  </h3>
+                  <p className="text-xs text-[#91A09E] mt-0.5">
+                    Disburse recognized platform commission revenue to the verified corporate bank account.
+                  </p>
+                </div>
+
+                <form onSubmit={handleWithdrawAdminCommission} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                  <div className="md:col-span-5">
+                    <label className="text-[11px] font-mono uppercase text-[#91A09E] block mb-1">
+                      Corporate Destination Account
+                    </label>
+                    <select
+                      value={adminWithdrawBankId}
+                      onChange={e => setAdminWithdrawBankId(e.target.value)}
+                      className="w-full px-3.5 py-2.5 bg-[#071011] border border-white/[0.1] rounded-xl text-white text-xs font-mono focus:outline-none focus:border-[#73D8C4]"
+                      required
+                    >
+                      {adminBankAccounts.map(b => (
+                        <option key={b.id} value={b.id}>
+                          {b.bankName} - {b.maskedAccountNumber} ({b.accountHolderName})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="md:col-span-4">
+                    <label className="text-[11px] font-mono uppercase text-[#91A09E] block mb-1">
+                      Withdrawal Amount (₹)
+                    </label>
+                    <input
+                      type="number"
+                      min={100}
+                      max={adminFinanceSummary?.availableCommissionBalance || 100000}
+                      value={adminWithdrawAmount}
+                      onChange={e => setAdminWithdrawAmount(Number(e.target.value))}
+                      className="w-full px-3.5 py-2.5 bg-[#071011] border border-white/[0.1] rounded-xl text-white text-xs font-mono font-bold focus:outline-none focus:border-[#73D8C4]"
+                      required
+                    />
+                  </div>
+
+                  <div className="md:col-span-3">
+                    <button
+                      type="submit"
+                      disabled={withdrawingAdminComm || (adminFinanceSummary?.availableCommissionBalance || 0) <= 0}
+                      className="w-full py-2.5 px-4 rounded-xl bg-[#73D8C4] hover:bg-[#73D8C4]/90 text-[#071011] font-mono text-xs uppercase font-extrabold tracking-wider transition-all disabled:opacity-50"
+                    >
+                      {withdrawingAdminComm ? 'Disbursing...' : 'Disburse to Treasury'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Commission Ledger Table */}
+              <div className="p-6 sm:p-8 rounded-3xl bg-[#0B1719] border border-white/[0.08] space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-base font-bold text-white flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-[#73D8C4]" />
+                      <span>Recognized Commission Revenue Ledger</span>
+                    </h3>
+                    <p className="text-xs text-[#91A09E] mt-0.5">
+                      Immutable double-entry log of all platform commission retained upon order deliverable approval.
+                    </p>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.06] text-xs font-mono text-[#73D8C4]">
+                    {adminCommissionLedger.length} Audited Records
+                  </span>
+                </div>
+
+                <div className="overflow-x-auto scrollbar-none rounded-2xl border border-white/[0.06]">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-[#071011] border-b border-white/[0.06] text-[#91A09E] font-mono uppercase text-[10px]">
+                      <tr>
+                        <th className="py-3 px-4">Ref ID / Date</th>
+                        <th className="py-3 px-4">Project & Order</th>
+                        <th className="py-3 px-4">Client / Freelancer</th>
+                        <th className="py-3 px-4 font-mono">Gross Volume</th>
+                        <th className="py-3 px-4 font-mono">Commission</th>
+                        <th className="py-3 px-4 font-mono">GST (18%)</th>
+                        <th className="py-3 px-4">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/[0.04]">
+                      {adminCommissionLedger.map((entry) => (
+                        <tr key={entry.id} className="hover:bg-white/[0.02]">
+                          <td className="py-3 px-4 font-mono">
+                            <span className="font-bold text-white block">{entry.id}</span>
+                            <span className="text-[10px] text-gray-500">{new Date(entry.recognitionDate).toLocaleDateString()}</span>
+                          </td>
+                          <td className="py-3 px-4">
+                            <span className="font-bold text-white block truncate max-w-xs">{entry.projectTitle}</span>
+                            <span className="text-[10px] font-mono text-[#73D8C4]">{entry.orderId}</span>
+                          </td>
+                          <td className="py-3 px-4 text-xs text-gray-300">
+                            <div>{entry.clientName}</div>
+                            <div className="text-[10px] text-gray-500">&rarr; {entry.freelancerName}</div>
+                          </td>
+                          <td className="py-3 px-4 font-mono font-bold text-white">
+                            {formatINR(entry.grossProjectAmountINR)}
+                          </td>
+                          <td className="py-3 px-4 font-mono font-bold text-[#73D8C4]">
+                            {formatINR(entry.commissionAmountINR)} ({entry.commissionPercentage}%)
+                          </td>
+                          <td className="py-3 px-4 font-mono text-gray-400">
+                            {formatINR(entry.applicableTaxINR)}
+                          </td>
+                          <td className="py-3 px-4">
+                            <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[9px] font-mono font-bold uppercase">
+                              {entry.status}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
             </div>
 
           </div>

@@ -24,22 +24,31 @@ import {
   ShieldCheck,
   Lock,
   FileText,
-  AlertTriangle
+  AlertTriangle,
+  FileCheck,
+  FileCode,
+  X
 } from 'lucide-react';
-import { Project, ProjectApplication, Contract, Category, EscrowAccount, InvoiceRecord, DisputeRecord } from '@/types';
+import { Project, ProjectApplication, Contract, Category, EscrowAccount, InvoiceRecord, DisputeRecord, Order } from '@/types';
 import { formatDate } from '@/lib/utils';
 
 export default function ClientDashboard() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'post' | 'projects' | 'applicants' | 'contracts' | 'finance'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'post' | 'projects' | 'applicants' | 'contracts' | 'deliverables' | 'finance'>('overview');
   const [projects, setProjects] = useState<Project[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [escrows, setEscrows] = useState<EscrowAccount[]>([]);
   const [invoices, setInvoices] = useState<InvoiceRecord[]>([]);
+  const [clientOrders, setClientOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [escrowFeedback, setEscrowFeedback] = useState('');
+
+  // Deliverables Review & Revision Modal
+  const [revisionModalOrder, setRevisionModalOrder] = useState<Order | null>(null);
+  const [revisionFeedback, setRevisionFeedback] = useState('');
+  const [reviewProcessing, setReviewProcessing] = useState(false);
 
   // Dispute Modal
   const [disputeModalOpen, setDisputeModalOpen] = useState(false);
@@ -63,25 +72,80 @@ export default function ClientDashboard() {
 
   const loadClientData = async () => {
     try {
-      const [projRes, catRes, escRes, invRes] = await Promise.all([
+      const [projRes, catRes, escRes, invRes, ordRes] = await Promise.all([
         fetch('/api/projects?status=all'),
         fetch('/api/categories'),
         fetch('/api/finance/escrow'),
-        fetch('/api/finance/invoices')
+        fetch('/api/finance/invoices'),
+        fetch(`/api/orders?userId=${user?.id || 'user-client-1'}&role=client`)
       ]);
       const projData = await projRes.json();
       const catData = await catRes.json();
       const escData = await escRes.json();
       const invData = await invRes.json();
+      const ordData = await ordRes.json();
 
       if (projData.projects) setProjects(projData.projects);
       if (catData.categories) setCategories(catData.categories);
       if (escData.escrows) setEscrows(escData.escrows);
       if (invData.invoices) setInvoices(invData.invoices);
+      if (ordData.orders) setClientOrders(ordData.orders);
     } catch (e) {
       console.error(e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleApproveDeliverables = async (orderId: string) => {
+    if (!confirm('Are you sure you want to approve these deliverables? Escrow payment will be released to the freelancer.')) return;
+    setReviewProcessing(true);
+    try {
+      const res = await fetch(`/api/orders/${orderId}/review`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'approve', userId: user?.id || 'user-client-1' })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setEscrowFeedback('Deliverables approved! Escrow payment released to freelancer and platform commission recorded.');
+        loadClientData();
+      } else {
+        alert(data.error || 'Approval failed');
+      }
+    } catch (err: any) {
+      alert(err.message || 'Error approving deliverables');
+    } finally {
+      setReviewProcessing(false);
+    }
+  };
+
+  const handleRequestRevisionSubmit = async () => {
+    if (!revisionModalOrder || !revisionFeedback.trim()) return;
+    setReviewProcessing(true);
+    try {
+      const res = await fetch(`/api/orders/${revisionModalOrder.id}/review`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'request_revision',
+          userId: user?.id || 'user-client-1',
+          reason: revisionFeedback.trim()
+        })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setEscrowFeedback('Revision requested. Freelancer has been notified with your feedback.');
+        setRevisionModalOrder(null);
+        setRevisionFeedback('');
+        loadClientData();
+      } else {
+        alert(data.error || 'Revision request failed');
+      }
+    } catch (err: any) {
+      alert(err.message || 'Error requesting revision');
+    } finally {
+      setReviewProcessing(false);
     }
   };
 
@@ -267,6 +331,7 @@ export default function ClientDashboard() {
               { id: 'post', label: 'Post a New Project', icon: PlusCircle },
               { id: 'projects', label: `My Projects (${userProjects.length})`, icon: Briefcase },
               { id: 'contracts', label: 'Hired Talent & Escrow', icon: Users },
+              { id: 'deliverables', label: `Review Deliverables (${clientOrders.filter(o => o.status === 'submitted').length})`, icon: FileCheck },
               { id: 'finance', label: 'Finance & Escrow Vaults', icon: DollarSign }
             ].map((tab) => (
               <button
@@ -601,6 +666,153 @@ export default function ClientDashboard() {
             </div>
           )}
 
+          {/* TAB: REVIEW WORK DELIVERABLES */}
+          {activeTab === 'deliverables' && (
+            <div className="space-y-6 animate-fadeIn">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl bg-[#0B0B0F] border border-white/[0.08]">
+                <div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-[10px] font-mono text-cyan-400 uppercase">
+                    <FileCheck className="w-3.5 h-3.5" />
+                    <span>Client Milestone Deliverable Review</span>
+                  </div>
+                  <h2 className="text-xl font-bold text-white mt-1">Review & Approve Work Deliverables</h2>
+                  <p className="text-xs text-gray-400">
+                    Inspect submitted codebases, documents, and test benchmarks. Approving deliverables releases escrow funds to the specialist.
+                  </p>
+                </div>
+              </div>
+
+              {clientOrders.length === 0 ? (
+                <div className="p-12 text-center rounded-3xl bg-[#0B0B0F] border border-white/[0.08] space-y-3">
+                  <FileCheck className="w-10 h-10 text-gray-600 mx-auto" />
+                  <h3 className="text-sm font-bold text-gray-300">No active work deliverables</h3>
+                  <p className="text-xs text-gray-500 max-w-sm mx-auto">When your hired freelancers submit completed work, it will appear here for your review and approval.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {clientOrders.map((order) => (
+                    <div key={order.id} className="p-6 rounded-3xl bg-[#0B0B0F] border border-white/[0.08] space-y-4 shadow-xl">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/[0.06] pb-4">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="px-2.5 py-1 rounded-md bg-cyan-500/15 border border-cyan-500/30 text-cyan-400 text-xs font-mono font-bold">
+                              {order.id}
+                            </span>
+                            <span className="text-base font-bold text-white">{order.projectTitle}</span>
+                          </div>
+                          <p className="text-xs text-gray-400 mt-1">Freelancer: <strong className="text-white">{order.freelancerName}</strong> &bull; Deadline: {formatDate(order.deadline)}</p>
+                        </div>
+
+                        <div className="text-right">
+                          <p className="text-sm font-extrabold text-cyan-400">₹{order.agreedPriceINR.toLocaleString('en-IN')}</p>
+                          <span className={`text-[10px] font-bold uppercase ${
+                            order.status === 'submitted' ? 'text-amber-400' :
+                            order.status === 'completed' ? 'text-emerald-400' : 'text-gray-400'
+                          }`}>
+                            Status: {order.status.replace('_', ' ')}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Submissions list with versions */}
+                      {order.submissions && order.submissions.length > 0 ? (
+                        <div className="space-y-3">
+                          <h4 className="text-xs font-bold text-white uppercase tracking-wider">Submitted Deliverables</h4>
+                          {order.submissions.map((sub) => (
+                            <div key={sub.id} className="p-4 rounded-2xl bg-[#121218] border border-white/[0.06] space-y-3">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <span className="px-2 py-0.5 rounded bg-violet-500/20 text-violet-300 font-mono font-bold text-[10px]">
+                                    Version {sub.version}
+                                  </span>
+                                  <span className="text-xs font-bold text-white">{sub.milestoneTitle || 'Milestone Deliverable'}</span>
+                                </div>
+                                <span className={`text-[10px] font-bold uppercase ${
+                                  sub.status === 'approved' ? 'text-emerald-400' :
+                                  sub.status === 'revision_requested' ? 'text-amber-400' : 'text-cyan-400'
+                                }`}>
+                                  {sub.status.replace('_', ' ')}
+                                </span>
+                              </div>
+
+                              <p className="text-xs text-gray-300 leading-relaxed">{sub.description}</p>
+
+                              {sub.files && sub.files.length > 0 && (
+                                <div className="flex flex-wrap gap-2 pt-1">
+                                  {sub.files.map((file, idx) => (
+                                    <a
+                                      key={idx}
+                                      href={file.url}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.1] text-xs text-cyan-300 font-medium transition-colors"
+                                    >
+                                      <FileCode className="w-3.5 h-3.5" />
+                                      <span>{file.name} ({(file.size / 1024 / 1024).toFixed(1)} MB)</span>
+                                    </a>
+                                  ))}
+                                </div>
+                              )}
+                              <span className="text-[10px] text-gray-500 block pt-1">Submitted at {formatDate(sub.submittedAt)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="p-4 rounded-xl bg-[#121218] text-xs text-gray-400 italic">
+                          Freelancer is currently working on deliverables (Progress: {order.progressPercentage}%).
+                        </div>
+                      )}
+
+                      {/* Review Actions */}
+                      <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-white/[0.06]">
+                        <span className="inline-flex items-center gap-1.5 text-xs text-emerald-400 font-semibold">
+                          <ShieldCheck className="w-4 h-4" />
+                          <span>Escrow Protected &bull; Funds safe until approved</span>
+                        </span>
+
+                        <div className="flex items-center gap-2">
+                          {order.status === 'submitted' && (
+                            <>
+                              <button
+                                onClick={() => {
+                                  setDisputeContractId(order.contractId);
+                                  setDisputeModalOpen(true);
+                                }}
+                                className="px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold"
+                              >
+                                Dispute
+                              </button>
+                              <button
+                                onClick={() => setRevisionModalOrder(order)}
+                                className="px-4 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold"
+                              >
+                                Request Revision
+                              </button>
+                              <button
+                                onClick={() => handleApproveDeliverables(order.id)}
+                                disabled={reviewProcessing}
+                                className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider shadow-lg disabled:opacity-50"
+                              >
+                                {reviewProcessing ? 'Processing...' : 'Approve Work & Release Payment'}
+                              </button>
+                            </>
+                          )}
+
+                          {order.status === 'completed' && (
+                            <span className="px-3 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs font-bold flex items-center gap-1.5">
+                              <CheckCircle2 className="w-4 h-4" />
+                              <span>Deliverables Approved & Payment Released</span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* TAB: FINANCE & ESCROW VAULTS */}
           {activeTab === 'finance' && (
             <div className="space-y-6 animate-fadeIn">
@@ -776,7 +988,55 @@ export default function ClientDashboard() {
             </div>
           )}
 
-          {/* DISPUTE MODAL */}
+          {/* REVISION REQUEST MODAL */}
+          {revisionModalOrder && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
+              <div className="bg-[#0B0B0F] border border-amber-500/40 rounded-3xl w-full max-w-md p-6 space-y-4 shadow-2xl">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-amber-400 text-sm font-bold uppercase tracking-wider">
+                    <FileCheck className="w-4 h-4" />
+                    <span>Request Deliverable Revision</span>
+                  </div>
+                  <button onClick={() => setRevisionModalOrder(null)} className="text-gray-400 hover:text-white">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <p className="text-xs text-gray-400">
+                  Provide specific technical feedback for {revisionModalOrder.freelancerName} on Order {revisionModalOrder.id}.
+                </p>
+
+                <div className="space-y-4">
+                  <textarea
+                    rows={4}
+                    value={revisionFeedback}
+                    onChange={(e) => setRevisionFeedback(e.target.value)}
+                    placeholder="Specify the changes, missing test cases, or modifications required..."
+                    className="w-full bg-[#121218] border border-white/[0.1] rounded-xl p-3 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-amber-400 leading-relaxed"
+                    required
+                  />
+
+                  <div className="flex items-center justify-end gap-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={() => setRevisionModalOrder(null)}
+                      className="px-4 py-2 rounded-xl text-xs text-gray-400 hover:text-white"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleRequestRevisionSubmit}
+                      disabled={reviewProcessing || !revisionFeedback.trim()}
+                      className="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-[#071011] text-xs font-bold uppercase tracking-wider disabled:opacity-50"
+                    >
+                      {reviewProcessing ? 'Sending...' : 'Send Revision Feedback'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           {disputeModalOpen && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
               <div className="bg-[#0B0B0F] border border-red-500/40 rounded-3xl w-full max-w-md p-6 space-y-4 shadow-2xl">

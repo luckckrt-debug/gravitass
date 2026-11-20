@@ -11,7 +11,9 @@ import {
   Zap, 
   ArrowUpDown,
   Sparkles,
-  Layers
+  Layers,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { FreelancerProfile, Category } from '@/types';
 import { formatINR } from '@/lib/utils';
@@ -31,6 +33,33 @@ function ExploreTalentContent() {
   const [maxPriceINR, setMaxPriceINR] = useState(100000);
   const [sortBy, setSortBy] = useState('recommended');
   const [loading, setLoading] = useState(true);
+
+  const catScrollRef = React.useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkCatScroll = () => {
+    if (catScrollRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = catScrollRef.current;
+      setCanScrollLeft(scrollLeft > 4);
+      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 6);
+    }
+  };
+
+  useEffect(() => {
+    checkCatScroll();
+    const handleResize = () => checkCatScroll();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [categories]);
+
+  const scrollCats = (direction: 'left' | 'right') => {
+    if (catScrollRef.current) {
+      const scrollAmount = direction === 'left' ? -280 : 280;
+      catScrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      setTimeout(checkCatScroll, 350);
+    }
+  };
 
   useEffect(() => {
     fetch('/api/categories')
@@ -73,33 +102,65 @@ function ExploreTalentContent() {
           Browse verified talent, top-rated engineers, AI architects, cinematic creators, and consultants. Guaranteed escrow protection and transparent INR pricing.
         </p>
 
-        {/* Categories Pill Carousel */}
-        <div className="mt-4 flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
-          <button
-            type="button"
-            onClick={() => setSelectedCategory('all')}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-              selectedCategory === 'all'
-                ? 'bg-[#73D8C4] text-[#071011]'
-                : 'bg-white/[0.04] text-[#91A09E] hover:text-[#F4F5F3]'
-            }`}
+        {/* Categories Pill Carousel with high visibility & scroll buttons */}
+        <div className="mt-5 relative">
+          {canScrollLeft && (
+            <div className="absolute left-0 top-0 bottom-0 z-10 flex items-center pr-3 bg-gradient-to-r from-[#071011] via-[#071011]/90 to-transparent">
+              <button
+                type="button"
+                onClick={() => scrollCats('left')}
+                className="w-7 h-7 rounded-full bg-[#0B1719] hover:bg-[#73D8C4] border border-white/[0.2] hover:border-[#73D8C4] text-[#F4F5F3] hover:text-[#071011] flex items-center justify-center transition-all shadow-xl"
+                title="Scroll left"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
+          <div
+            ref={catScrollRef}
+            onScroll={checkCatScroll}
+            className="flex items-center gap-2 overflow-x-auto scrollbar-none scroll-smooth py-1 px-1"
           >
-            All Categories
-          </button>
-          {categories.map(c => (
             <button
-              key={c.id}
               type="button"
-              onClick={() => setSelectedCategory(c.slug)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border ${
-                selectedCategory === c.slug
-                  ? 'bg-[#73D8C4] text-[#071011] border-[#73D8C4] font-semibold'
-                  : 'bg-[#071011] text-[#91A09E] hover:text-[#F4F5F3] border-white/[0.08]'
+              onClick={() => setSelectedCategory('all')}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all border shadow-sm ${
+                selectedCategory === 'all'
+                  ? 'bg-[#73D8C4] text-[#071011] border-[#73D8C4] shadow-[0_0_15px_rgba(115,216,196,0.35)]'
+                  : 'bg-[#0E1E22] hover:bg-[#152E34] text-[#D8E5E2] hover:text-white border-white/[0.12] hover:border-[#73D8C4]/60'
               }`}
             >
-              {c.name}
+              All Categories
             </button>
-          ))}
+            {categories.map(c => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => setSelectedCategory(c.slug)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border shadow-sm ${
+                  selectedCategory === c.slug
+                    ? 'bg-[#73D8C4] text-[#071011] border-[#73D8C4] font-bold shadow-[0_0_15px_rgba(115,216,196,0.35)]'
+                    : 'bg-[#0E1E22] hover:bg-[#152E34] text-[#D8E5E2] hover:text-white border-white/[0.12] hover:border-[#73D8C4]/60'
+                }`}
+              >
+                {c.name}
+              </button>
+            ))}
+          </div>
+
+          {canScrollRight && (
+            <div className="absolute right-0 top-0 bottom-0 z-10 flex items-center pl-3 bg-gradient-to-l from-[#071011] via-[#071011]/90 to-transparent">
+              <button
+                type="button"
+                onClick={() => scrollCats('right')}
+                className="w-7 h-7 rounded-full bg-[#0B1719] hover:bg-[#73D8C4] border border-white/[0.2] hover:border-[#73D8C4] text-[#F4F5F3] hover:text-[#071011] flex items-center justify-center transition-all shadow-xl"
+                title="Scroll right"
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
