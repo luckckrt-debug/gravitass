@@ -22,7 +22,8 @@
       "isClient": false,
       "activeRole": "freelancer",
       "isVerified": true,
-      "createdAt": "2026-01-15T10:00:00.000Z"
+      "createdAt": "2026-01-15T10:00:00.000Z",
+      "isSuspended": false
     },
     {
       "id": "user-freelancer-3",
@@ -3765,6 +3766,19 @@
       "version": "v2026.1",
       "defaultPercentage": 10,
       "categoryRates": {
+        "programming-tech": 8,
+        "graphics-design": 10,
+        "ai-services": 7,
+        "digital-marketing": 12,
+        "video-animation": 10,
+        "writing-translation": 11,
+        "music-audio": 9,
+        "business": 10,
+        "data-analytics": 8,
+        "engineering-architecture": 7,
+        "photography": 10,
+        "lifestyle-consulting": 12,
+        "trending": 10,
         "development": 8,
         "design": 10,
         "ai": 7,
@@ -3776,7 +3790,9 @@
       "effectiveDate": "2026-01-01T00:00:00.000Z",
       "description": "Tiered production platform commission framework with category concessions",
       "isActive": true,
-      "updatedAt": "2026-11-19T17:29:17.579Z"
+      "updatedAt": "2026-11-19T17:29:17.579Z",
+      "promotionalPercentage": 5,
+      "promotionalCode": "GRAVITASS2026"
     }
   ],
   "taxRules": [

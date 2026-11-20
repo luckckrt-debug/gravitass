@@ -336,6 +336,7 @@ export const INITIAL_USERS: User[] = [
     isClient: true,
     activeRole: 'freelancer',
     isVerified: true,
+    verificationStatus: 'verified',
     createdAt: '2026-01-10T10:00:00.000Z'
   },
   {
@@ -348,6 +349,7 @@ export const INITIAL_USERS: User[] = [
     isClient: false,
     activeRole: 'freelancer',
     isVerified: true,
+    verificationStatus: 'verified',
     createdAt: '2026-01-15T10:00:00.000Z'
   },
   {
@@ -360,7 +362,34 @@ export const INITIAL_USERS: User[] = [
     isClient: false,
     activeRole: 'freelancer',
     isVerified: true,
+    verificationStatus: 'verified',
     createdAt: '2026-02-01T10:00:00.000Z'
+  },
+  {
+    id: 'user-freelancer-4',
+    email: 'devon@gravitass.com',
+    name: 'Devon Carter',
+    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80',
+    role: 'freelancer',
+    isFreelancer: true,
+    isClient: false,
+    activeRole: 'freelancer',
+    isVerified: false,
+    verificationStatus: 'pending',
+    createdAt: '2026-02-10T14:30:00.000Z'
+  },
+  {
+    id: 'user-freelancer-5',
+    email: 'kavita@gravitass.com',
+    name: 'Kavita Rao',
+    avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&auto=format&fit=crop&q=80',
+    role: 'freelancer',
+    isFreelancer: true,
+    isClient: false,
+    activeRole: 'freelancer',
+    isVerified: false,
+    verificationStatus: 'pending',
+    createdAt: '2026-02-12T11:20:00.000Z'
   },
   {
     id: 'user-client-1',
@@ -372,7 +401,50 @@ export const INITIAL_USERS: User[] = [
     isClient: true,
     activeRole: 'client',
     isVerified: true,
+    verificationStatus: 'verified',
     createdAt: '2026-01-05T12:00:00.000Z'
+  },
+  {
+    id: 'user-client-2',
+    email: 'nexus@global.com',
+    name: 'Nexus Ventures',
+    avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=80',
+    role: 'client',
+    isFreelancer: false,
+    isClient: true,
+    activeRole: 'client',
+    isVerified: true,
+    verificationStatus: 'verified',
+    createdAt: '2026-01-20T09:00:00.000Z'
+  },
+  {
+    id: 'user-freelancer-suspended',
+    email: 'suspended.actor@gravitass.com',
+    name: 'Alex Rivera',
+    avatarUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=400&auto=format&fit=crop&q=80',
+    role: 'freelancer',
+    isFreelancer: true,
+    isClient: false,
+    activeRole: 'freelancer',
+    isVerified: false,
+    isSuspended: true,
+    suspensionReason: 'Multiple client complaints regarding deliverables plagiarism & off-platform solicitation.',
+    verificationStatus: 'rejected',
+    verificationRejectionReason: 'ID verification documents mismatched with profile tax details.',
+    reportedCount: 3,
+    complaints: [
+      {
+        id: 'comp-101',
+        reporterId: 'user-client-1',
+        reporterName: 'Aetheria Labs',
+        reportedUserId: 'user-freelancer-suspended',
+        reason: 'Attempted to bypass escrow payment via external crypto address',
+        details: 'Sent telegram handle in milestone delivery chat asking for direct USDT payment.',
+        createdAt: '2026-02-14T10:00:00.000Z',
+        status: 'reviewed'
+      }
+    ],
+    createdAt: '2026-01-25T16:00:00.000Z'
   },
   {
     id: 'user-admin-1',
@@ -384,6 +456,7 @@ export const INITIAL_USERS: User[] = [
     isClient: true,
     activeRole: 'admin',
     isVerified: true,
+    verificationStatus: 'verified',
     createdAt: '2025-12-01T00:00:00.000Z'
   }
 ];
@@ -869,18 +942,51 @@ export const INITIAL_COMMISSION_RULES: CommissionRule[] = [
     version: 'v2026.1',
     defaultPercentage: 10,
     categoryRates: {
-      development: 8,
-      design: 10,
-      ai: 7,
-      marketing: 12
+      'programming-tech': 8,
+      'graphics-design': 10,
+      'ai-services': 7,
+      'digital-marketing': 12,
+      'video-animation': 10,
+      'writing-translation': 11,
+      'music-audio': 9,
+      'business': 10,
+      'data-analytics': 8,
+      'engineering-architecture': 7,
+      'photography': 10,
+      'lifestyle-consulting': 12,
+      'trending': 10
+    },
+    freelancerRates: {
+      'user-freelancer-1': 6
+    },
+    promotionalPercentage: 5,
+    promotionalStartDate: '2026-01-01T00:00:00.000Z',
+    promotionalEndDate: '2026-12-31T23:59:59.000Z',
+    promotionalCode: 'GRAVITASS2026',
+    minFee: 50,
+    maxFee: 25000,
+    effectiveDate: '2026-01-01T00:00:00.000Z',
+    description: 'Tiered production platform commission framework with category concessions & elite overrides',
+    isActive: true,
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: 'COMM-2025-ARCHIVED',
+    version: 'v2025.4',
+    defaultPercentage: 12,
+    categoryRates: {
+      'programming-tech': 10,
+      'graphics-design': 12
     },
     freelancerRates: {},
-    minFee: 20,
-    maxFee: 50000,
-    effectiveDate: '2026-01-01T00:00:00.000Z',
-    description: 'Tiered production platform commission framework with category concessions',
-    isActive: true,
-    updatedAt: new Date().toISOString()
+    minFee: 100,
+    maxFee: 20000,
+    effectiveDate: '2025-06-01T00:00:00.000Z',
+    description: 'Legacy Flat 12% Platform Rate (Archived for Historical Contracts)',
+    isActive: false,
+    createdAt: '2025-06-01T00:00:00.000Z',
+    updatedAt: '2025-12-31T23:59:59.000Z'
   }
 ];
 
@@ -1280,8 +1386,8 @@ class DataStore {
             ...this.getDefaultState(),
             ...parsed,
             categories: mergedCategories,
-            ledgerTransactions: parsed.ledgerTransactions && parsed.ledgerTransactions.length > 0 
-              ? parsed.ledgerTransactions 
+            ledgerTransactions: parsed.ledgerTransactions && parsed.ledgerTransactions.length > 0
+              ? parsed.ledgerTransactions
               : INITIAL_LEDGER_TRANSACTIONS,
             withdrawals: parsed.withdrawals && parsed.withdrawals.length > 0
               ? parsed.withdrawals
@@ -1555,7 +1661,7 @@ class DataStore {
       if (filters.subcategory) {
         const subFilter = filters.subcategory.toLowerCase().trim();
         const subSlug = slugify(subFilter);
-        const matchesSubcategory = 
+        const matchesSubcategory =
           slugify(profile.subcategory || '').includes(subSlug) ||
           (profile.subcategory || '').toLowerCase().includes(subFilter) ||
           (profile.serviceTags || []).some(t => slugify(t).includes(subSlug) || t.toLowerCase().includes(subFilter)) ||
@@ -1946,7 +2052,7 @@ class DataStore {
 
   // --- MESSAGES & CONVERSATIONS ---
   public getConversationsForUser(userId: string): Conversation[] {
-    return this.state.conversations.filter(c => 
+    return this.state.conversations.filter(c =>
       c.participants.some(p => p.id === userId)
     );
   }
@@ -2045,7 +2151,7 @@ class DataStore {
   }
 
   public getLedgerForFreelancer(
-    freelancerId: string, 
+    freelancerId: string,
     filters?: { status?: string; search?: string; startDate?: string; endDate?: string }
   ): LedgerTransaction[] {
     let list = (this.state.ledgerTransactions || []).filter(l => l.freelancerId === freelancerId);
@@ -2056,7 +2162,7 @@ class DataStore {
 
     if (filters?.search) {
       const q = filters.search.toLowerCase();
-      list = list.filter(l => 
+      list = list.filter(l =>
         l.projectTitle.toLowerCase().includes(q) ||
         l.clientName.toLowerCase().includes(q) ||
         l.id.toLowerCase().includes(q) ||
@@ -2168,8 +2274,8 @@ class DataStore {
       return { success: false, error: 'Unauthorized approver' };
     }
 
-    const ms = params.milestoneId 
-      ? contract.milestones.find(m => m.id === params.milestoneId) 
+    const ms = params.milestoneId
+      ? contract.milestones.find(m => m.id === params.milestoneId)
       : undefined;
 
     const grossAmount = ms ? ms.amount : (contract.totalAmount - (contract.paidAmount || 0));
@@ -2178,8 +2284,8 @@ class DataStore {
     }
 
     // Idempotency: Prevent duplicate credits for the same milestone/contract
-    const existing = (this.state.ledgerTransactions || []).find(l => 
-      l.contractId === contract.id && 
+    const existing = (this.state.ledgerTransactions || []).find(l =>
+      l.contractId === contract.id &&
       (ms ? l.milestoneId === ms.id : true) &&
       l.status !== 'failed' && l.status !== 'refunded'
     );
@@ -2187,11 +2293,19 @@ class DataStore {
       return { success: false, error: 'Project milestone earning has already been credited to ledger', ledger: existing };
     }
 
-    // Dynamic Platform Commission from Settings
-    const settings = this.getPlatformSettings();
-    const commissionPercentage = settings.commissionPercentage || 10;
-    const platformFee = Number(((grossAmount * commissionPercentage) / 100).toFixed(2));
-    const netAmount = Number((grossAmount - platformFee).toFixed(2));
+    // Dynamic Platform Commission from Active Commission Rule & Project Category
+    const project = this.getProjectById(contract.projectId);
+    const activeRule = (this.state.commissionRules || []).find(r => r.isActive) || INITIAL_COMMISSION_RULES[0];
+    const commCalc = calculateCommissionFee({
+      grossAmount,
+      category: project?.category,
+      freelancerId: contract.freelancerId,
+      rule: activeRule
+    });
+
+    const commissionPercentage = commCalc.effectivePercentage;
+    const platformFee = commCalc.commissionFee;
+    const netAmount = commCalc.freelancerNetBeforeTax;
 
     const ledgerEntry: LedgerTransaction = {
       id: `LED-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`,
@@ -2210,6 +2324,9 @@ class DataStore {
       netAmount,
       status: 'available',
       transactionReference: `REF-GRAV-${Date.now().toString(36).toUpperCase()}`,
+      commissionRuleId: commCalc.ruleId,
+      commissionRuleVersion: commCalc.ruleVersion,
+      appliedRate: commCalc.effectivePercentage,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -2283,9 +2400,9 @@ class DataStore {
     }
 
     if (params.amount > summary.availableBalance) {
-      return { 
-        success: false, 
-        error: `Insufficient available balance. You requested $${params.amount}, but your verified available balance is $${summary.availableBalance}.` 
+      return {
+        success: false,
+        error: `Insufficient available balance. You requested $${params.amount}, but your verified available balance is $${summary.availableBalance}.`
       };
     }
 
@@ -2323,11 +2440,11 @@ class DataStore {
     // Mask destination for secure audit
     const maskedDetails: PayoutDetails = {
       ...params.payoutDetails,
-      maskedAccount: params.payoutDetails.accountNumber 
-        ? `•••• •••• ${params.payoutDetails.accountNumber.slice(-4)}` 
+      maskedAccount: params.payoutDetails.accountNumber
+        ? `•••• •••• ${params.payoutDetails.accountNumber.slice(-4)}`
         : undefined,
-      maskedUpi: params.payoutDetails.upiId 
-        ? `${params.payoutDetails.upiId.slice(0, 3)}***@${params.payoutDetails.upiId.split('@')[1] || 'upi'}` 
+      maskedUpi: params.payoutDetails.upiId
+        ? `${params.payoutDetails.upiId.slice(0, 3)}***@${params.payoutDetails.upiId.split('@')[1] || 'upi'}`
         : undefined,
       isVerified: true
     };
@@ -2875,7 +2992,7 @@ class DataStore {
       const roundingAdj = validation.difference;
       const commLine = journalLines.find(l => l.accountId === 'revenue:platform_commission');
       if (commLine) {
-        commLine.amount = validation.debitTotal > validation.creditTotal 
+        commLine.amount = validation.debitTotal > validation.creditTotal
           ? safeAdd(commLine.amount, roundingAdj)
           : safeSubtract(commLine.amount, roundingAdj);
       }
@@ -2992,9 +3109,9 @@ class DataStore {
     escrow.releasedAmount = safeAdd(escrow.releasedAmount, msAmount);
     if (ms) {
       ms.status = 'approved';
-      const escMs = escrow.milestones.find(m => 
-        m.milestoneId === ms.id || 
-        m.milestoneId === params.milestoneId || 
+      const escMs = escrow.milestones.find(m =>
+        m.milestoneId === ms.id ||
+        m.milestoneId === params.milestoneId ||
         m.milestoneId === `ms-demo-${ms.id.replace('ms-', '')}` ||
         m.title.toLowerCase().includes(ms.title.slice(0, 10).toLowerCase())
       );
@@ -3141,16 +3258,354 @@ class DataStore {
   // ==========================================
 
   public getCommissionRules(): CommissionRule[] {
-    return this.state.commissionRules || INITIAL_COMMISSION_RULES;
+    if (!this.state.commissionRules || this.state.commissionRules.length === 0) {
+      this.state.commissionRules = [...INITIAL_COMMISSION_RULES];
+    } else {
+      // Ensure all 13 standard category rates and promotional fields exist
+      const active = this.state.commissionRules.find(r => r.isActive) || this.state.commissionRules[0];
+      if (active) {
+        active.categoryRates = {
+          ...INITIAL_COMMISSION_RULES[0].categoryRates,
+          ...active.categoryRates,
+          'programming-tech': active.categoryRates['programming-tech'] ?? active.categoryRates['development'] ?? 8,
+          'graphics-design': active.categoryRates['graphics-design'] ?? active.categoryRates['design'] ?? 10,
+          'ai-services': active.categoryRates['ai-services'] ?? active.categoryRates['ai'] ?? 7
+        };
+        if (active.promotionalPercentage === undefined) {
+          active.promotionalPercentage = INITIAL_COMMISSION_RULES[0].promotionalPercentage;
+          active.promotionalCode = INITIAL_COMMISSION_RULES[0].promotionalCode;
+        }
+      }
+    }
+    return this.state.commissionRules;
+  }
+
+  public getActiveCommissionRule(): CommissionRule {
+    const rules = this.getCommissionRules();
+    return rules.find(r => r.isActive) || rules[0] || INITIAL_COMMISSION_RULES[0];
+  }
+
+  public createCommissionRule(rule: Partial<CommissionRule>): CommissionRule {
+    if (!this.state.commissionRules) this.state.commissionRules = [...INITIAL_COMMISSION_RULES];
+
+    // If newly created rule is active, deactivate other rules
+    if (rule.isActive) {
+      this.state.commissionRules.forEach(r => { r.isActive = false; });
+    }
+
+    const newRule: CommissionRule = {
+      id: rule.id || `COMM-${Date.now().toString(36).toUpperCase()}`,
+      version: rule.version || `v${new Date().getFullYear()}.${this.state.commissionRules.length + 1}`,
+      defaultPercentage: rule.defaultPercentage ?? 10,
+      categoryRates: rule.categoryRates || {},
+      freelancerRates: rule.freelancerRates || {},
+      promotionalPercentage: rule.promotionalPercentage,
+      promotionalStartDate: rule.promotionalStartDate,
+      promotionalEndDate: rule.promotionalEndDate,
+      promotionalCode: rule.promotionalCode,
+      minFee: rule.minFee ?? 50,
+      maxFee: rule.maxFee ?? 25000,
+      effectiveDate: rule.effectiveDate || new Date().toISOString(),
+      description: rule.description || 'Configured platform commission rule',
+      isActive: rule.isActive ?? false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    this.state.commissionRules.unshift(newRule);
+    this.saveState();
+    return newRule;
+  }
+
+  public updateCommissionRuleById(id: string, updates: Partial<CommissionRule>): CommissionRule {
+    if (!this.state.commissionRules) this.state.commissionRules = [...INITIAL_COMMISSION_RULES];
+    const rule = this.state.commissionRules.find(r => r.id === id);
+    if (!rule) {
+      throw new Error(`Commission rule ${id} not found`);
+    }
+
+    if (updates.isActive) {
+      this.state.commissionRules.forEach(r => { r.isActive = false; });
+    }
+
+    Object.assign(rule, updates, { updatedAt: new Date().toISOString() });
+
+    // Synchronize default percentage with settings if this is the active rule
+    if (updates.defaultPercentage !== undefined && rule.isActive) {
+      this.updatePlatformSettings({ commissionPercentage: updates.defaultPercentage });
+    }
+
+    this.saveState();
+    return rule;
+  }
+
+  public setActiveCommissionRule(id: string): CommissionRule {
+    if (!this.state.commissionRules) this.state.commissionRules = [...INITIAL_COMMISSION_RULES];
+    const target = this.state.commissionRules.find(r => r.id === id);
+    if (!target) throw new Error('Rule not found');
+    this.state.commissionRules.forEach(r => { r.isActive = (r.id === id); });
+    target.updatedAt = new Date().toISOString();
+    this.updatePlatformSettings({ commissionPercentage: target.defaultPercentage });
+    this.saveState();
+    return target;
+  }
+
+  public deleteCommissionRule(id: string): boolean {
+    if (!this.state.commissionRules) return false;
+    const rule = this.state.commissionRules.find(r => r.id === id);
+    if (!rule || rule.isActive) return false;
+    this.state.commissionRules = this.state.commissionRules.filter(r => r.id !== id);
+    this.saveState();
+    return true;
   }
 
   public updateCommissionRule(rule: Partial<CommissionRule>): CommissionRule {
-    if (!this.state.commissionRules) this.state.commissionRules = [...INITIAL_COMMISSION_RULES];
-    const active = this.state.commissionRules.find(r => r.isActive) || this.state.commissionRules[0];
-    
-    Object.assign(active, rule, { updatedAt: new Date().toISOString() });
+    const active = this.getActiveCommissionRule();
+    return this.updateCommissionRuleById(active.id, rule);
+  }
+
+  // ==========================================
+  // SUPER ADMIN COMMAND CENTER ANALYTICS ENGINE
+  // ==========================================
+
+  public getSuperAdminAnalytics() {
+    const users = this.state.users || [];
+    const freelancers = users.filter(u => u.isFreelancer || u.role === 'freelancer');
+    const clients = users.filter(u => u.isClient || u.role === 'client');
+    const verifiedFreelancers = freelancers.filter(u => u.isVerified || u.verificationStatus === 'verified');
+
+    const projects = this.state.projects || [];
+    const activeProjects = projects.filter(p => p.status === 'open' || p.status === 'in_progress');
+    const completedProjects = projects.filter(p => p.status === 'completed');
+    const pendingProjects = projects.filter(p => p.status === 'open');
+
+    const contracts = this.state.contracts || [];
+    const escrows = this.state.escrowAccounts || [];
+    const ledger = this.state.ledgerTransactions || [];
+    const withdrawals = this.state.withdrawals || [];
+    const disputes = this.state.disputes || [];
+    const activeRule = this.getActiveCommissionRule();
+
+    // 1. Total Project Payment Volume (Gross Merchandise Volume)
+    // Real volume of funds deposited into escrow or contracted
+    const escrowVolume = escrows.reduce((sum: number, e: EscrowAccount) => sum + (e.fundedAmount || 0), 0);
+    const contractVolume = contracts.reduce((sum: number, c: Contract) => sum + (c.paidAmount || c.totalAmount || 0), 0);
+    const totalProjectVolume = Math.max(escrowVolume, contractVolume);
+
+    // 2. Real Recognized Platform Commission Revenue
+    // Commission is recognized ONLY when milestone deliverables are released & credited
+    const totalCommissionRevenue = ledger
+      .filter(l => l.status === 'available' || l.status === 'paid')
+      .reduce((sum, l) => sum + (l.platformFee || 0), 0);
+
+    // 3. Pending Commission locked in unreleased escrows
+    const pendingCommission = escrows
+      .filter((e: EscrowAccount) => e.status !== 'payment_released' && e.status !== 'refunded' && e.status !== 'cancelled')
+      .reduce((sum: number, e: EscrowAccount) => {
+        const unreleased = Math.max(0, (e.fundedAmount || 0) - (e.releasedAmount || 0));
+        return sum + Number(((unreleased * activeRule.defaultPercentage) / 100).toFixed(2));
+      }, 0);
+
+    // 4. Total Refunds to clients
+    const totalRefunds = escrows.reduce((sum: number, e: EscrowAccount) => sum + (e.refundedAmount || 0), 0);
+
+    // 5. Withdrawals Breakdown
+    const pendingWthList = withdrawals.filter(w => w.status === 'requested' || w.status === 'under_review' || w.status === 'processing');
+    const completedWthList = withdrawals.filter(w => w.status === 'paid');
+    const pendingWithdrawalsCount = pendingWthList.length;
+    const pendingWithdrawalsAmount = pendingWthList.reduce((sum, w) => sum + (w.amount || 0), 0);
+    const successfulPayoutsCount = completedWthList.length;
+    const successfulPayoutsAmount = completedWthList.reduce((sum, w) => sum + (w.finalAmount || w.amount || 0), 0);
+
+    // 6. Disputes Breakdown
+    const openDisputes = disputes.filter(d => d.status === 'open' || d.status === 'investigating');
+    const resolvedDisputes = disputes.filter(d => d.status === 'resolved' || d.status === 'closed');
+
+    // 7. Monthly Revenue Breakdown (Past 12 Months from real database records)
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const currentYear = new Date().getFullYear();
+    const monthlyRevenue = monthNames.map((month, idx) => {
+      const monthTransactions = ledger.filter(l => {
+        const d = new Date(l.createdAt);
+        return d.getMonth() === idx && d.getFullYear() === currentYear;
+      });
+
+      const monthGmv = monthTransactions.reduce((sum, l) => sum + (l.grossAmount || 0), 0);
+      const monthCommission = monthTransactions.reduce((sum, l) => sum + (l.platformFee || 0), 0);
+      const monthNetFreelancers = monthTransactions.reduce((sum, l) => sum + (l.netAmount || 0), 0);
+
+      return {
+        month,
+        grossVolume: monthGmv,
+        commissionRevenue: monthCommission,
+        freelancerEarnings: monthNetFreelancers,
+        transactionCount: monthTransactions.length
+      };
+    });
+
+    return {
+      totalUsers: users.length,
+      totalFreelancers: freelancers.length,
+      totalClients: clients.length,
+      verifiedFreelancers: verifiedFreelancers.length,
+      activeProjects: activeProjects.length,
+      completedProjects: completedProjects.length,
+      pendingProjects: pendingProjects.length,
+      totalProjectVolume,
+      totalCommissionRevenue,
+      pendingCommission,
+      totalRefunds,
+      pendingWithdrawals: {
+        count: pendingWithdrawalsCount,
+        amount: pendingWithdrawalsAmount
+      },
+      successfulPayouts: {
+        count: successfulPayoutsCount,
+        amount: successfulPayoutsAmount
+      },
+      disputes: {
+        total: disputes.length,
+        open: openDisputes.length,
+        resolved: resolvedDisputes.length
+      },
+      monthlyRevenue,
+      activeCommissionRule: activeRule
+    };
+  }
+
+  // ==========================================
+  // SUPER ADMIN USER MANAGEMENT SUITE
+  // ==========================================
+
+  public getUsersForAdmin(tab: string = 'all', search: string = ''): User[] {
+    let list = this.state.users || [];
+
+    if (search.trim()) {
+      const q = search.toLowerCase().trim();
+      list = list.filter(u =>
+        u.name.toLowerCase().includes(q) ||
+        u.email.toLowerCase().includes(q) ||
+        u.id.toLowerCase().includes(q)
+      );
+    }
+
+    switch (tab) {
+      case 'freelancers':
+        return list.filter(u => u.role === 'freelancer' || u.isFreelancer);
+      case 'clients':
+        return list.filter(u => u.role === 'client' || u.isClient);
+      case 'verified':
+        return list.filter(u => u.isVerified || u.verificationStatus === 'verified');
+      case 'pending':
+        return list.filter(u => u.verificationStatus === 'pending' || (!u.isVerified && !u.isSuspended));
+      case 'suspended':
+        return list.filter(u => u.isSuspended);
+      case 'all':
+      default:
+        return list;
+    }
+  }
+
+  public getUserAuditDetails(userId: string) {
+    const user = this.getUserById(userId);
+    if (!user) return null;
+
+    // Sanitize user: exclude passwords or private tokens
+    const sanitizedUser: any = { ...user };
+    delete sanitizedUser.password;
+    delete sanitizedUser.token;
+
+    const freelancerProfile = this.getFreelancerById(userId);
+    const clientProfile = this.getClientById(userId);
+    const portfolio = freelancerProfile?.portfolio || [];
+
+    const userContracts = (this.state.contracts || []).filter(c =>
+      c.clientId === userId || c.freelancerId === userId
+    );
+    const contractProjectIds = new Set(userContracts.map(c => c.projectId));
+
+    const userProjects = (this.state.projects || []).filter(p =>
+      p.clientId === userId || contractProjectIds.has(p.id)
+    );
+
+    const userLedger = (this.state.ledgerTransactions || []).filter(l =>
+      l.clientId === userId || l.freelancerId === userId
+    );
+
+    const userWithdrawals = (this.state.withdrawals || []).filter(w =>
+      w.freelancerId === userId
+    );
+
+    const complaints = user.complaints || [];
+
+    return {
+      user: sanitizedUser,
+      freelancerProfile,
+      clientProfile,
+      portfolio,
+      projects: userProjects,
+      contracts: userContracts,
+      ledger: userLedger,
+      withdrawals: userWithdrawals,
+      complaints
+    };
+  }
+
+  public suspendUser(userId: string, reason: string): User {
+    const user = this.getUserById(userId);
+    if (!user) throw new Error('User not found');
+    user.isSuspended = true;
+    user.suspensionReason = reason;
     this.saveState();
-    return active;
+    return user;
+  }
+
+  public reactivateUser(userId: string): User {
+    const user = this.getUserById(userId);
+    if (!user) throw new Error('User not found');
+    user.isSuspended = false;
+    user.suspensionReason = undefined;
+    this.saveState();
+    return user;
+  }
+
+  public verifyUserAccount(userId: string): User {
+    const user = this.getUserById(userId);
+    if (!user) throw new Error('User not found');
+    user.isVerified = true;
+    user.verificationStatus = 'verified';
+    user.verificationRejectionReason = undefined;
+
+    const freelancer = this.getFreelancerById(userId);
+    if (freelancer && !freelancer.badges.includes('verified')) {
+      freelancer.badges.push('verified');
+      this.saveFreelancerProfile(freelancer);
+    }
+
+    this.saveState();
+    return user;
+  }
+
+  public rejectUserVerification(userId: string, reason: string): User {
+    const user = this.getUserById(userId);
+    if (!user) throw new Error('User not found');
+    user.isVerified = false;
+    user.verificationStatus = 'rejected';
+    user.verificationRejectionReason = reason;
+    this.saveState();
+    return user;
+  }
+
+  public dismissComplaint(userId: string, complaintId: string): boolean {
+    const user = this.getUserById(userId);
+    if (!user || !user.complaints) return false;
+    const complaint = user.complaints.find(c => c.id === complaintId);
+    if (complaint) {
+      complaint.status = 'dismissed';
+      this.saveState();
+      return true;
+    }
+    return false;
   }
 
   // ==========================================

@@ -75,24 +75,53 @@ export function calculateCommissionFee(params: {
   grossAmount: number;
   category?: string;
   freelancerId?: string;
+  promoCode?: string;
   rule: CommissionRule;
 }): {
   grossAmount: number;
   effectivePercentage: number;
   commissionFee: number;
   freelancerNetBeforeTax: number;
+  ruleId: string;
   ruleVersion: string;
+  promotionalApplied?: boolean;
 } {
-  const { grossAmount, category, freelancerId, rule } = params;
+  const { grossAmount, category, freelancerId, promoCode, rule } = params;
 
   let percentage = rule.defaultPercentage;
+  let promotionalApplied = false;
 
-  if (category && rule.categoryRates && rule.categoryRates[category] !== undefined) {
-    percentage = rule.categoryRates[category];
+  // Check category specific rate with alias tolerance
+  if (category && rule.categoryRates) {
+    const catLower = category.toLowerCase().trim();
+    if (rule.categoryRates[category] !== undefined) {
+      percentage = rule.categoryRates[category];
+    } else if (rule.categoryRates[catLower] !== undefined) {
+      percentage = rule.categoryRates[catLower];
+    } else if ((catLower === 'programming-tech' || catLower === 'programming' || catLower === 'tech') && rule.categoryRates['development'] !== undefined) {
+      percentage = rule.categoryRates['development'];
+    } else if ((catLower === 'graphics-design' || catLower === 'design') && rule.categoryRates['design'] !== undefined) {
+      percentage = rule.categoryRates['design'];
+    } else if ((catLower === 'ai-services' || catLower === 'ai') && rule.categoryRates['ai'] !== undefined) {
+      percentage = rule.categoryRates['ai'];
+    }
   }
 
+  // Check freelancer specific override
   if (freelancerId && rule.freelancerRates && rule.freelancerRates[freelancerId] !== undefined) {
     percentage = rule.freelancerRates[freelancerId];
+  }
+
+  // Check promotional rate (time-based or code-based)
+  const now = new Date().toISOString();
+  const isPromoTimeActive = (!rule.promotionalStartDate || now >= rule.promotionalStartDate) &&
+                            (!rule.promotionalEndDate || now <= rule.promotionalEndDate);
+  
+  if (rule.promotionalPercentage !== undefined && rule.promotionalPercentage >= 0 && isPromoTimeActive) {
+    if (!rule.promotionalCode || (promoCode && promoCode.trim().toUpperCase() === rule.promotionalCode.trim().toUpperCase())) {
+      percentage = Math.min(percentage, rule.promotionalPercentage);
+      promotionalApplied = true;
+    }
   }
 
   let fee = fromMinorUnits(Math.round(toMinorUnits(grossAmount) * (percentage / 100)));
@@ -112,7 +141,9 @@ export function calculateCommissionFee(params: {
     effectivePercentage: percentage,
     commissionFee: fee,
     freelancerNetBeforeTax,
-    ruleVersion: rule.version
+    ruleId: rule.id,
+    ruleVersion: rule.version,
+    promotionalApplied
   };
 }
 

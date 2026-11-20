@@ -26,6 +26,17 @@ export type ContractStatus =
 
 export type MilestoneStatus = 'pending' | 'in_progress' | 'submitted' | 'approved';
 
+export interface UserComplaint {
+  id: string;
+  reporterId: string;
+  reporterName: string;
+  reportedUserId: string;
+  reason: string;
+  details?: string;
+  createdAt: string;
+  status: 'pending' | 'reviewed' | 'dismissed';
+}
+
 export interface User {
   id: string;
   email: string;
@@ -37,6 +48,12 @@ export interface User {
   activeRole: 'freelancer' | 'client' | 'admin';
   createdAt: string;
   isVerified?: boolean;
+  isSuspended?: boolean;
+  suspensionReason?: string;
+  verificationStatus?: 'verified' | 'pending' | 'rejected' | 'unverified';
+  verificationRejectionReason?: string;
+  reportedCount?: number;
+  complaints?: UserComplaint[];
 }
 
 export interface PortfolioItem {
@@ -404,6 +421,9 @@ export interface LedgerTransaction {
   paidAt?: string;
   notes?: string;
   withdrawalId?: string;
+  commissionRuleId?: string;
+  commissionRuleVersion?: string;
+  appliedRate?: number;
 }
 
 export interface WithdrawalRequest {
@@ -571,11 +591,16 @@ export interface CommissionRule {
   defaultPercentage: number;
   categoryRates: Record<string, number>;
   freelancerRates: Record<string, number>;
+  promotionalPercentage?: number;
+  promotionalStartDate?: string;
+  promotionalEndDate?: string;
+  promotionalCode?: string;
   minFee: number;
   maxFee: number;
   effectiveDate: string;
   description: string;
   isActive: boolean;
+  createdAt?: string;
   updatedAt: string;
 }
 
