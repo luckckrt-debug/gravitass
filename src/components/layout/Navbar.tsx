@@ -381,28 +381,11 @@ export default function Navbar() {
     return () => clearTimeout(timer);
   }, [searchQuery, isSearchFocused]);
 
-  // Mega menu hover management
-  const handleCategoryMouseEnter = (cat: Category) => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    hoverTimeoutRef.current = setTimeout(() => {
-      setActiveCategory(cat);
-    }, 120);
-  };
-
-  const handleCategoryMouseLeave = () => {
-    hoverTimeoutRef.current = setTimeout(() => {
-      setActiveCategory(null);
-    }, 240);
-  };
-
-  const handleMegaMenuMouseEnter = () => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-  };
-
-  const handleMegaMenuMouseLeave = () => {
-    hoverTimeoutRef.current = setTimeout(() => {
-      setActiveCategory(null);
-    }, 200);
+  // Category dropdown click toggle management (click-to-open only, never hover)
+  const handleCategoryClick = (e: React.MouseEvent, cat: Category) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setActiveCategory(prev => (prev?.id === cat.id || prev?.slug === cat.slug ? null : cat));
   };
 
   // Horizontal scroll helpers
@@ -832,24 +815,26 @@ export default function Navbar() {
           >
             {categories.map(cat => {
               const IconComponent = ICON_MAP[cat.icon] || Sparkles;
-              const isHovered = activeCategory?.slug === cat.slug;
+              const isOpen = activeCategory?.slug === cat.slug || activeCategory?.id === cat.id;
               const isCurrent = pathname === `/freelancers/${cat.slug}` || pathname.startsWith(`/freelancers/${cat.slug}/`);
 
               return (
                 <div
                   key={cat.id}
-                  onMouseEnter={() => handleCategoryMouseEnter(cat)}
-                  onMouseLeave={handleCategoryMouseLeave}
                   className="relative flex-shrink-0"
                 >
-                  <Link
-                    href={`/freelancers/${cat.slug}`}
-                    onClick={() => setActiveCategory(null)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs whitespace-nowrap transition-all duration-150 relative ${
-                      isCurrent || isHovered
-                        ? 'text-[#73D8C4] font-medium bg-white/[0.06]'
-                        : 'text-[#91A09E] hover:text-[#F4F5F3] hover:bg-white/[0.02]'
+                  <button
+                    type="button"
+                    onClick={(e) => handleCategoryClick(e, cat)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs whitespace-nowrap transition-all duration-150 relative cursor-pointer ${
+                      isOpen
+                        ? 'text-[#73D8C4] font-bold bg-[#73D8C4]/15 border border-[#73D8C4]/50 shadow-[0_0_12px_rgba(115,216,196,0.2)]'
+                        : isCurrent
+                          ? 'text-[#73D8C4] font-semibold bg-white/[0.06]'
+                          : 'text-[#91A09E] hover:text-[#F4F5F3] hover:bg-white/[0.04]'
                     }`}
+                    aria-expanded={isOpen}
+                    aria-haspopup="true"
                   >
                     <IconComponent className="w-3.5 h-3.5 flex-shrink-0" />
                     <span>{cat.name}</span>
@@ -858,10 +843,11 @@ export default function Navbar() {
                         HOT
                       </span>
                     )}
+                    <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isOpen ? 'rotate-180 text-[#73D8C4]' : 'text-[#91A09E]'}`} />
                     {isCurrent && (
                       <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-[#73D8C4] rounded-full" />
                     )}
-                  </Link>
+                  </button>
                 </div>
               );
             })}
@@ -893,8 +879,6 @@ export default function Navbar() {
         {activeCategory && (
           <div
             ref={megaMenuRef}
-            onMouseEnter={handleMegaMenuMouseEnter}
-            onMouseLeave={handleMegaMenuMouseLeave}
             style={{ backgroundColor: '#071011' }}
             className="absolute top-full left-0 right-0 bg-[#071011] border-t border-b border-white/[0.14] shadow-[0_30px_70px_rgba(0,0,0,0.98)] z-50 transition-all duration-150"
           >
